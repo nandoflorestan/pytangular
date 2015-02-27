@@ -1,8 +1,11 @@
-formBuilder = {
+'use strict';
+
+var pytangular = {
 	skeletons: {
 		formSkeleton: '<form role="form" data-data-ng-submit="«fnSubmit»" name="«formName»">«formContent»</form>',
 
-		fieldSkeleton: '<div data-data-ng-class="models.fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»</div>',
+		fieldSkeleton: '<div data-data-ng-class="models.fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»</div>' +
+			'<span class="help-block" data-ng-if="models.fieldError[\'«fieldName»\']" data-ng-bind="models.fieldError[\'«fieldName»\']"></span>',
 		widgets : {
 			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" name="«fieldName»" «inputAttrs»/>',
 			select: '<select class="form-control" id="«fieldId»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
@@ -19,21 +22,21 @@ formBuilder = {
 				var aField = "";
 				// Define label if exists
 				if (field.label) {
-					aField += formBuilder.skeletons.labelSkeleton;
+					aField += pytangular.skeletons.labelSkeleton;
 					aField = aField.replace(/«fieldLabel»/g, field.label);
 				}
 
 				// Define the type of field and get the input template
 				if ((field.widget != 'textarea') && (field.widget != 'select') && (field.widget != 'checkbox')) {
 					// All other input types (text, number, password, etc)
-					aField += formBuilder.skeletons.widgets.defaultTemplate;
+					aField += pytangular.skeletons.widgets.defaultTemplate;
 					aField = aField.replace(/«inputType»/g, field.widget);
 				} else if (field.widget == 'textarea') {
-					aField += formBuilder.skeletons.widgets.textarea;
+					aField += pytangular.skeletons.widgets.textarea;
 				} else if (field.widget == 'select') {
-					aField += formBuilder.skeletons.widgets.select;
+					aField += pytangular.skeletons.widgets.select;
 				} else if (field.widget == 'checkbox') {
-					aField += formBuilder.skeletons.widgets.checkbox;
+					aField += pytangular.skeletons.widgets.checkbox;
 				}
 
 				// If is a select define the list of values
@@ -74,7 +77,7 @@ formBuilder = {
 				aField = aField.replace(/«inputAttrs»/g, aFieldAttrs);
 
 				// Insert the aField inside of fieldSkeleton
-				aField = formBuilder.skeletons.fieldSkeleton.replace(/«fieldContent»/g, aField);
+				aField = pytangular.skeletons.fieldSkeleton.replace(/«fieldContent»/g, aField);
 
 				// Change all «fieldName» references to real fieldName
 				aField = aField.replace(/«fieldName»/g, field.name);
@@ -92,7 +95,7 @@ formBuilder = {
 
 		var template;
 		// Insert all fields inside formSkeleton
-		template = formBuilder.skeletons.formSkeleton.replace(/«formContent»/g, fieldsTemplate);
+		template = pytangular.skeletons.formSkeleton.replace(/«formContent»/g, fieldsTemplate);
 		// Insert form name
 		template = template.replace(/«formName»/g, form.name);
 		// Insert form submit function
@@ -114,8 +117,6 @@ formBuilder = {
 				counter++;
 			});
 		});
-
-
 	}
 };
 
@@ -128,7 +129,7 @@ dvApp.directive('dvForm', function ($compile) {
 		link: function ($scope, element, attrs) {
 			var form = $scope.form;
 			if (form) {
-				var template = formBuilder.build(form);
+				var template = pytangular.build(form);
 				var linkFn = $compile(template);
 				var content = linkFn($scope);
 				element.append(content);
