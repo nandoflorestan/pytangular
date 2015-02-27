@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>dvFrom test</title>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<style>
+			.container {
+				width: 25em;
+				display: inline-block;
+				vertical-align: top;
+			}
+		</style>
+	</head>
+	<body>
+		<div ng-app="dvApp" ng-controller="personController">
+			<div class="container">
+				<h3>{{ msg }}</h3>
+				<dv-form form="form"></dv-form>
+			</div>
+			<div class="container">
+				<h3>User info:</h3>
+				<p>Name: {{ model.name }}</p>
+				<p>Fone: {{ model.fone }}</p>
+				<p>Age: {{ model.age }}</p>
+				<p>Email: {{ model.email }}</p>
+				<p>Password: {{ model.pwd }}</p>
+				<p>Kind: {{ model.kind }}</p>
+				<p>Message: {{ model.msg }}</p>
+				<p>Like? {{ model.like1 }}</p>
+				<p>Really like? {{ model.like2 }}</p>
+			</div>
+		</div>
+	</body>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular.min.js"></script>
+		<script>
+			var dvApp = angular.module("dvApp", []);
+		</script>
+		<script src="pytangular.js"></script>
+		<script>
+		dvApp.controller('personController', function ($scope) {
+			$scope.msg = "Test of dvForm:"
+
+			var test = [];
+			test.push(
+				{
+					widget: 'text',
+					label: 'Name',
+					name: 'name',
+					model: 'name',
+					fieldAttrs: [
+						{
+							'data-test': 'test',
+						}
+					],
+				}
+			);
+			test.push(
+				{
+					widget: 'tel',
+					label: 'Fone',
+					name: 'fone',
+					model: 'fone',
+					fieldAttrs: [
+						{
+							'data-test': 'test',
+						}
+					],
+				}
+			);
+			test.push(
+				{
+					widget: 'number',
+					label: 'Age',
+					name: 'age',
+					model: 'age',
+					fieldAttrs: [
+						{
+							'data-test': 'test',
+						}
+					],
+				}
+			);
+			test.push(
+				{
+					widget: 'email',
+					label: 'E-mail',
+					name: 'email',
+					model: 'email',
+				}
+			);
+			test.push(
+				{
+					widget: 'password',
+					label: 'Password',
+					name: 'pwd',
+					model: 'pwd',
+				}
+			);
+			test.push(
+				{
+					widget: 'select',
+					label: 'Kind',
+					name: 'kind',
+					model: 'kind',
+					options: 'kindoptions',
+				}
+			);
+			test.push(
+				{
+					widget: 'textarea',
+					label: 'Message',
+					name: 'msg',
+					model: 'msg',
+					fieldAttrs: [
+						{'cols': '50'},
+						{'rows': '5'},
+					],
+				}
+			);
+			test.push(
+				{
+					widget: 'checkbox',
+					label: 'Like this?',
+					name: 'like1',
+					model: 'like1',
+				}
+			);
+			test.push(
+				{
+					widget: 'checkbox',
+					label: 'Really like this?',
+					name: 'like2',
+					model: 'like2',
+					'true-value': 'Yes',
+					'false-value': 'No',
+				}
+			);
+
+			$scope.kindoptions = [
+				{ label: 'Male', value: 'Boy'},
+				{ label: 'Female', value: 'Girl'},
+				{ label: 'Both', value: 'LOL!'},
+			]
+			$scope.form = { name: 'aForm', fnSubmit: 'call(asset.id)', fieldsets: [], model: 'model'};
+			$scope.form.fieldsets.push({fields: test});
+
+			var values = [
+				{name: 'John Doe'},
+				{fone: '5544-1234'},
+				{age: 35},
+				{email: 'john@gmail.com'},
+				{pwd: 'bruhaha'},
+				{kind: 'Boy'},
+				{msg: "This is John Doe's message!"},
+				{like1: true},
+				{like2: 'Yes'},
+			];
+
+			$scope.model = {};
+
+			formBuilder.populate($scope.form, $scope.model, values);
+		});
+		</script>
+</html>
