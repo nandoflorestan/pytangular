@@ -120,7 +120,7 @@ var pytangular = {
 	}
 };
 
-dvApp.directive('dvForm', function ($compile) {
+dvApp.directive('pytangular', function ($compile) {
 	return {
 		restrict: 'E',
 		// scope: {
@@ -130,6 +130,7 @@ dvApp.directive('dvForm', function ($compile) {
 			var form = $scope.form;
 			if (form) {
 				var template = pytangular.build(form);
+				console.log(template);
 				var linkFn = $compile(template);
 				var content = linkFn($scope);
 				element.append(content);
