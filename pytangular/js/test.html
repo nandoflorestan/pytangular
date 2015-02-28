@@ -21,15 +21,15 @@
 			</div>
 			<div class="container">
 				<h3>User info:</h3>
-				<p>Name: {{ model.name }}</p>
-				<p>Fone: {{ model.fone }}</p>
-				<p>Age: {{ model.age }}</p>
-				<p>Email: {{ model.email }}</p>
-				<p>Password: {{ model.pwd }}</p>
-				<p>Kind: {{ model.kind }}</p>
-				<p>Message: {{ model.msg }}</p>
-				<p>Like? {{ model.like1 }}</p>
-				<p>Really like? {{ model.like2 }}</p>
+				<p>Name: {{ pytangular.name }}</p>
+				<p>Fone: {{ pytangular.fone }}</p>
+				<p>Age: {{ pytangular.age }}</p>
+				<p>Email: {{ pytangular.email }}</p>
+				<p>Password: {{ pytangular.pwd }}</p>
+				<p>Kind: {{ pytangular.kind }}</p>
+				<p>Message: {{ pytangular.msg }}</p>
+				<p>Like? {{ pytangular.like1 }}</p>
+				<p>Really like? {{ pytangular.like2 }}</p>
 			</div>
 		</div>
 	</body>
@@ -179,7 +179,7 @@
 			fieldSets.push({fields: test, legend: 'Test of Pytangular'});
 			fieldSets.push({fields: cardFields, legend: 'Payment information'});
 
-			$scope.myForm = { name: 'aForm', fnSubmit: 'call(asset.id)', fieldsets: fieldSets, model: 'model'};
+			$scope.myForm = { kind: 'xeditable', name: 'aForm', fnSubmit: 'call()', fieldsets: fieldSets};
 
 			var values = [
 				{name: 'John Doe'},
@@ -195,9 +195,9 @@
 				{code: '585'},
 			];
 
-			$scope.model = {};
+			$scope.pytangular = {};
 
-			pytangular.populate($scope.myForm, $scope.model, values);
+			pytangular.populate($scope.myForm, $scope.pytangular, values);
 			console.log($scope.myForm);
 		});
 		</script>

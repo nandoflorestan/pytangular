@@ -1,16 +1,28 @@
 'use strict';
 
 var pytangular = {
-	skeletons: {
+	// Normal HTML5 field skeletons
+	simpleSkeletons: {
 		formSkeleton: '<form role="form" data-ng-submit="«fnSubmit»" name="«formName»">«formContent»</form>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<div data-ng-class="models.fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»</div>' +
 			'<span class="help-block" data-ng-if="models.fieldError[\'«fieldName»\']" data-ng-bind="models.fieldError[\'«fieldName»\']"></span>',
 		widgets : {
-			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" name="«fieldName»" «inputAttrs»/>',
-			select: '<select class="form-control" id="«fieldId»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
-			textarea: '<textarea class="form-control" id="«fieldId»" «inputAttrs»></textarea>',
-			checkbox: ' <input type="checkbox" id="«fieldId»" name="«fieldName»" «inputAttrs»/>',
+			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs»/>',
+			select: '<select class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
+			textarea: '<textarea class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs»></textarea>',
+			checkbox: ' <input type="checkbox" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs»/>',
+		},
+		 labelSkeleton: '<label for="«fieldName»" class="control-label">«fieldLabel»</label>',
+	},
+	// Xeditable skeletons
+	xeditableSkeletons: {
+		formSkeleton: '<form role="form" editable-form onaftersave="«fnSubmit»" name="«formName»">«formContent»</form>',
+		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
+		fieldSkeleton: '<div data-ng-class="models.fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»</div>' +
+			'<span class="help-block" data-ng-if="models.fieldError[\'«fieldName»\']" data-ng-bind="models.fieldError[\'«fieldName»\']"></span>',
+		widgets : {
+			defaultTemplate: '<span editable-«inputType»="«ngModel»" e-name="«fieldName»" onbeforesave="checkName($data)" e-required>{{ «ngModel» || "empty" }}</span>'
 		},
 		 labelSkeleton: '<label for="«fieldName»" class="control-label">«fieldLabel»</label>',
 	},
@@ -18,6 +30,13 @@ var pytangular = {
 		var formTemplate = '';
 		var fieldsTemplate = '';
 		var fieldSetsTemplate = '';
+
+		// Allow select the kind of skeleton to use, if simples field or xeditable
+		if (form.kind == undefined) {
+			var formKind = 'simpleSkeletons';
+		} else if (form.kind == 'xeditable'){
+			var formKind = 'xeditableSkeletons';
+		}
 
 		// Hold all fieldSets
 		var tempForm = '';
@@ -28,7 +47,7 @@ var pytangular = {
 			var aFieldSet = '';
 			// Add the field set template if there is a field set
 			if (fieldset.legend) {
-				fieldSetsTemplate = pytangular.skeletons.fieldSetSkeleton.replace(/«fieldSetLegend»/g, fieldset.legend);
+				fieldSetsTemplate = pytangular[formKind].fieldSetSkeleton.replace(/«fieldSetLegend»/g, fieldset.legend);
 			}
 
 			fieldset.fields.forEach(function (field) {
@@ -36,21 +55,21 @@ var pytangular = {
 				var aField = '';
 				// Define label if exists
 				if (field.label) {
-					aField += pytangular.skeletons.labelSkeleton;
+					aField += pytangular[formKind].labelSkeleton;
 					aField = aField.replace(/«fieldLabel»/g, field.label  || ' ');
 				}
 
 				// Define the type of field and get the input template
 				if ((field.widget != 'textarea') && (field.widget != 'select') && (field.widget != 'checkbox')) {
 					// All other input types (text, number, password, etc)
-					aField += pytangular.skeletons.widgets.defaultTemplate;
+					aField += pytangular[formKind].widgets.defaultTemplate;
 					aField = aField.replace(/«inputType»/g, field.widget);
 				} else if (field.widget == 'textarea') {
-					aField += pytangular.skeletons.widgets.textarea;
+					aField += pytangular[formKind].widgets.textarea;
 				} else if (field.widget == 'select') {
-					aField += pytangular.skeletons.widgets.select;
+					aField += pytangular[formKind].widgets.select;
 				} else if (field.widget == 'checkbox') {
-					aField += pytangular.skeletons.widgets.checkbox;
+					aField += pytangular[formKind].widgets.checkbox;
 				}
 
 				// If is a select define the list of values
@@ -60,17 +79,22 @@ var pytangular = {
 
 				// Build all other field attributes
 				var aFieldAttrs = '';
-				// TODO: Find a real solution for this!
+				// If there is no model use name as field model
 				if (!field.model) {
 					field.model = field.name;
 				}
 				// If there is a data-ng-model attr
+				// This alow to build a model like: "mymodel.myfield"
+				var ngModel = '';
 				if (field.model) {
-					aFieldAttrs = 'data-ng-model="';
+					// If there is a form model name use it, if not use
+					// the default model "pytangular"
 					if (form.model) {
-						aFieldAttrs += form.model + '.';
+						ngModel += form.model + '.';
+					} else {
+						ngModel += 'pytangular.';
 					}
-					aFieldAttrs += field.model + '" ';
+					ngModel += field.model;
 				}
 				// Inset all attributes if exists
 				if (field.input_attrs) {
@@ -93,7 +117,7 @@ var pytangular = {
 				aField = aField.replace(/«inputAttrs»/g, aFieldAttrs);
 
 				// Insert the aField inside of fieldSkeleton
-				aField = pytangular.skeletons.fieldSkeleton.replace(/«fieldContent»/g, aField);
+				aField = pytangular[formKind].fieldSkeleton.replace(/«fieldContent»/g, aField);
 
 				// Change all «fieldName» references to real fieldName
 				aField = aField.replace(/«fieldName»/g, field.name  || ' ');
@@ -104,7 +128,8 @@ var pytangular = {
 				} else {
 					aField = aField.replace(/«fieldId»/g, field.name  || ' ');
 				}
-
+				// Define the models
+					aField = aField.replace(/«ngModel»/g, ngModel || ' ');
 				// Inset this field into the temp field set
 				aFieldSet += aField;
 			});
@@ -122,7 +147,7 @@ var pytangular = {
 		});
 
 		// Insert all fields inside formSkeleton
-		formTemplate = pytangular.skeletons.formSkeleton.replace(/«formContent»/g, tempForm);
+		formTemplate = pytangular[formKind].formSkeleton.replace(/«formContent»/g, tempForm);
 		// Insert form name
 		formTemplate = formTemplate.replace(/«formName»/g, form.name || ' ');
 		// Insert form submit function
