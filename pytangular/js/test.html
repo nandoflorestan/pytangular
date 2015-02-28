@@ -148,8 +148,38 @@
 				{ label: 'Female', value: 'Girl'},
 				{ label: 'Both', value: 'LOL!'},
 			]
-			$scope.myForm = { name: 'aForm', fnSubmit: 'call(asset.id)', fieldsets: [], model: 'model'};
-			$scope.myForm.fieldsets.push({fields: test, legend: 'Test of Pytangular'});
+
+			var cardFields = [];
+			cardFields.push(
+				{
+					widget: 'text',
+					label: 'Credit card Number',
+					name: 'card',
+					model: 'card',
+					input_attrs: {
+						'data-test': 'test',
+						'style': 'width: 20em;',
+					}
+				}
+			);
+			cardFields.push(
+				{
+					widget: 'text',
+					label: '3 digites security code',
+					name: 'code',
+					model: 'code',
+					input_attrs: {
+						'data-test': 'test',
+						'style': 'width: 4em;',
+					}
+				}
+			);
+
+			var fieldSets = []
+			fieldSets.push({fields: test, legend: 'Test of Pytangular'});
+			fieldSets.push({fields: cardFields, legend: 'Payment information'});
+
+			$scope.myForm = { name: 'aForm', fnSubmit: 'call(asset.id)', fieldsets: fieldSets, model: 'model'};
 
 			var values = [
 				{name: 'John Doe'},

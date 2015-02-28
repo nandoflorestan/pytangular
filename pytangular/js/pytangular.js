@@ -19,6 +19,9 @@ var pytangular = {
 		var fieldsTemplate = '';
 		var fieldSetsTemplate = '';
 
+		// Hold all fieldSets
+		var tempForm = '';
+
 		form.fieldsets.forEach(function (fieldset) {
 			console.log('fieldset', fieldset);
 			// Hold individual fieldSets
@@ -113,10 +116,13 @@ var pytangular = {
 			} else {
 				fieldSetsTemplate = aFieldSet;
 			}
+
+			// Insert this fieldSet into tempform
+			tempForm += fieldSetsTemplate;
 		});
 
 		// Insert all fields inside formSkeleton
-		formTemplate = pytangular.skeletons.formSkeleton.replace(/«formContent»/g, fieldSetsTemplate);
+		formTemplate = pytangular.skeletons.formSkeleton.replace(/«formContent»/g, tempForm);
 		// Insert form name
 		formTemplate = formTemplate.replace(/«formName»/g, form.name);
 		// Insert form submit function
