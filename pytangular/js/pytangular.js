@@ -2,9 +2,9 @@
 
 var pytangular = {
 	skeletons: {
-		formSkeleton: '<form role="form" data-data-ng-submit="«fnSubmit»" name="«formName»">«formContent»</form>',
+		formSkeleton: '<form role="form" data-ng-submit="«fnSubmit»" name="«formName»">«formContent»</form>',
 
-		fieldSkeleton: '<div data-data-ng-class="models.fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»</div>' +
+		fieldSkeleton: '<div data-ng-class="models.fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»</div>' +
 			'<span class="help-block" data-ng-if="models.fieldError[\'«fieldName»\']" data-ng-bind="models.fieldError[\'«fieldName»\']"></span>',
 		widgets : {
 			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" name="«fieldName»" «inputAttrs»/>',
@@ -46,6 +46,10 @@ var pytangular = {
 
 				// Build all other field attributes
 				var aFieldAttrs = '';
+				// TODO: Find a real solution for this!
+				if (!field.model) {
+					field.model = field.name;
+				}
 				// If there is a data-ng-model attr
 				if (field.model) {
 					aFieldAttrs = 'data-ng-model="';
@@ -55,12 +59,10 @@ var pytangular = {
 					aFieldAttrs += field.model + '" ';
 				}
 				// Inset all attributes if exists
-				if (field.fieldAttrs) {
-					field.fieldAttrs.forEach(function (thisAttr) {
-						for (var key in thisAttr) {
-							aFieldAttrs += key + '="' + thisAttr[key] + '" ';
-						}
-					});
+				if (field.input_attrs) {
+					for (var key in field.input_attrs) {
+						aFieldAttrs += key + '="' + field.input_attrs[key] + '" ';
+					}
 				}
 				// If is checklist check for true or false special values
 				if (field.widget='checkbox') {
@@ -123,14 +125,10 @@ var pytangular = {
 dvApp.directive('pytangular', function ($compile) {
 	return {
 		restrict: 'E',
-		// scope: {
-		// 	form: '=',
-		// },
 		link: function ($scope, element, attrs) {
-			var form = $scope.form;
+			var form = $scope[attrs.form];
 			if (form) {
 				var template = pytangular.build(form);
-				console.log(template);
 				var linkFn = $compile(template);
 				var content = linkFn($scope);
 				element.append(content);

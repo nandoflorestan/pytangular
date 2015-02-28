@@ -17,7 +17,7 @@
 		<div ng-app="dvApp" ng-controller="personController">
 			<div class="container">
 				<h3>{{ msg }}</h3>
-				<pytangular form="form"></pytangular>
+				<pytangular form="myForm"></pytangular>
 			</div>
 			<div class="container">
 				<h3>User info:</h3>
@@ -49,7 +49,7 @@
 					label: 'Name',
 					name: 'name',
 					model: 'name',
-					fieldAttrs: [
+					input_attrs: [
 						{
 							'data-test': 'test',
 						}
@@ -62,7 +62,7 @@
 					label: 'Fone',
 					name: 'fone',
 					model: 'fone',
-					fieldAttrs: [
+					input_attrs: [
 						{
 							'data-test': 'test',
 						}
@@ -75,7 +75,7 @@
 					label: 'Age',
 					name: 'age',
 					model: 'age',
-					fieldAttrs: [
+					input_attrs: [
 						{
 							'data-test': 'test',
 						}
@@ -113,7 +113,7 @@
 					label: 'Message',
 					name: 'msg',
 					model: 'msg',
-					fieldAttrs: [
+					input_attrs: [
 						{'cols': '50'},
 						{'rows': '5'},
 					],
@@ -143,8 +143,8 @@
 				{ label: 'Female', value: 'Girl'},
 				{ label: 'Both', value: 'LOL!'},
 			]
-			$scope.form = { name: 'aForm', fnSubmit: 'call(asset.id)', fieldsets: [], model: 'model'};
-			$scope.form.fieldsets.push({fields: test});
+			$scope.myForm = { name: 'aForm', fnSubmit: 'call(asset.id)', fieldsets: [], model: 'model'};
+			$scope.myForm.fieldsets.push({fields: test});
 
 			var values = [
 				{name: 'John Doe'},
@@ -160,7 +160,7 @@
 
 			$scope.model = {};
 
-			pytangular.populate($scope.form, $scope.model, values);
+			pytangular.populate($scope.myForm, $scope.model, values);
 		});
 		</script>
 </html>
