@@ -37,7 +37,7 @@ var pytangular = {
 				// Define label if exists
 				if (field.label) {
 					aField += pytangular.skeletons.labelSkeleton;
-					aField = aField.replace(/«fieldLabel»/g, field.label);
+					aField = aField.replace(/«fieldLabel»/g, field.label  || ' ');
 				}
 
 				// Define the type of field and get the input template
@@ -96,13 +96,13 @@ var pytangular = {
 				aField = pytangular.skeletons.fieldSkeleton.replace(/«fieldContent»/g, aField);
 
 				// Change all «fieldName» references to real fieldName
-				aField = aField.replace(/«fieldName»/g, field.name);
+				aField = aField.replace(/«fieldName»/g, field.name  || ' ');
 
 				// Define id if it exists or use field name
 				if (field.id) {
-					aField = aField.replace(/«fieldId»/g, field.id);
+					aField = aField.replace(/«fieldId»/g, field.id  || ' ');
 				} else {
-					aField = aField.replace(/«fieldId»/g, field.name);
+					aField = aField.replace(/«fieldId»/g, field.name  || ' ');
 				}
 
 				// Inset this field into the temp field set
@@ -124,20 +124,24 @@ var pytangular = {
 		// Insert all fields inside formSkeleton
 		formTemplate = pytangular.skeletons.formSkeleton.replace(/«formContent»/g, tempForm);
 		// Insert form name
-		formTemplate = formTemplate.replace(/«formName»/g, form.name);
+		formTemplate = formTemplate.replace(/«formName»/g, form.name || ' ');
 		// Insert form submit function
-		formTemplate = formTemplate.replace(/«fnSubmit»/g, form.fnSubmit);
+		formTemplate = formTemplate.replace(/«fnSubmit»/g, form.fnSubmit || ' ');
 
 		return formTemplate;
 	},
 	populate: function (form, model, values) {
+		var counter = 0;
 		form.fieldsets.forEach(function (fieldset) {
-			var counter = 0;
 			fieldset.fields.forEach(function (field) {
-				if (field.model) {
-					if (field.default && !values[field.name]) {
-						model[field.model] = field.default;
-					} else {
+				// If there is no model use field name as model
+				if (!field.model) {
+					field.model = field.name;
+				}
+				if (field.default && (values[counter] == undefined || !values[counter][field.name])) {
+					model[field.model] = field.default;
+				} else {
+					if (values[counter] != undefined) {
 						model[field.model] = values[counter][field.name];
 					}
 				}
