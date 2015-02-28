@@ -3,7 +3,7 @@
 var pytangular = {
 	skeletons: {
 		formSkeleton: '<form role="form" data-ng-submit="«fnSubmit»" name="«formName»">«formContent»</form>',
-
+		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<div data-ng-class="models.fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»</div>' +
 			'<span class="help-block" data-ng-if="models.fieldError[\'«fieldName»\']" data-ng-bind="models.fieldError[\'«fieldName»\']"></span>',
 		widgets : {
@@ -13,13 +13,24 @@ var pytangular = {
 			checkbox: ' <input type="checkbox" id="«fieldId»" name="«fieldName»" «inputAttrs»/>',
 		},
 		 labelSkeleton: '<label for="«fieldName»" class="control-label">«fieldLabel»</label>',
-		 fieldSetSkeleton: '<fieldset>',
 	},
 	build: function (form) {
-		var fieldsTemplate = "";
+		var formTemplate = '';
+		var fieldsTemplate = '';
+		var fieldSetsTemplate = '';
+
 		form.fieldsets.forEach(function (fieldset) {
+			console.log('fieldset', fieldset);
+			// Hold individual fieldSets
+			var aFieldSet = '';
+			// Add the field set template if there is a field set
+			if (fieldset.legend) {
+				fieldSetsTemplate = pytangular.skeletons.fieldSetSkeleton.replace(/«fieldSetLegend»/g, fieldset.legend);
+			}
+
 			fieldset.fields.forEach(function (field) {
-				var aField = "";
+				// Hold individual fields;
+				var aField = '';
 				// Define label if exists
 				if (field.label) {
 					aField += pytangular.skeletons.labelSkeleton;
@@ -91,19 +102,27 @@ var pytangular = {
 					aField = aField.replace(/«fieldId»/g, field.name);
 				}
 
-				fieldsTemplate += aField;
+				// Inset this field into the temp field set
+				aFieldSet += aField;
 			});
+
+			// If there is a fieldSet isert each one into fieldSetsTemplate
+			// Else insert just the normal fields into the fieldSetsTemplate variable
+			if (fieldset.legend) {
+				fieldSetsTemplate = fieldSetsTemplate.replace(/«fieldSetContent»/g, aFieldSet);
+			} else {
+				fieldSetsTemplate = aFieldSet;
+			}
 		});
 
-		var template;
 		// Insert all fields inside formSkeleton
-		template = pytangular.skeletons.formSkeleton.replace(/«formContent»/g, fieldsTemplate);
+		formTemplate = pytangular.skeletons.formSkeleton.replace(/«formContent»/g, fieldSetsTemplate);
 		// Insert form name
-		template = template.replace(/«formName»/g, form.name);
+		formTemplate = formTemplate.replace(/«formName»/g, form.name);
 		// Insert form submit function
-		template = template.replace(/«fnSubmit»/g, form.fnSubmit);
+		formTemplate = formTemplate.replace(/«fnSubmit»/g, form.fnSubmit);
 
-		return template;
+		return formTemplate;
 	},
 	populate: function (form, model, values) {
 		form.fieldsets.forEach(function (fieldset) {

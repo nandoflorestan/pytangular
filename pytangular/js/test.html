@@ -40,8 +40,6 @@
 		<script src="pytangular.js"></script>
 		<script>
 		dvApp.controller('personController', function ($scope) {
-			$scope.msg = "Test of dvForm:"
-
 			var test = [];
 			test.push(
 				{
@@ -51,6 +49,7 @@
 					model: 'name',
 					input_attrs: {
 						'data-test': 'test',
+						'style': 'width: 20em;',
 					}
 				}
 			);
@@ -62,6 +61,7 @@
 					model: 'fone',
 					input_attrs:{
 						'data-test': 'test',
+						'style': 'width: 12em;',
 					}
 				}
 			);
@@ -74,6 +74,7 @@
 					input_attrs: {
 						'data-test': 'test',
 						'data-ng-teste2': 'outro-teste',
+						'style': 'width: 4em;',
 					},
 				}
 			);
@@ -83,6 +84,9 @@
 					label: 'E-mail',
 					name: 'email',
 					model: 'email',
+					input_attrs: {
+						'style': 'width: 14em;',
+					},
 				}
 			);
 			test.push(
@@ -91,6 +95,9 @@
 					label: 'Password',
 					name: 'pwd',
 					model: 'pwd',
+					input_attrs: {
+						'style': 'width: 10em;',
+					},
 				}
 			);
 			test.push(
@@ -100,6 +107,9 @@
 					name: 'kind',
 					model: 'kind',
 					options: 'kindoptions',
+					input_attrs: {
+						'style': 'width: 8em;',
+					},
 				}
 			);
 			test.push(
@@ -139,7 +149,7 @@
 				{ label: 'Both', value: 'LOL!'},
 			]
 			$scope.myForm = { name: 'aForm', fnSubmit: 'call(asset.id)', fieldsets: [], model: 'model'};
-			$scope.myForm.fieldsets.push({fields: test});
+			$scope.myForm.fieldsets.push({fields: test, legend: 'Test of Pytangular'});
 
 			var values = [
 				{name: 'John Doe'},
@@ -156,6 +166,7 @@
 			$scope.model = {};
 
 			pytangular.populate($scope.myForm, $scope.model, values);
+			console.log($scope.myForm);
 		});
 		</script>
 </html>
