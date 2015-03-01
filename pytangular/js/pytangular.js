@@ -5,8 +5,8 @@ var pytangular = {
 	simpleSkeletons: {
 		formSkeleton: '<form role="form" data-ng-submit="«fnSubmit»" name="«formName»">«formContent»</form>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
-		fieldSkeleton: '<div data-ng-class="models.fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»</div>' +
-			'<span class="help-block" data-ng-if="models.fieldError[\'«fieldName»\']" data-ng-bind="models.fieldError[\'«fieldName»\']"></span>',
+		fieldSkeleton: '<div data-ng-class="«formModel».fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»</div>' +
+			'<span class="help-block" data-ng-if="«formModel».fieldError[\'«fieldName»\']" data-ng-bind="«formModel».fieldError[\'«fieldName»\']"></span>',
 		widgets : {
 			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs»/>',
 			select: '<select class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
@@ -17,14 +17,38 @@ var pytangular = {
 	},
 	// Xeditable skeletons
 	xeditableSkeletons: {
-		formSkeleton: '<form role="form" editable-form onaftersave="«fnSubmit»" name="«formName»">«formContent»</form>',
-		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
-		fieldSkeleton: '<div data-ng-class="models.fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»</div>' +
-			'<span class="help-block" data-ng-if="models.fieldError[\'«fieldName»\']" data-ng-bind="models.fieldError[\'«fieldName»\']"></span>',
+		formSkeleton:
+			'<form role="form" ' +
+						'editable-form ' +
+						'onaftersave="«fnSubmit»" ' +
+						'name="«formName»">' +
+				'«formContent»' +
+				'<div class="buttons">' +
+					'<button type="button" ' +
+						'class="btn btn-default" ' +
+						'data-ng-click="«formName».$show()" ' +
+						'data-ng-show="!«formName».$visible"> Edit' +
+					'</button>' +
+					'<span ng-show="«formName».$visible">' +
+						'<button type="submit" class="btn btn-primary" ' +
+								'data-ng-disabled="«formName».$waiting"> Save' +
+						'</button>' +
+						' <button type="button" class="btn btn-default" ' +
+								'ng-disabled="«formName».$waiting" ' +
+								'ng-click="«formName».$cancel()"> Cancel' +
+						'</button>' +
+					'</span>' +
+				'</div>' +
+			'</form>',
+		fieldSetSkeleton: '<fieldset style="margin-bottom: 2em;"><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
+		fieldSkeleton: '<div class="form-group">«fieldContent»</div>',
 		widgets : {
-			defaultTemplate: '<span editable-«inputType»="«ngModel»" e-name="«fieldName»" onbeforesave="checkName($data)" e-required>{{ «ngModel» || "empty" }}</span>'
+			defaultTemplate: ' <span editable-«inputType»="«ngModel»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" data-ng-bind="«ngModel»"></span>',
+			password: '<span editable-text="«ngModel»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" e-type="password">******</span>',
+			textarea: '<span editable-textarea="«ngModel»" «inputAttrs»>' +
+    					'<pre data-ng-bind="«ngModel»"></pre></span>',
 		},
-		 labelSkeleton: '<label for="«fieldName»" class="control-label">«fieldLabel»</label>',
+		 labelSkeleton: '<span class="title">«fieldLabel» </span>',
 	},
 	build: function (form) {
 		var formTemplate = '';
@@ -62,8 +86,15 @@ var pytangular = {
 				// Define the type of field and get the input template
 				if ((field.widget != 'textarea') && (field.widget != 'select') && (field.widget != 'checkbox')) {
 					// All other input types (text, number, password, etc)
-					aField += pytangular[formKind].widgets.defaultTemplate;
+					// Xeditable uses a different password template
+					if (field.widget == 'password' && formKind == 'xeditableSkeletons') {
+						aField += pytangular[formKind].widgets.password;
+					} else {
+						// Default inputs
+						aField += pytangular[formKind].widgets.defaultTemplate;
+					}
 					aField = aField.replace(/«inputType»/g, field.widget);
+				// Special inputs
 				} else if (field.widget == 'textarea') {
 					aField += pytangular[formKind].widgets.textarea;
 				} else if (field.widget == 'select') {
@@ -89,18 +120,21 @@ var pytangular = {
 				if (field.model) {
 					// If there is a form model name use it, if not use
 					// the default model "pytangular"
-					if (form.model) {
-						ngModel += form.model + '.';
-					} else {
-						ngModel += 'pytangular.';
+					if (!form.model) {
+						form.model = 'pytangular';
 					}
-					ngModel += field.model;
+					ngModel += form.model + '.' + field.model;
 				}
 				// Inset all attributes if exists
 				if (field.input_attrs) {
 					for (var key in field.input_attrs) {
 						aFieldAttrs += key + '="' + field.input_attrs[key] + '" ';
 					}
+				}
+				// If is xeditable textarea change cols and rows to e-cols and e-rows
+				if (field.widget == 'textarea' && formKind == 'xeditableSkeletons') {
+					aFieldAttrs = aFieldAttrs.replace(/rows=/g, 'e-rows=');
+					aFieldAttrs = aFieldAttrs.replace(/cols=/g, 'e-cols=');
 				}
 				// If is checklist check for true or false special values
 				if (field.widget='checkbox') {
@@ -129,6 +163,7 @@ var pytangular = {
 					aField = aField.replace(/«fieldId»/g, field.name  || ' ');
 				}
 				// Define the models
+					aField = aField.replace(/«formModel»/g, form.model || ' ');
 					aField = aField.replace(/«ngModel»/g, ngModel || ' ');
 				// Inset this field into the temp field set
 				aFieldSet += aField;
