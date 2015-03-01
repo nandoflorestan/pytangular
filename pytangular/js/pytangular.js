@@ -12,6 +12,7 @@ var pytangular = {
 			select: '<select class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
 			textarea: '<textarea class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs»></textarea>',
 			checkbox: ' <input type="checkbox" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs»/>',
+			typeahead: '<input type="text" ng-model="«ngModel»" typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" class="form-control">',
 		},
 		 labelSkeleton: '<label for="«fieldName»" class="control-label">«fieldLabel»</label>',
 	},
@@ -49,6 +50,7 @@ var pytangular = {
 			textarea: '<span editable-textarea="«ngModel»" id="«fieldId»" «inputAttrs»>' +
     					'<pre data-ng-bind="«ngModel»"></pre></span>',
     		checkbox: ' <span editable-checkbox="«ngModel»" id="«fieldId»" e-title="«title»">{{ «ngModel» && "«trueValue»" || "«falseValue»" }}<span>',
+    		typeahead: ' <span editable-text="«ngModel»" e-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8">{{ «ngModel» }}</span>',
 		},
 		 labelSkeleton: '<span class="title">«fieldLabel» </span>',
 	},
@@ -86,7 +88,7 @@ var pytangular = {
 				}
 
 				// Define the type of field and get the input template
-				if ((field.widget != 'textarea') && (field.widget != 'select') && (field.widget != 'checkbox')) {
+				if ((field.widget != 'textarea') && (field.widget != 'select') && (field.widget != 'checkbox')&& (field.widget != 'typeahead')) {
 					// All other input types (text, number, password, etc)
 					// Xeditable uses a different password template
 					if (field.widget == 'password' && formKind == 'xeditableSkeletons') {
@@ -103,11 +105,17 @@ var pytangular = {
 					aField += pytangular[formKind].widgets.select;
 				} else if (field.widget == 'checkbox') {
 					aField += pytangular[formKind].widgets.checkbox;
+				} else if (field.widget == 'typeahead') {
+					aField += pytangular[formKind].widgets.typeahead;
 				}
 
 				// If is a select define the list of values
 				if (field.widget == 'select') {
 					aField = aField.replace(/«itemsList»/g, field.options);
+				}
+				// If is a typeahead define the list of values
+				if (field.widget == 'typeahead') {
+					aField = aField.replace(/«typeaheadList»/g, field.typeaheadList);
 				}
 
 				// Build all other field attributes
