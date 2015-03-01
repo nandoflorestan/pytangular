@@ -43,10 +43,11 @@ var pytangular = {
 		fieldSetSkeleton: '<fieldset style="margin-bottom: 2em;"><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<div class="form-group">«fieldContent»</div>',
 		widgets : {
-			defaultTemplate: ' <span editable-«inputType»="«ngModel»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" data-ng-bind="«ngModel»"></span>',
-			password: '<span editable-text="«ngModel»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" e-type="password">******</span>',
-			textarea: '<span editable-textarea="«ngModel»" «inputAttrs»>' +
+			defaultTemplate: ' <span editable-«inputType»="«ngModel»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" id="«fieldId»" data-ng-bind="«ngModel»"></span>',
+			password: '<span editable-text="«ngModel»" id="«fieldId»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" e-type="password">******</span>',
+			textarea: '<span editable-textarea="«ngModel»" id="«fieldId»" «inputAttrs»>' +
     					'<pre data-ng-bind="«ngModel»"></pre></span>',
+    		checkbox: ' <span editable-checkbox="«ngModel»" id="«fieldId»" e-title="«title»">{{ «ngModel» && "«trueValue»" || "«falseValue»" }}<span>',
 		},
 		 labelSkeleton: '<span class="title">«fieldLabel» </span>',
 	},
@@ -144,6 +145,12 @@ var pytangular = {
 					}
 					if (field['false-value']) {
 						aFieldAttrs += 'data-ng-false-value="\'' + field['false-value'] + '\'" ';
+					}
+					// Check if is xeditable checkbox and define false, true and title values
+					if(formKind == 'xeditableSkeletons') {
+						aField = aField.replace(/«trueValue»/g, field['true-value'] || 'Yes');
+						aField = aField.replace(/«falseValue»/g, field['false-value'] || 'No');
+						aField = aField.replace(/«title»/g, field['title']);
 					}
 				}
 
