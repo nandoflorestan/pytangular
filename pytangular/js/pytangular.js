@@ -212,10 +212,7 @@ var pytangular = {
 
 		return formTemplate;
 	},
-	populate: function () {
-		var form = pytangular.config.form;
-		var model = pytangular.config.model;
-		var values = pytangular.config.fieldvalues;
+	populate: function (form, model, values) {
 
 		var counter = 0;
 		form.fieldsets.forEach(function (fieldset) {
@@ -273,7 +270,7 @@ dvApp.directive('pytangular', function ($compile) {
 				element.append(content);
 				// Populate the form if values exists
 				console.log('fieldvalues', fieldvalues);
-				pytangular.populate();
+				pytangular.populate(form, model, fieldvalues);
 			}
 		},
 	};
