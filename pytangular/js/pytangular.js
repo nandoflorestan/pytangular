@@ -12,7 +12,7 @@ var pytangular = {
 			select: '<select class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
 			textarea: '<textarea class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs»></textarea>',
 			checkbox: ' <input type="checkbox" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs»/>',
-			typeahead: '<input type="text" ng-model="«ngModel»" typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" class="form-control">',
+			typeahead: '<input type="text" ng-model="«ngModel»" «inputAttrs» typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" class="form-control">',
 		},
 		 labelSkeleton: '<label for="«fieldName»" class="control-label">«fieldLabel»</label>',
 	},
@@ -50,7 +50,7 @@ var pytangular = {
 			textarea: '<span editable-textarea="«ngModel»" id="«fieldId»" «inputAttrs»>' +
     					'<pre data-ng-bind="«ngModel»"></pre></span>',
     		checkbox: ' <span editable-checkbox="«ngModel»" id="«fieldId»" e-title="«title»">{{ «ngModel» && "«trueValue»" || "«falseValue»" }}<span>',
-    		typeahead: ' <span editable-text="«ngModel»" e-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8">{{ «ngModel» }}</span>',
+    		typeahead: ' <span editable-text="«ngModel»" «inputAttrs» e-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8">{{ «ngModel» }}</span>',
 		},
 		 labelSkeleton: '<span class="title">«fieldLabel» </span>',
 	},
@@ -70,7 +70,6 @@ var pytangular = {
 		var tempForm = '';
 
 		form.fieldsets.forEach(function (fieldset) {
-			console.log('fieldset', fieldset);
 			// Hold individual fieldSets
 			var aFieldSet = '';
 			// Add the field set template if there is a field set

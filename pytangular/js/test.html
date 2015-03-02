@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>dvFrom test</title>
+		<title>Pytangular</title>
 		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 		<link href="xeditable.css" rel="stylesheet">
@@ -42,9 +42,10 @@
 	</head>
 	<body>
 		<div ng-app="dvApp" ng-controller="personController">
+			<h1>Pytangular examples</h1>
 			<div class="container">
-				<h3>{{ msg }}</h3>
 				<pytangular form="myForm"></pytangular>
+				<pytangular form="editableForm"></pytangular>
 			</div>
 			<div class="container">
 				<h3>User info:</h3>
@@ -59,7 +60,6 @@
 				<p>Really like? {{ pytangular.like2 }}</p>
 			</div>
 		</div>
-	</body>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.6.0/ui-bootstrap-tpls.min.js"></script>
 		<script src="xeditable.min.js"></script>
@@ -72,8 +72,7 @@
 		<script src="pytangular.js"></script>
 		<script>
 		dvApp.controller('personController', function ($scope, $filter) {
-			var test = [];
-			test.push(
+			var aFrom = [
 				{
 					widget: 'text',
 					label: 'Name',
@@ -83,9 +82,7 @@
 						'data-test': 'test',
 						'style': 'width: 20em;',
 					}
-				}
-			);
-			test.push(
+				},
 				{
 					widget: 'tel',
 					label: 'Fone',
@@ -95,9 +92,7 @@
 						'data-test': 'test',
 						'style': 'width: 12em;',
 					}
-				}
-			);
-			test.push(
+				},
 				{
 					widget: 'number',
 					label: 'Age',
@@ -108,9 +103,7 @@
 						'data-ng-teste2': 'outro-teste',
 						'style': 'width: 4em;',
 					},
-				}
-			);
-			test.push(
+				},
 				{
 					widget: 'email',
 					label: 'E-mail',
@@ -119,9 +112,7 @@
 					input_attrs: {
 						'style': 'width: 14em;',
 					},
-				}
-			);
-			test.push(
+				},
 				{
 					widget: 'password',
 					label: 'Password',
@@ -130,9 +121,7 @@
 					input_attrs: {
 						'style': 'width: 10em;',
 					},
-				}
-			);
-			test.push(
+				},
 				{
 					widget: 'select',
 					label: 'Kind',
@@ -142,9 +131,7 @@
 					input_attrs: {
 						'style': 'width: 8em;',
 					},
-				}
-			);
-			test.push(
+				},
 				{
 					widget: 'textarea',
 					label: 'Message',
@@ -154,18 +141,14 @@
 						'cols': '50',
 						'rows': '5',
 					},
-				}
-			);
-			test.push(
+				},
 				{
 					widget: 'checkbox',
 					label: 'Like this?',
 					name: 'like1',
 					model: 'like1',
 					title: '',
-				}
-			);
-			test.push(
+				},
 				{
 					widget: 'checkbox',
 					label: 'Really like this?',
@@ -174,17 +157,18 @@
 					'true-value': 'Yes',
 					'false-value': 'No',
 					title: '',
-				}
-			);
-			test.push(
+				},
 				{
 					widget: 'typeahead',
 					label: 'Favorite color',
 					name: 'color',
 					model: 'color',
 					typeaheadList: 'myColors',
+					input_attrs:{
+						'title': 'ui.bootstrap typeahead',
+					},
 				}
-			);
+			];
 
 			var cardFields = [];
 			cardFields.push(
@@ -213,13 +197,14 @@
 			);
 
 			var fieldSets = [];
-			$scope.myColors = [];
-			$scope.myColors.push('Blue');
-			$scope.myColors.push('Aqua');
-			$scope.myColors.push('Brown');
-			$scope.myColors.push('Cian');
-			$scope.myColors.push('Yellow');
-			$scope.myColors.push('Black');
+			$scope.myColors = [
+				'Blue',
+				'Aqua',
+				'Brown',
+				'Cian',
+				'Yellow',
+				'Black',
+			];
 
 			$scope.kindoptions = [
 				{ label: 'Male', value: 'Boy'},
@@ -227,10 +212,11 @@
 				{ label: 'Both', value: 'LOL!'},
 			];
 
-			fieldSets.push({fields: test, legend: 'Test of Pytangular'});
+			fieldSets.push({fields: aFrom, legend: 'Simple web form'});
 			fieldSets.push({fields: cardFields, legend: 'Payment information'});
 
-			$scope.myForm = { kind: 'xeditable', name: 'aForm', fnSubmit: 'call()', fieldsets: fieldSets};
+			$scope.myForm = { name: 'aForm', fnSubmit: 'call()', fieldsets: fieldSets};
+			$scope.editableForm = { kind: 'xeditable', name: 'aForm', fnSubmit: 'call()', fieldsets: fieldSets};
 
 			var values = [
 				{name: 'John Doe'},
@@ -250,7 +236,9 @@
 			$scope.pytangular = {};
 
 			pytangular.populate($scope.myForm, $scope.pytangular, values);
+			pytangular.populate($scope.editableForm, $scope.pytangular, values);
 			console.log($scope.myForm);
 		});
 		</script>
+	</body>
 </html>
