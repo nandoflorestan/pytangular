@@ -44,8 +44,15 @@
 		<div ng-app="dvApp" ng-controller="personController">
 			<h1>Pytangular examples</h1>
 			<div class="container">
-				<pytangular form="myForm"></pytangular>
-				<pytangular form="editableForm"></pytangular>
+				<pytangular form="myForm"
+							model="pytangular"
+							fieldvalues="values">
+				</pytangular>
+				<pytangular form="editableForm"
+							xeditable="true"
+							model="pytangular"
+							fieldvalues="values">
+				</pytangular>
 			</div>
 			<div class="container">
 				<h3>User info:</h3>
@@ -216,9 +223,9 @@
 			fieldSets.push({fields: cardFields, legend: 'Payment information'});
 
 			$scope.myForm = { name: 'aForm', fnSubmit: 'call()', fieldsets: fieldSets};
-			$scope.editableForm = { kind: 'xeditable', name: 'aForm', fnSubmit: 'call()', fieldsets: fieldSets};
+			$scope.editableForm = { name: 'aForm', fnSubmit: 'call()', fieldsets: fieldSets};
 
-			var values = [
+			$scope.values = [
 				{name: 'John Doe'},
 				{fone: '5544-1234'},
 				{age: 35},
@@ -235,8 +242,9 @@
 
 			$scope.pytangular = {};
 
-			pytangular.populate($scope.myForm, $scope.pytangular, values);
-			pytangular.populate($scope.editableForm, $scope.pytangular, values);
+			//pytangular.populate($scope.myForm, $scope.pytangular, values);
+			console.log(pytangular);
+			//pytangular.populate($scope.editableForm, $scope.pytangular, values);
 			console.log($scope.myForm);
 		});
 		</script>

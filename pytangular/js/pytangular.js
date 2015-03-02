@@ -1,6 +1,8 @@
 'use strict';
 
 var pytangular = {
+	// Hold all configuration variables defined in the directive
+	config: {},
 	// Hold the form field names
 	resetableFields: [],
 	resetableDefaultFields: [],
@@ -58,15 +60,16 @@ var pytangular = {
 		},
 		 labelSkeleton: '<span class="title">«fieldLabel» </span>',
 	},
-	build: function (form) {
+	build: function () {
+		var form = pytangular.config.form;
 		var formTemplate = '';
 		var fieldsTemplate = '';
 		var fieldSetsTemplate = '';
 
 		// Allow select the kind of skeleton to use, if simples field or xeditable
-		if (form.kind == undefined) {
+		if (pytangular.config.xeditable == false || undefined) {
 			var formKind = 'simpleSkeletons';
-		} else if (form.kind == 'xeditable'){
+		} else if (pytangular.config.xeditable == 'true'){
 			var formKind = 'xeditableSkeletons';
 		}
 
@@ -210,6 +213,7 @@ var pytangular = {
 		return formTemplate;
 	},
 	populate: function (form, model, values) {
+
 		var counter = 0;
 		form.fieldsets.forEach(function (fieldset) {
 			fieldset.fields.forEach(function (field) {
@@ -248,11 +252,25 @@ dvApp.directive('pytangular', function ($compile) {
 		restrict: 'E',
 		link: function ($scope, element, attrs) {
 			var form = $scope[attrs.form];
+			var xeditable = attrs.xeditable || false;
+			var fieldvalues = $scope[attrs.fieldvalues] || [];
+			var model = $scope[attrs.model] || 'pytangular';
+
+			//Add configurations from attrs into pytangular
+			pytangular.config = {
+				form: form,
+				xeditable: xeditable,
+				fieldvalues: fieldvalues,
+				model: model,
+			};
 			if (form) {
-				var template = pytangular.build(form);
+				var template = pytangular.build();
 				var linkFn = $compile(template);
 				var content = linkFn($scope);
 				element.append(content);
+				// Populate the form if values exists
+				console.log('fieldvalues', fieldvalues);
+				pytangular.populate(form, model, fieldvalues);
 			}
 		},
 	};
