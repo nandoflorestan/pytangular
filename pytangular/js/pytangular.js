@@ -3,7 +3,7 @@
 var pytangular = {
 	// Normal HTML5 field skeletons
 	simpleSkeletons: {
-		formSkeleton: '<form role="form" data-ng-submit="«fnSubmit»" name="«formName»">«formContent»</form>',
+		formSkeleton: '<form role="form" data-ng-submit="«fnSubmit»" id="«formName»" name="«formName»">«formContent»</form>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<div data-ng-class="«formModel».fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»</div>' +
 			'<span class="help-block" data-ng-if="«formModel».fieldError[\'«fieldName»\']" data-ng-bind="«formModel».fieldError[\'«fieldName»\']"></span>',
@@ -20,6 +20,7 @@ var pytangular = {
 	xeditableSkeletons: {
 		formSkeleton:
 			'<form role="form" ' +
+						'id="«formName»"' +
 						'editable-form ' +
 						'onaftersave="«fnSubmit»" ' +
 						'name="«formName»">' +
@@ -78,6 +79,7 @@ var pytangular = {
 			}
 
 			fieldset.fields.forEach(function (field) {
+				console.log('field:', field);
 				// Hold individual fields;
 				var aField = '';
 				// Define label if exists
@@ -87,7 +89,7 @@ var pytangular = {
 				}
 
 				// Define the type of field and get the input template
-				if ((field.widget != 'textarea') && (field.widget != 'select') && (field.widget != 'checkbox')&& (field.widget != 'typeahead')) {
+				if ((field.widget != 'textarea') && (field.widget != 'select') && (field.widget != 'checkbox') && (field.widget != 'typeahead')) {
 					// All other input types (text, number, password, etc)
 					// Xeditable uses a different password template
 					if (field.widget == 'password' && formKind == 'xeditableSkeletons') {
@@ -146,7 +148,7 @@ var pytangular = {
 					aFieldAttrs = aFieldAttrs.replace(/cols=/g, 'e-cols=');
 				}
 				// If is checklist check for true or false special values
-				if (field.widget='checkbox') {
+				if (field.widget =='checkbox') {
 					if (field['true-value'])
 					{
 						aFieldAttrs += 'data-ng-true-value="\'' + field['true-value'] + '\'" ';
@@ -233,6 +235,7 @@ dvApp.directive('pytangular', function ($compile) {
 			var form = $scope[attrs.form];
 			if (form) {
 				var template = pytangular.build(form);
+				console.log('build', template);
 				var linkFn = $compile(template);
 				var content = linkFn($scope);
 				element.append(content);
