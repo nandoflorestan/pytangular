@@ -1,6 +1,9 @@
 'use strict';
 
 var pytangular = {
+	// Hold the form field names
+	resetableFields: [],
+	resetableDefaultFields: [],
 	// Normal HTML5 field skeletons
 	simpleSkeletons: {
 		formSkeleton: '<form role="form" data-ng-submit="«fnSubmit»" id="«formName»" name="«formName»">«formContent»</form>',
@@ -79,7 +82,6 @@ var pytangular = {
 			}
 
 			fieldset.fields.forEach(function (field) {
-				console.log('field:', field);
 				// Hold individual fields;
 				var aField = '';
 				// Define label if exists
@@ -215,15 +217,28 @@ var pytangular = {
 				if (!field.model) {
 					field.model = field.name;
 				}
+				// If there is a default and not info on this field
 				if (field.default && (values[counter] == undefined || !values[counter][field.name])) {
 					model[field.model] = field.default;
+					// Mark all default fields with it's values to reset
+					pytangular.resetableDefaultFields.push({ name: field.name, value: field.default });
 				} else {
 					if (values[counter] != undefined) {
 						model[field.model] = values[counter][field.name];
 					}
+					// Mark all fields with no defaut option tho be resetable
+					pytangular.resetableFields.push(field.name);
 				}
 				counter++;
 			});
+		});
+	},
+	reset: function (model) {
+		pytangular.resetableFields.forEach(function (fieldName) {
+			model[fieldName] = "";
+		});
+		pytangular.resetableDefaultFields.forEach(function (field) {
+			model[field.name] = field.value;
 		});
 	}
 };
@@ -235,7 +250,6 @@ dvApp.directive('pytangular', function ($compile) {
 			var form = $scope[attrs.form];
 			if (form) {
 				var template = pytangular.build(form);
-				console.log('build', template);
 				var linkFn = $compile(template);
 				var content = linkFn($scope);
 				element.append(content);
