@@ -46,9 +46,9 @@ def schema_to_dict(*schemas, mode='simple'):
                 attrs['placeholder'] = node.placeholder
             if hasattr(node, 'size'):
                 attrs['size'] = node.size
-            # TODO Inspect validators to set maxlength on text fields
-            # TODO Inspect validators to set max on number fields
-            # TODO Set input size if not set
+            if hasattr(node, 'maxlength'):
+                attrs['maxlength'] = node.maxlength
+            # TODO Inspect validators to set min and max on number fields
     return form
 
 
@@ -81,3 +81,42 @@ def get_widget(node):
         c.Int: 'number',
         c.Float: 'number',
         }[typ]
+
+
+def text_node(attrib, min_size=4, max_size=60, **kw):
+    '''Helps you define colander SchemaNodes for text fields that
+        will be stored in SQLAlchemy -- typing less.
+
+        Pass in the SQLAlchemy model attribute, such as ``User.name``,
+        along with other keyword arguments.
+
+        If not informed, ``maxlength`` is inferred from the column size.
+
+        When ``widget`` is missing, it is set to ``text``.
+        And when ``widget`` is not ``textarea``,
+        a smart formula calculates ``size`` based on ``maxlength``.
+        '''
+    from bag.sqlalchemy.tricks import length
+
+    maxlength = kw.get('maxlength')
+    if maxlength is None:
+        maxlength = length(attrib)
+        if maxlength is not None:
+            kw['maxlength'] = maxlength
+
+    widget = kw.get('widget', 'text')
+
+    # If necessary, calculate a default size for the input
+    size = kw.pop('size', None)
+    if widget != 'textarea' and size is None and maxlength is not None:
+        medium = max_size / 2 + (max_size / 12)
+        size = int(maxlength if maxlength <= medium
+                   else medium + (maxlength - medium) / min_size)
+        if size > max_size:
+            size = max_size
+        kw['size'] = size
+    # print(kw)
+
+    # TODO Add Length validator if not present
+    # TODO Infer colander type based on sqlalchemy type
+    return c.SchemaNode(c.Str(), **kw)
