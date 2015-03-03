@@ -132,7 +132,7 @@ def text_node(attrib, min_size=4, max_size=60, **kw):
     if widget != 'textarea' and size is None and maxlength is not None:
         medium = max_size / 2 + (max_size / 12)
         size = int(maxlength if maxlength <= medium
-                   else medium + (maxlength - medium) / min_size)
+                   else medium + (maxlength - medium) / 4)
         if size > max_size:
             size = max_size
         kw['size'] = size
