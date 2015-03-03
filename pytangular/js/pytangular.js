@@ -10,8 +10,8 @@ var pytangular = {
 	simpleSkeletons: {
 		formSkeleton: '<form role="form" data-ng-submit="«fnSubmit»" id="«formName»" name="«formName»">«formContent»</form>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
-		fieldSkeleton: '<div data-ng-class="«formModel».fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»</div>' +
-			'<span class="help-block" data-ng-if="«formModel».fieldError[\'«fieldName»\']" data-ng-bind="«formModel».fieldError[\'«fieldName»\']"></span>',
+		fieldSkeleton: '<div data-ng-class="«formModel».fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»' +
+			'<span class="help-block" data-ng-if="«formModel».fieldError[\'«fieldName»\']" data-ng-bind="«formModel».fieldError[\'«fieldName»\']"></span></div>',
 		widgets : {
 			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs»/>',
 			select: '<select class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
@@ -60,7 +60,7 @@ var pytangular = {
 		},
 		 labelSkeleton: '<span class="title">«fieldLabel» </span>',
 	},
-	build: function () {
+	build: function (formModel) {
 		var form = pytangular.config.form;
 		var formTemplate = '';
 		var fieldsTemplate = '';
@@ -136,10 +136,10 @@ var pytangular = {
 				if (field.model) {
 					// If there is a form model name use it, if not use
 					// the default model "pytangular"
-					if (!form.model) {
-						form.model = 'pytangular';
-					}
-					ngModel += form.model + '.' + field.model;
+					// if (!form.model) {
+					// 	form.model = 'pytangular';
+					// }
+					ngModel += formModel + '.' + field.model;
 				}
 				// Inset all attributes if exists
 				if (field.input_attrs) {
@@ -185,7 +185,7 @@ var pytangular = {
 					aField = aField.replace(/«fieldId»/g, field.name  || ' ');
 				}
 				// Define the models
-					aField = aField.replace(/«formModel»/g, form.model || ' ');
+					aField = aField.replace(/«formModel»/g, formModel || ' ');
 					aField = aField.replace(/«ngModel»/g, ngModel || ' ');
 				// Inset this field into the temp field set
 				aFieldSet += aField;
@@ -255,6 +255,9 @@ dvApp.directive('pytangular', function ($compile) {
 			var xeditable = attrs.xeditable || false;
 			var fieldvalues = $scope[attrs.fieldvalues] || [];
 			var model = $scope[attrs.model] || 'pytangular';
+			var modelName = attrs.model || 'pytangular';
+			// Create field error
+			model.fieldError = {};
 
 			//Add configurations from attrs into pytangular
 			pytangular.config = {
@@ -264,7 +267,7 @@ dvApp.directive('pytangular', function ($compile) {
 				model: model,
 			};
 			if (form) {
-				var template = pytangular.build();
+				var template = pytangular.build(modelName);
 				var linkFn = $compile(template);
 				var content = linkFn($scope);
 				element.append(content);
