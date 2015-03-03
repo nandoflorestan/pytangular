@@ -119,6 +119,7 @@
 					label: 'E-mail',
 					name: 'email',
 					model: 'email',
+					helperText: 'Type your e-mail',
 					input_attrs: {
 						'style': 'width: 14em;',
 					},
@@ -128,6 +129,7 @@
 					label: 'Password',
 					name: 'pwd',
 					model: 'pwd',
+					helperText: 'Mix numbers and letters',
 					input_attrs: {
 						'style': 'width: 10em;',
 					},
@@ -138,6 +140,7 @@
 					name: 'kind',
 					model: 'kind',
 					options: 'kindoptions',
+					helperText: 'Your gender',
 					input_attrs: {
 						'style': 'width: 8em;',
 					},
@@ -147,6 +150,7 @@
 					label: 'Message',
 					name: 'msg',
 					model: 'msg',
+					popover: {msg: 'A message, not a book!', placement: 'top'},
 					input_attrs:{
 						'cols': '50',
 						'rows': '5',
@@ -173,6 +177,7 @@
 					label: 'Favorite color',
 					name: 'color',
 					model: 'color',
+					popover: {msg: 'This is a typeahead field!', trigger:'focus', placement: 'top'},
 					typeaheadList: 'myColors',
 					input_attrs:{
 						'title': 'ui.bootstrap typeahead',
