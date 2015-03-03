@@ -14,6 +14,12 @@ def schema_to_json(*schemas, mode='simple'):
     return dumps(schema_to_dict(*a, **kw))
 
 
+def _copy_attr(o, attr, adict, key=None):
+    '''Maybe copies an attribute of an object to an item in adict.'''
+    if hasattr(o, attr):
+        adict[key or attr] = getattr(o, attr)
+
+
 def schema_to_dict(*schemas, mode='simple'):
     form = {'fieldsets': [], 'mode': mode}
 
@@ -23,8 +29,7 @@ def schema_to_dict(*schemas, mode='simple'):
             schema = schema()
         fieldset = {'fields': []}
         form['fieldsets'].append(fieldset)
-        if hasattr(schema, 'legend'):
-            fieldset['legend'] = schema.legend
+        _copy_attr(schema, 'legend', fieldset)
 
         # Build each field
         for node in schema:
@@ -41,28 +46,21 @@ def schema_to_dict(*schemas, mode='simple'):
                 field['default'] = node.default
             if node.description:
                 field['helptext'] = node.description
-            if hasattr(node, 'tooltip'):
-                field['title'] = node.tooltip
-            if hasattr(node, 'size'):
-                attrs['size'] = node.size
-            if hasattr(node, 'maxlength'):
-                attrs['maxlength'] = node.maxlength
+            _copy_attr(node, 'tooltip', field, 'title')
+            _copy_attr(node, 'size', attrs)
+            _copy_attr(node, 'maxlength', attrs)
 
             # Textarea
-            if hasattr(node, 'cols'):
-                attrs['cols'] = node.cols
-            if hasattr(node, 'rows'):
-                attrs['rows'] = node.rows
+            _copy_attr(node, 'cols', attrs)
+            _copy_attr(node, 'rows', attrs)
 
             # HTML5 forms: http://html5doctor.com/html5-forms-introduction-and-new-attributes/
-            if hasattr(node, 'placeholder'):
-                attrs['placeholder'] = node.placeholder
+            _copy_attr(node, 'placeholder', attrs)
+            _copy_attr(node, 'pattern', attrs)
             if hasattr(node, 'autofocus') and node.autofocus:
                 attrs['autofocus'] = 'autofocus'
             if node.required:
                 attrs['required'] = 'required'
-            if hasattr(node, 'pattern'):
-                attrs['pattern'] = node.pattern
             # TODO autocomplete, list, novalidate etc.
 
             if field['widget'] == 'number':
