@@ -85,8 +85,9 @@
 					label: 'Name',
 					name: 'name',
 					model: 'name',
-					popover: {msg: 'Type your name', placement: 'top'},
+					popover: {msg: 'Type your name here!', placement: 'top'},
 					input_attrs: {
+						'title': 'This is a title on field and label',
 						'data-test': 'test',
 						'style': 'width: 20em;',
 					}
@@ -230,8 +231,31 @@
 			fieldSets.push({fields: aFrom, legend: 'Simple web form'});
 			fieldSets.push({fields: cardFields, legend: 'Payment information'});
 
-			$scope.myForm = { name: 'aForm', fnSubmit: 'call()', fieldsets: fieldSets};
-			$scope.editableForm = { name: 'aForm', fnSubmit: 'call()', fieldsets: fieldSets};
+			$scope.myForm = { name: 'aForm', fnSubmit: 'call()', fieldsets: fieldSets,
+								buttons: [
+									{
+										type: 'submit',
+										class: 'primary',
+										icon: 'save',
+										label: 'Save',
+									},
+									{
+										type: 'reset',
+										class: 'danger',
+										icon: 'remove-sign',
+										label: 'Remove',
+									},
+									{
+										class: 'success',
+										icon: 'plus-sign',
+										label: 'Add',
+										attrs: {'ng-click': 'callMe()'},
+									},
+
+								],
+			};
+
+			$scope.editableForm = { name: 'bForm', fnSubmit: 'call()', fieldsets: fieldSets};
 
 			$scope.values = [
 				{name: 'John Doe'},
@@ -247,13 +271,10 @@
 				{card: '5033-5544-3585'},
 				{code: '585'},
 			];
-
+			$scope.callMe = function () {
+				console.log("Called");
+			}
 			$scope.pytangular = {};
-
-			//pytangular.populate($scope.myForm, $scope.pytangular, values);
-			console.log(pytangular);
-			//pytangular.populate($scope.editableForm, $scope.pytangular, values);
-			console.log($scope.myForm);
 		});
 		</script>
 	</body>

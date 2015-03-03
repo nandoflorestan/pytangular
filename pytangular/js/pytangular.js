@@ -8,7 +8,7 @@ var pytangular = {
 	resetableDefaultFields: [],
 	// Normal HTML5 field skeletons
 	simpleSkeletons: {
-		formSkeleton: '<form role="form" data-ng-submit="«fnSubmit»" id="«formName»" name="«formName»">«formContent»</form>',
+		formSkeleton: '<form role="form" data-ng-submit="«fnSubmit»" id="«formName»" name="«formName»">«formContent» «buttons»</form>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<span data-ng-class="«formModel».fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»' +
 			'<span class="help-block" data-ng-if="«formModel».fieldError[\'«fieldName»\']" data-ng-bind="«formModel».fieldError[\'«fieldName»\']"></span></span>' +
@@ -20,7 +20,7 @@ var pytangular = {
 			checkbox: ' <input type="checkbox" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs» «popOver»/>',
 			typeahead: '<input type="text" ng-model="«ngModel»" «inputAttrs» «popOver» typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" class="form-control">',
 		},
-		 labelSkeleton: '<label for="«fieldName»" class="control-label">«fieldLabel»</label>',
+		 labelSkeleton: '<label for="«fieldName»" «inputTitle» class="control-label">«fieldLabel»</label>',
 	},
 	// Xeditable skeletons
 	xeditableSkeletons: {
@@ -38,6 +38,8 @@ var pytangular = {
 						'data-ng-show="!«formName».$visible"> Edit' +
 					'</button>' +
 					'<span ng-show="«formName».$visible">' +
+					// TODO: Fix the buttons configuration with xeditable
+						'«buttons»' +
 						'<button type="submit" class="btn btn-primary" ' +
 								'data-ng-disabled="«formName».$waiting"> Save' +
 						'</button>' +
@@ -138,10 +140,16 @@ var pytangular = {
 				if (field.model) {
 					ngModel += modelName + '.' + field.model;
 				}
+
+				var fieldTitle = '';
 				// Inset all attributes if exists
 				if (field.input_attrs) {
 					for (var key in field.input_attrs) {
 						aFieldAttrs += key + '="' + field.input_attrs[key] + '" ';
+						// Capture fild title if exists to inset also in the label
+						if (key == 'title') {
+							fieldTitle = 'title="' + field.input_attrs[key] + '"';
+						}
 					}
 				}
 				// If is xeditable textarea change cols and rows to e-cols and e-rows
@@ -184,6 +192,9 @@ var pytangular = {
 				// Define helper text if exists
 				aField = aField.replace(/«helperText»/g, field.helperText || '');
 
+				// Define title to label if exists
+				aField = aField.replace(/«inputTitle»/g, fieldTitle);
+
 				// Define a popover if exists
 				if (field.popover) {
 					var poptrigger = field.popover.trigger || 'mouseenter';
@@ -201,7 +212,7 @@ var pytangular = {
 				aFieldSet += aField;
 			});
 
-			// If there is a fieldSet isert each one into fieldSetsTemplate
+			// If there is a fieldSet insert each one into fieldSetsTemplate
 			// Else insert just the normal fields into the fieldSetsTemplate variable
 			if (fieldset.legend) {
 				fieldSetsTemplate = fieldSetsTemplate.replace(/«fieldSetContent»/g, aFieldSet);
@@ -220,6 +231,55 @@ var pytangular = {
 		// Insert form submit function
 		formTemplate = formTemplate.replace(/«fnSubmit»/g, form.fnSubmit || ' ');
 
+		// Add form buttons if is present
+		if (form.buttons) {
+			var btTemplate = '';
+			form.buttons.forEach(function (button) {
+				// Make bootstrap classes more easy or use user custom class
+				if (!button.class) {
+					var btClass = 'btn btn-default';
+				} else {
+					if (button.class == 'success') {
+						var btClass = 'btn btn-success';
+					} else if (button.class == 'info') {
+						var btClass = 'btn btn-info';
+					} else if (button.class == 'warning') {
+						var btClass = 'btn btn-warning';
+					} else if (button.class == 'danger') {
+						var btClass = 'btn btn-danger';
+					} else if (button.class == 'primary') {
+						var btClass = 'btn btn-primary';
+					} else {
+						var btClass = button.class;
+					}
+				}
+				// Check type of buttom
+				if (button.type) {
+					var btType = ' type="' + button.type + '"';
+				} else {
+					var btType = '';
+				}
+				// Check for icon and make more easy
+				if (button.icon) {
+					var btIcon = '<span class="glyphicon glyphicon-' + button.icon + '"></span> ';
+				} else {
+					var btIcon = '';
+				}
+
+				// Inset all attributes if exists
+				var btAttrs = ' ';
+				if (button.attrs) {
+					for (var key in button.attrs) {
+						btAttrs += key + '="' + button.attrs[key] + '" ';
+					}
+				}
+
+				btTemplate += '<button class="' + btClass + '"' + btType + btAttrs + '>' + btIcon + button.label + '</button> ';
+			});
+		}
+
+		// Insert the buttons into the form
+		formTemplate = formTemplate.replace(/«buttons»/g, btTemplate || '');
 		return formTemplate;
 	},
 	populate: function (form, model, values) {
@@ -287,7 +347,6 @@ dvApp.directive('pytangular', function ($compile) {
 				var content = linkFn($scope);
 				element.append(content);
 				// Populate the form if values exists
-				console.log('fieldvalues', fieldvalues);
 				pytangular.populate(form, model, fieldvalues);
 			}
 		},
