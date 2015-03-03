@@ -10,14 +10,15 @@ var pytangular = {
 	simpleSkeletons: {
 		formSkeleton: '<form role="form" data-ng-submit="«fnSubmit»" id="«formName»" name="«formName»">«formContent»</form>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
-		fieldSkeleton: '<div data-ng-class="«formModel».fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»' +
-			'<span class="help-block" data-ng-if="«formModel».fieldError[\'«fieldName»\']" data-ng-bind="«formModel».fieldError[\'«fieldName»\']"></span></div>',
+		fieldSkeleton: '<span data-ng-class="«formModel».fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»' +
+			'<span class="help-block" data-ng-if="«formModel».fieldError[\'«fieldName»\']" data-ng-bind="«formModel».fieldError[\'«fieldName»\']"></span></span>' +
+			'<span class="help-block">«helperText»</span>',
 		widgets : {
-			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs»/>',
+			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs» «popOver»/>',
 			select: '<select class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
-			textarea: '<textarea class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs»></textarea>',
-			checkbox: ' <input type="checkbox" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs»/>',
-			typeahead: '<input type="text" ng-model="«ngModel»" «inputAttrs» typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" class="form-control">',
+			textarea: '<textarea class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» «popOver»></textarea>',
+			checkbox: ' <input type="checkbox" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs» «popOver»/>',
+			typeahead: '<input type="text" ng-model="«ngModel»" «inputAttrs» «popOver» typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" class="form-control">',
 		},
 		 labelSkeleton: '<label for="«fieldName»" class="control-label">«fieldLabel»</label>',
 	},
@@ -60,7 +61,8 @@ var pytangular = {
 		},
 		 labelSkeleton: '<span class="title">«fieldLabel» </span>',
 	},
-	build: function (formModel) {
+	build: function () {
+		var modelName = pytangular.config.modelName;
 		var form = pytangular.config.form;
 		var formTemplate = '';
 		var fieldsTemplate = '';
@@ -134,12 +136,7 @@ var pytangular = {
 				// This alow to build a model like: "mymodel.myfield"
 				var ngModel = '';
 				if (field.model) {
-					// If there is a form model name use it, if not use
-					// the default model "pytangular"
-					// if (!form.model) {
-					// 	form.model = 'pytangular';
-					// }
-					ngModel += formModel + '.' + field.model;
+					ngModel += modelName + '.' + field.model;
 				}
 				// Inset all attributes if exists
 				if (field.input_attrs) {
@@ -184,8 +181,21 @@ var pytangular = {
 				} else {
 					aField = aField.replace(/«fieldId»/g, field.name  || ' ');
 				}
+				// Define helper text if exists
+				aField = aField.replace(/«helperText»/g, field.helperText || '');
+
+				// Define a popover if exists
+				if (field.popover) {
+					var poptrigger = field.popover.trigger || 'mouseenter';
+					var popoverAtrr = 'Popover-animation="true" popover="' + field.popover.msg + '" popover-trigger="' + poptrigger + '"';
+					// Popover
+					var placement = field.popover.placement || 'top';
+					popoverAtrr = ' popover-placement="' + field.popover.placement + '"' + popoverAtrr;
+				}
+				aField = aField.replace(/«popOver»/g, popoverAtrr || '');
+
 				// Define the models
-					aField = aField.replace(/«formModel»/g, formModel || ' ');
+					aField = aField.replace(/«formModel»/g, modelName || ' ');
 					aField = aField.replace(/«ngModel»/g, ngModel || ' ');
 				// Inset this field into the temp field set
 				aFieldSet += aField;
@@ -256,8 +266,12 @@ dvApp.directive('pytangular', function ($compile) {
 			var fieldvalues = $scope[attrs.fieldvalues] || [];
 			var model = $scope[attrs.model] || 'pytangular';
 			var modelName = attrs.model || 'pytangular';
+
+
 			// Create field error
 			model.fieldError = {};
+			// Create field helper
+			model.fieldHelper = {};
 
 			//Add configurations from attrs into pytangular
 			pytangular.config = {
@@ -265,9 +279,10 @@ dvApp.directive('pytangular', function ($compile) {
 				xeditable: xeditable,
 				fieldvalues: fieldvalues,
 				model: model,
+				modelName: modelName,
 			};
 			if (form) {
-				var template = pytangular.build(modelName);
+				var template = pytangular.build();
 				var linkFn = $compile(template);
 				var content = linkFn($scope);
 				element.append(content);

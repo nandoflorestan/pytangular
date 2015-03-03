@@ -71,7 +71,7 @@
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.6.0/ui-bootstrap-tpls.min.js"></script>
 		<script src="xeditable.min.js"></script>
 		<script>
-			var dvApp = angular.module("dvApp", ['xeditable', 'ui.bootstrap']);
+			var dvApp = angular.module("dvApp", ['xeditable', 'ui.bootstrap', 'ui.bootstrap.popover']);
 			dvApp.run(function(editableOptions) {
 				editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
 			});
@@ -85,6 +85,7 @@
 					label: 'Name',
 					name: 'name',
 					model: 'name',
+					popover: {msg: 'Type your name', placement: 'top'},
 					input_attrs: {
 						'data-test': 'test',
 						'style': 'width: 20em;',
@@ -95,6 +96,7 @@
 					label: 'Fone',
 					name: 'fone',
 					model: 'fone',
+					popover: {msg: 'Type your fone', placement: 'bottom'},
 					input_attrs:{
 						'data-test': 'test',
 						'style': 'width: 12em;',
@@ -105,6 +107,7 @@
 					label: 'Age',
 					name: 'age',
 					model: 'age',
+					popover: {msg: 'Type your age', placement: 'right'},
 					input_attrs: {
 						'data-test': 'test',
 						'data-ng-teste2': 'outro-teste',
