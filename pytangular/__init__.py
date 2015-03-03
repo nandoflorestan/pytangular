@@ -33,42 +33,65 @@ def schema_to_dict(*schemas, mode='simple'):
                 'label': node.title,
                 'widget': get_widget(node) if node.widget is None
                     else node.widget,
-                'input_attrs': node.input_attrs
-                    if hasattr(node, 'input_attrs') else {},
+                'input_attrs': {},
                 }
             fieldset['fields'].append(field)
             attrs = field['input_attrs']
             if node.default is not c.null:
                 field['default'] = node.default
             if node.description:
-                field['title'] = node.description
-            if hasattr(node, 'placeholder'):
-                attrs['placeholder'] = node.placeholder
+                field['helptext'] = node.description
+            if hasattr(node, 'tooltip'):
+                field['title'] = node.tooltip
             if hasattr(node, 'size'):
                 attrs['size'] = node.size
             if hasattr(node, 'maxlength'):
                 attrs['maxlength'] = node.maxlength
-            # TODO Inspect validators to set min and max on number fields
+
+            # Textarea
+            if hasattr(node, 'cols'):
+                attrs['cols'] = node.cols
+            if hasattr(node, 'rows'):
+                attrs['rows'] = node.rows
+
+            # HTML5 forms: http://html5doctor.com/html5-forms-introduction-and-new-attributes/
+            if hasattr(node, 'placeholder'):
+                attrs['placeholder'] = node.placeholder
+            if hasattr(node, 'autofocus') and node.autofocus:
+                attrs['autofocus'] = 'autofocus'
+            if node.required:
+                attrs['required'] = 'required'
+            if hasattr(node, 'pattern'):
+                attrs['pattern'] = node.pattern
+            # TODO autocomplete, list, novalidate etc.
+
+            if field['widget'] == 'number':
+                validator = get_validator(c.Range, node)
+                if validator:
+                    if validator.min is not None:
+                        attrs['min'] = validator.min
+                    if validator.max is not None:
+                        attrs['max'] = validator.max
     return form
 
 
-def get_validator(typ, validators):
+def get_validator(typ, node):
+    if isinstance(node.validator, c.All):
+        validators = node.validator.validators
+    else:
+        validators = [node.validator]
+
     for validator in validators:
         if isinstance(validator, typ):
             return validator
 
 
 def get_widget(node):
-    if isinstance(node.validator, c.All):
-        validators = node.validator.validators
-    else:
-        validators = [node.validator]
-
-    if get_validator(c.Email, validators):
+    if get_validator(c.Email, node):
         return 'email'
 
     if isinstance(node.typ, c.String):
-        length_validator = get_validator(c.Length, validators)
+        length_validator = get_validator(c.Length, node)
         return 'textarea' if length_validator is None else 'text'
 
     typ = type(node.typ)
@@ -107,7 +130,7 @@ def text_node(attrib, min_size=4, max_size=60, **kw):
     widget = kw.get('widget', 'text')
 
     # If necessary, calculate a default size for the input
-    size = kw.pop('size', None)
+    size = kw.get('size')
     if widget != 'textarea' and size is None and maxlength is not None:
         medium = max_size / 2 + (max_size / 12)
         size = int(maxlength if maxlength <= medium
