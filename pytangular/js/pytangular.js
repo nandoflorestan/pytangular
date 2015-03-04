@@ -68,7 +68,6 @@ var pytangular = {
 		var form = pytangular.config.form;
 		var formTemplate = '';
 		var fieldsTemplate = '';
-		var fieldSetsTemplate = '';
 
 		// Allow select the kind of skeleton to use, if simples field or xeditable
 		if (pytangular.config.xeditable == false || undefined) {
@@ -78,15 +77,14 @@ var pytangular = {
 		}
 
 		// Hold all fieldSets
-		var tempForm = '';
+		var allFieldSets = [];
+
+		// Count the fieldSets and register its indexes
+		var fsetIndex = 0;
 
 		form.fieldsets.forEach(function (fieldset) {
 			// Hold individual fieldSets
-			var aFieldSet = '';
-			// Add the field set template if there is a field set
-			if (fieldset.legend) {
-				fieldSetsTemplate = pytangular[formKind].fieldSetSkeleton.replace(/«fieldSetLegend»/g, fieldset.legend);
-			}
+			var aFieldSet = {};
 
 			fieldset.fields.forEach(function (field) {
 				// Hold individual fields;
@@ -208,24 +206,24 @@ var pytangular = {
 				// Define the models
 					aField = aField.replace(/«formModel»/g, modelName || ' ');
 					aField = aField.replace(/«ngModel»/g, ngModel || ' ');
-				// Inset this field into the temp field set
-				aFieldSet += aField;
+
+				// Inset this field into the aFieldSet object organized by field name
+				aFieldSet[field.name] = aField;
 			});
 
-			// If there is a fieldSet insert each one into fieldSetsTemplate
-			// Else insert just the normal fields into the fieldSetsTemplate variable
-			if (fieldset.legend) {
-				fieldSetsTemplate = fieldSetsTemplate.replace(/«fieldSetContent»/g, aFieldSet);
-			} else {
-				fieldSetsTemplate = aFieldSet;
-			}
+			// Call buildFieldSets function to build this fieldSet with the fields template if there is one
+			// The result will be inserted in the templatedFieldSet variable, that hold the final
+			// version of the fieldset with the template applied on the fields
+			var templatedFieldSet = pytangular.buildFieldSets(aFieldSet, fieldset.legend, fsetIndex, form, formKind);
+			// Increment de fieldSet index
+			fsetIndex++;
 
-			// Insert this fieldSet into tempform
-			tempForm += fieldSetsTemplate;
+			// Insert this fieldSet into allFieldSets array organized by fieldset index
+			allFieldSets.push(templatedFieldSet);
 		});
-
+		console.log(allFieldSets);
 		// Insert all fields inside formSkeleton
-		formTemplate = pytangular[formKind].formSkeleton.replace(/«formContent»/g, tempForm);
+		formTemplate = pytangular[formKind].formSkeleton.replace(/«formContent»/g, allFieldSets);
 		// Insert form name
 		formTemplate = formTemplate.replace(/«formName»/g, form.name || ' ');
 		// Insert form submit function
@@ -314,7 +312,24 @@ var pytangular = {
 		pytangular.resetableDefaultFields.forEach(function (field) {
 			model[field.name] = field.value;
 		});
-	}
+	},
+	buildFieldSets: function (fieldSet, fsetLegend, fsetIndex, form, formKind) {
+		//form.fieldsTemplate[fsetIndex]
+		var fieldSetContent = '';
+		// Add the field set content if there is a fieldset / legend
+		if (fsetLegend) {
+			fieldSetContent = pytangular[formKind].fieldSetSkeleton.replace(/«fieldSetLegend»/g, fsetLegend);
+		}
+
+		// If there is a fieldSet insert each one into fieldSetContent
+		// else insert just the normal fields into the fieldSetContent variable
+		if (fsetLegend) {
+			fieldSetContent = fieldSetContent.replace(/«fieldSetContent»/g, fieldSet);
+		} else {
+			fieldSetContent = fieldSet;
+		}
+		return fieldSetContent;
+	},
 };
 
 dvApp.directive('pytangular', function ($compile) {
