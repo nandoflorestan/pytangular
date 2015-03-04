@@ -267,20 +267,20 @@
 
 			$scope.editableForm = { name: 'bForm', fnSubmit: 'call()', fieldsets: fieldSets};
 
-			$scope.values = [
-				{name: 'John Doe'},
-				{fone: '5544-1234'},
-				{age: 35},
-				{email: 'john@gmail.com'},
-				{pwd: 'bruhaha'},
-				{kind: 'Boy'},
-				{msg: "This is John Doe's message!"},
-				{like1: true},
-				{like2: true},
-				{color: 'Blue'},
-				{card: '5033-5544-3585'},
-				{code: '585'},
-			];
+			$scope.values = {
+				name: 'John Doe',
+				fone: '5544-1234',
+				age: 35,
+				email: 'john@gmail.com',
+				pwd: 'bruhaha',
+				kind: 'Boy',
+				msg: "This is John Doe's message!",
+				like1: true,
+				like2: true,
+				color: 'Blue',
+				card: '5033-5544-3585',
+				code: '585',
+			};
 			$scope.callMe = function () {
 				console.log("Called");
 			}

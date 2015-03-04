@@ -281,38 +281,23 @@ var pytangular = {
 		formTemplate = formTemplate.replace(/«buttons»/g, btTemplate || '');
 		return formTemplate;
 	},
-	populate: function (form, model, values) {
-
-		var counter = 0;
-		form.fieldsets.forEach(function (fieldset) {
+	//populate receives a dict with model, form, values, apply_defaults = true
+	populate: function (options) {
+		options.form.fieldsets.forEach(function (fieldset) {
 			fieldset.fields.forEach(function (field) {
-				// If there is no model use field name as model
-				if (!field.model) {
-					field.model = field.name;
+				options.model[field.model] = null;
+				if (options.apply_defaults && field.default != null) {
+					options.model[field.model] = field.default;
 				}
-				// If there is a default and not info on this field
-				if (field.default && (values[counter] == undefined || !values[counter][field.name])) {
-					model[field.model] = field.default;
-					// Mark all default fields with it's values to reset
-					pytangular.resetableDefaultFields.push({ name: field.name, value: field.default });
-				} else {
-					if (values[counter] != undefined) {
-						model[field.model] = values[counter][field.name];
-					}
-					// Mark all fields with no defaut option tho be resetable
-					pytangular.resetableFields.push(field.name);
+				if (options.fieldvalues[field.name] !== undefined) {
+					options.model[field.model] = options.fieldvalues[field.name];
 				}
-				counter++;
 			});
 		});
 	},
+
 	reset: function (model) {
-		pytangular.resetableFields.forEach(function (fieldName) {
-			model[fieldName] = "";
-		});
-		pytangular.resetableDefaultFields.forEach(function (field) {
-			model[field.name] = field.value;
-		});
+		pytangular.populate(options);
 	},
 	// Position every field in a template for this fieldset
 	buildFieldSet: function (fieldSet, fsetLegend, fsetIndex, form, formKind) {
@@ -380,6 +365,8 @@ dvApp.directive('pytangular', function ($compile) {
 			var fieldvalues = $scope[attrs.fieldvalues] || [];
 			var model = $scope[attrs.model] || 'pytangular';
 			var modelName = attrs.model || 'pytangular';
+			var apply_defaults = attrs.apply_defaults || true;
+			var options = {form: form, model: model, fieldvalues: fieldvalues, apply_defaults: apply_defaults};
 
 
 			// Create field error
@@ -401,7 +388,7 @@ dvApp.directive('pytangular', function ($compile) {
 				var content = linkFn($scope);
 				element.append(content);
 				// Populate the form if values exists
-				pytangular.populate(form, model, fieldvalues);
+				pytangular.populate(options);
 			}
 		},
 	};
