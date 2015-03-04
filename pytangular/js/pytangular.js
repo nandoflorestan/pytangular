@@ -67,10 +67,9 @@ var pytangular = {
 		var modelName = pytangular.config.modelName;
 		var form = pytangular.config.form;
 		var formTemplate = '';
-		var fieldsTemplate = '';
 
 		// Allow select the kind of skeleton to use, if simples field or xeditable
-		if (pytangular.config.xeditable == false || undefined) {
+		if (pytangular.config.xeditable == undefined || pytangular.config.xeditable != 'true') {
 			var formKind = 'simpleSkeletons';
 		} else if (pytangular.config.xeditable == 'true'){
 			var formKind = 'xeditableSkeletons';
@@ -221,7 +220,7 @@ var pytangular = {
 			// Insert this fieldSet into allFieldSets array organized by fieldset index
 			allFieldSets.push(templatedFieldSet);
 		});
-		console.log(allFieldSets);
+
 		// Insert all fields inside formSkeleton
 		formTemplate = pytangular[formKind].formSkeleton.replace(/«formContent»/g, allFieldSets);
 		// Insert form name
@@ -314,19 +313,36 @@ var pytangular = {
 		});
 	},
 	buildFieldSets: function (fieldSet, fsetLegend, fsetIndex, form, formKind) {
-		//form.fieldsTemplate[fsetIndex]
+
 		var fieldSetContent = '';
+		var newFieldSet = '';
 		// Add the field set content if there is a fieldset / legend
 		if (fsetLegend) {
 			fieldSetContent = pytangular[formKind].fieldSetSkeleton.replace(/«fieldSetLegend»/g, fsetLegend);
 		}
 
+		//If there is a template for the fields in this fieldset
+		if (form.fieldsTemplate != undefined && form.fieldsTemplate[fsetIndex]) {
+			// Add the template to the newFieldSet variable
+			newFieldSet = form.fieldsTemplate[fsetIndex];
+			for (var key in fieldSet) {
+				// This replace all comands "add.field(field_name)" on the template for the field
+				var fieldToAdd = 'add(' + key + ')';
+				newFieldSet = newFieldSet.replace(fieldToAdd, fieldSet[key]);
+			}
+		} else {
+			// If there is not a template, just concat all fields
+			for (var key in fieldSet) {
+				newFieldSet += fieldSet[key];
+			}
+		}
+
 		// If there is a fieldSet insert each one into fieldSetContent
 		// else insert just the normal fields into the fieldSetContent variable
 		if (fsetLegend) {
-			fieldSetContent = fieldSetContent.replace(/«fieldSetContent»/g, fieldSet);
+			fieldSetContent = fieldSetContent.replace(/«fieldSetContent»/g, newFieldSet);
 		} else {
-			fieldSetContent = fieldSet;
+			fieldSetContent = newFieldSet;
 		}
 		return fieldSetContent;
 	},
