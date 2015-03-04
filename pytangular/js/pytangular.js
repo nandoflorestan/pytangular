@@ -210,10 +210,10 @@ var pytangular = {
 				aFieldSet[field.name] = aField;
 			});
 
-			// Call buildFieldSets function to build this fieldSet with the fields template if there is one
+			// Call buildFieldSet function to build this fieldSet with the fields template if there is one
 			// The result will be inserted in the templatedFieldSet variable, that hold the final
 			// version of the fieldset with the template applied on the fields
-			var templatedFieldSet = pytangular.buildFieldSets(aFieldSet, fieldset.legend, fsetIndex, form, formKind);
+			var templatedFieldSet = pytangular.buildFieldSet(aFieldSet, fieldset.legend, fsetIndex, form, formKind);
 			// Increment de fieldSet index
 			fsetIndex++;
 
@@ -221,8 +221,10 @@ var pytangular = {
 			allFieldSets.push(templatedFieldSet);
 		});
 
+		// Call buildFrom to position allFieldSets into a template if it exists
+		formTemplate = pytangular.buildFrom(formKind, allFieldSets, form);
 		// Insert all fields inside formSkeleton
-		formTemplate = pytangular[formKind].formSkeleton.replace(/«formContent»/g, allFieldSets);
+		formTemplate = pytangular[formKind].formSkeleton.replace(/«formContent»/g, formTemplate);
 		// Insert form name
 		formTemplate = formTemplate.replace(/«formName»/g, form.name || ' ');
 		// Insert form submit function
@@ -312,7 +314,8 @@ var pytangular = {
 			model[field.name] = field.value;
 		});
 	},
-	buildFieldSets: function (fieldSet, fsetLegend, fsetIndex, form, formKind) {
+	// Position every field in a template for this fieldset
+	buildFieldSet: function (fieldSet, fsetLegend, fsetIndex, form, formKind) {
 
 		var fieldSetContent = '';
 		var newFieldSet = '';
@@ -326,7 +329,7 @@ var pytangular = {
 			// Add the template to the newFieldSet variable
 			newFieldSet = form.fieldsTemplate[fsetIndex];
 			for (var key in fieldSet) {
-				// This replace all comands "add.field(field_name)" on the template for the field
+				// This replace all comands "add(field_name)" on the template for the field
 				var fieldToAdd = 'add(' + key + ')';
 				newFieldSet = newFieldSet.replace(fieldToAdd, fieldSet[key]);
 			}
@@ -345,6 +348,26 @@ var pytangular = {
 			fieldSetContent = newFieldSet;
 		}
 		return fieldSetContent;
+	},
+
+	// Position every fieldset in a template for this form
+	buildFrom: function (formKind, allFieldSets, form) {
+		var newFieldSets = "";
+		// If there is a template for this fieldset
+		if (form.fieldSetTemplate != undefined) {
+			newFieldSets = form.fieldSetTemplate;
+			for (var key in allFieldSets) {
+				// This replace all comands "add(fieldset_index)" on the template for the field
+				var fieldSetToAdd = 'add(' + key + ')';
+				newFieldSets = newFieldSets.replace(fieldSetToAdd, allFieldSets[key]);
+			}
+		} else {
+			// If there is not a template, just concat all fieldsets
+			for (var key in allFieldSets) {
+				newFieldSets += allFieldSets[key];
+			}
+		}
+		return newFieldSets;
 	},
 };
 

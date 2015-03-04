@@ -287,10 +287,11 @@
 			$scope.pytangular = {};
 
 			// Form with template
-			var fieldset1 = '<table><tr><td>add(name)</td><td>add(fone)</td><td style:"border:solid 2px;">add(age)</td></tr><tr><td>add(email)</td><td>add(kind)</td><td>add(msg)</td></tr><tr><td>add(like1)</td><td>add(like2)</td><td>add(color)</td><td></tr><tr><td>add(pwd)</td><td></td><td></tr></table>';
+			var fieldset1 = '<table><tr><td>add(name)</td><td>add(fone)</td><td style:"border:solid 2px;">add(age)</td></tr><tr><td>add(email)</td><td>add(kind)</td><td>add(msg)</td></tr><tr><td>add(like1)</td><td>add(like2)</td><td>add(color)</td><td></tr><tr><td>add(pwd)</td><td></td></tr></table>';
 			var fieldset2 = '<table><tr><td>add(card)</td><td>add(code)</td></tr></table>';
 			var fieldsTemplate = { '0': fieldset1, '1': fieldset2 };
-			$scope.templatedForm = { fieldsTemplate: fieldsTemplate, name: 'cForm', fnSubmit: 'call()', fieldsets: fieldSets};
+			var fieldSetTemplate = '<table><tr><td>add(0)</td><td>add(1)</td></tr></table>';
+			$scope.templatedForm = { fieldsTemplate: fieldsTemplate, fieldSetTemplate: fieldSetTemplate, name: 'cForm', fnSubmit: 'call()', fieldsets: fieldSets};
 		});
 		</script>
 	</body>
