@@ -12,7 +12,7 @@ var pytangular = {
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<span data-ng-class="«formModel».fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»' +
 			'<span class="help-block" data-ng-if="«formModel».fieldError[\'«fieldName»\']" data-ng-bind="«formModel».fieldError[\'«fieldName»\']"></span></span>' +
-			'<span class="help-block">«helperText»</span>',
+			'<span class="help-block">«helpText»</span>',
 		widgets : {
 			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs» «popOver»/>',
 			select: '<select class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
@@ -185,7 +185,7 @@ var pytangular = {
 					aField = aField.replace(/«fieldId»/g, field.name  || '');
 				}
 				// Define helper text if exists
-				aField = aField.replace(/«helperText»/g, field.helperText || '');
+				aField = aField.replace(/«helpText»/g, field.helpText || '');
 
 				// Define title to label if exists
 				aField = aField.replace(/«inputTitle»/g, fieldTitle);

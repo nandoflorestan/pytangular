@@ -47,7 +47,7 @@ def schema_to_dict(*schemas, mode='simple'):
             if node.default is not c.null:
                 field['default'] = node.default
             if node.description:
-                field['helptext'] = node.description
+                field['helpText'] = node.description
             _copy_attr(node, 'tooltip', field, 'title')
             _copy_attr(node, 'size', attrs)
             _copy_attr(node, 'maxlength', attrs)
