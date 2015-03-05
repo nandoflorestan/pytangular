@@ -8,9 +8,17 @@
 		<link href="xeditable.css" rel="stylesheet">
 		<style>
 			.container {
-				width: 25em;
+				width: 50em;
 				display: inline-block;
 				vertical-align: top;
+			}
+			.menuContainer {
+				width: 20em;
+				display: inline-block;
+				vertical-align: top;
+			}
+			.menuContainer > p {
+				cursor: pointer;
 			}
 			div[ng-app] { margin: 10px; }
 			form[name="aForm"] > div {
@@ -43,38 +51,41 @@
 	<body>
 		<div ng-app="dvApp" ng-controller="personController">
 			<h1>Pytangular examples</h1>
-			<div class="container">
-				<pytangular form="myForm"
-							model="pytangular"
-							fieldvalues="values">
-				</pytangular>
-				<pytangular form="editableForm"
-							xeditable="true"
-							model="pytangular"
-							fieldvalues="values">
-				</pytangular>
-				<pytangular form="templatedForm"
-							xeditable="true"
-							model="pytangular"
-							fieldvalues="values">
-				</pytangular>
-				<!-- <pytangular form="templatedForm"
-							xeditable="false"
-							model="pytangular"
-							fieldvalues="values">
-				</pytangular> -->
+			<div class="menuContainer">
+				<h3>Menu:</h3>
+				<p ng-click="toggleMenu('aForm')">Simple form</p>
+				<p ng-click="toggleMenu('aEdit')">Xeditable form</p>
+				<p ng-click="toggleMenu('bForm')">Simple templated form</p>
+				<p ng-click="toggleMenu('bEdit')">Xeditable templated form</p>
 			</div>
 			<div class="container">
-				<h3>User info:</h3>
-				<p>Name: {{ pytangular.name }}</p>
-				<p>Fone: {{ pytangular.fone }}</p>
-				<p>Age: {{ pytangular.age }}</p>
-				<p>Email: {{ pytangular.email }}</p>
-				<p>Password: {{ pytangular.pwd }}</p>
-				<p>Kind: {{ pytangular.kind }}</p>
-				<p>Message: {{ pytangular.msg }}</p>
-				<p>Like? {{ pytangular.like1 }}</p>
-				<p>Really like? {{ pytangular.like2 }}</p>
+				<div ng-if="selected=='aForm'">
+					<pytangular form="myForm"
+								model="pytangular"
+								fieldvalues="values">
+					</pytangular>
+				</div>
+				<div ng-if="selected=='aEdit'">
+					<pytangular form="editableForm"
+								xeditable="true"
+								model="pytangular"
+								fieldvalues="values">
+					</pytangular>
+				</div>
+				<div ng-if="selected=='bForm'">
+					<pytangular form="templatedSimpleForm"
+								xeditable="false"
+								model="pytangular"
+								fieldvalues="values">
+					</pytangular>
+				</div>
+				<div ng-if="selected=='bEdit'">
+					<pytangular form="templatedForm"
+								xeditable="true"
+								model="pytangular"
+								fieldvalues="values">
+					</pytangular>
+				</div>
 			</div>
 		</div>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular.min.js"></script>
@@ -89,6 +100,9 @@
 		<script src="pytangular.js"></script>
 		<script>
 		dvApp.controller('personController', function ($scope, $filter) {
+			$scope.toggleMenu = function (selected) {
+				$scope.selected = selected;
+			}
 			var aFrom = [
 				{
 					widget: 'text',
@@ -193,7 +207,19 @@
 					input_attrs:{
 						'title': 'ui.bootstrap typeahead',
 					},
-				}
+				},
+				{
+					widget: 'time',
+					label: 'Local time',
+					name: 'arrival-time',
+					model: 'time',
+				},
+				{
+					widget: 'datetime',
+					label: 'Local date',
+					name: 'date',
+					model: 'date',
+				},
 			];
 
 			var cardFields = [];
@@ -291,12 +317,41 @@
 			}
 			$scope.pytangular = {};
 
+			var buttons2 = [
+				{
+					class: 'success',
+					icon: 'plus-sign',
+					label: 'Add',
+					attrs: {'ng-click': 'callMe()'},
+				},
+				{
+					icon: 'remove-sign',
+					label: 'Cancel',
+					cancel: true,
+				},
+
+			];
+			var buttons3 = [
+				{
+					class: 'success',
+					icon: 'plus-sign',
+					label: 'Add',
+					attrs: {'ng-click': 'callMe()'},
+				},
+				{
+					icon: 'remove-sign',
+					label: 'Cancel',
+					cancel: true,
+				},
+
+			];
 			// Form with template
 			var fieldset1 = '<table><tr><td>add(name)</td><td>add(fone)</td><td style:"border:solid 2px;">add(age)</td></tr><tr><td>add(email)</td><td>add(kind)</td><td>add(msg)</td></tr><tr><td>add(like1)</td><td>add(like2)</td><td>add(color)</td><td></tr><tr><td>add(pwd)</td><td></td></tr></table>';
 			var fieldset2 = '<table><tr><td>add(card)</td><td>add(code)</td></tr></table>';
 			var fieldsTemplate = { '0': fieldset1, '1': fieldset2 };
 			var fieldSetTemplate = '<table><tr><td>add(0)</td><td>add(1)</td></tr></table>';
-			$scope.templatedForm = { fieldsTemplate: fieldsTemplate, fieldSetTemplate: fieldSetTemplate, name: 'dForm', fnSubmit: 'call()', fieldsets: fieldSets};
+			$scope.templatedForm = { fieldsTemplate: fieldsTemplate, fieldSetTemplate: fieldSetTemplate, name: 'cForm', fnSubmit: 'call()', fieldsets: fieldSets, buttons: buttons2};
+			$scope.templatedSimpleForm = { fieldsTemplate: fieldsTemplate, fieldSetTemplate: fieldSetTemplate, name: 'dForm', fnSubmit: 'call()', fieldsets: fieldSets, buttons: buttons3};
 		});
 		</script>
 	</body>

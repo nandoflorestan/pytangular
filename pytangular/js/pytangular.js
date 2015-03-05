@@ -257,7 +257,7 @@ var pytangular = {
 					var btIcon = '';
 				}
 
-				if (pytangular.config.xeditable == 'true') {
+				if (formKind == 'xeditableSkeletons') {
 					if (button.attrs == undefined) {
 						button.attrs = {};
 					}
@@ -388,7 +388,7 @@ dvApp.directive('pytangular', function ($compile) {
 				modelName: modelName,
 			};
 			if (form) {
-				var template = pytangular.build();
+				var template = pytangular.build(pytangular.config);
 				var linkFn = $compile(template);
 				var content = linkFn($scope);
 				element.append(content);
