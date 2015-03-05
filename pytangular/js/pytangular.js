@@ -119,7 +119,8 @@ var pytangular = {
 				}
 				// If is a typeahead define the list of values
 				if (field.widget == 'typeahead') {
-					aField = aField.replace(/«typeaheadList»/g, field.typeaheadList);
+					var typeaheadList = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
+					aField = aField.replace(/«typeaheadList»/g, typeaheadList);
 				}
 
 				// Build all other field attributes

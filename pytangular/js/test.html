@@ -207,7 +207,14 @@
 					name: 'color',
 					model: 'color',
 					popover: {msg: 'This is a typeahead field!', trigger:'focus', placement: 'top'},
-					typeaheadList: 'myColors',
+					options: [
+						'Blue',
+						'Aqua',
+						'Brown',
+						'Cian',
+						'Yellow',
+						'Black',
+					],
 					input_attrs:{
 						'title': 'ui.bootstrap typeahead',
 					},
@@ -253,20 +260,6 @@
 			);
 
 			var fieldSets = [];
-			$scope.myColors = [
-				'Blue',
-				'Aqua',
-				'Brown',
-				'Cian',
-				'Yellow',
-				'Black',
-			];
-
-			// $scope.kindoptions = [
-			// 	{ label: 'Male', value: 'Boy'},
-			// 	{ label: 'Female', value: 'Girl'},
-			// 	{ label: 'Both', value: 'LOL!'},
-			// ];
 
 			fieldSets.push({fields: aFrom, legend: 'Simple web form'});
 			fieldSets.push({fields: cardFields, legend: 'Payment information'});
