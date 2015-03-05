@@ -54,15 +54,15 @@
 							fieldvalues="values">
 				</pytangular>
 				<pytangular form="templatedForm"
-							xeditable="false"
-							model="pytangular"
-							fieldvalues="values">
-				</pytangular>
-				<pytangular form="templatedForm"
 							xeditable="true"
 							model="pytangular"
 							fieldvalues="values">
 				</pytangular>
+				<!-- <pytangular form="templatedForm"
+							xeditable="false"
+							model="pytangular"
+							fieldvalues="values">
+				</pytangular> -->
 			</div>
 			<div class="container">
 				<h3>User info:</h3>
@@ -241,31 +241,36 @@
 			fieldSets.push({fields: aFrom, legend: 'Simple web form'});
 			fieldSets.push({fields: cardFields, legend: 'Payment information'});
 
-			$scope.myForm = { name: 'aForm', fnSubmit: 'call()', fieldsets: fieldSets,
-								buttons: [
-									{
-										type: 'submit',
-										class: 'primary',
-										icon: 'save',
-										label: 'Save',
-									},
-									{
-										type: 'reset',
-										class: 'danger',
-										icon: 'remove-sign',
-										label: 'Remove',
-									},
-									{
-										class: 'success',
-										icon: 'plus-sign',
-										label: 'Add',
-										attrs: {'ng-click': 'callMe()'},
-									},
+			var buttons = [
+				{
+					type: 'submit',
+					class: 'primary',
+					icon: 'save',
+					label: 'Save',
+				},
+				{
+					type: 'reset',
+					class: 'danger',
+					icon: 'remove-sign',
+					label: 'Remove',
+				},
+				{
+					class: 'success',
+					icon: 'plus-sign',
+					label: 'Add',
+					attrs: {'ng-click': 'callMe()'},
+				},
+				{
+					icon: 'remove-sign',
+					label: 'Cancel',
+					cancel: true,
+				},
 
-								],
-			};
+			];
 
-			$scope.editableForm = { name: 'bForm', fnSubmit: 'call()', fieldsets: fieldSets};
+			$scope.myForm = { name: 'aForm', fnSubmit: 'call()', fieldsets: fieldSets, buttons: buttons,};
+
+			$scope.editableForm = { name: 'bForm', fnSubmit: 'call()', fieldsets: fieldSets, buttons: buttons,};
 
 			$scope.values = {
 				name: 'John Doe',
@@ -291,7 +296,7 @@
 			var fieldset2 = '<table><tr><td>add(card)</td><td>add(code)</td></tr></table>';
 			var fieldsTemplate = { '0': fieldset1, '1': fieldset2 };
 			var fieldSetTemplate = '<table><tr><td>add(0)</td><td>add(1)</td></tr></table>';
-			$scope.templatedForm = { fieldsTemplate: fieldsTemplate, fieldSetTemplate: fieldSetTemplate, name: 'cForm', fnSubmit: 'call()', fieldsets: fieldSets};
+			$scope.templatedForm = { fieldsTemplate: fieldsTemplate, fieldSetTemplate: fieldSetTemplate, name: 'dForm', fnSubmit: 'call()', fieldsets: fieldSets};
 		});
 		</script>
 	</body>

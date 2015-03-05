@@ -38,15 +38,7 @@ var pytangular = {
 						'data-ng-show="!«formName».$visible"> Edit' +
 					'</button>' +
 					'<span ng-show="«formName».$visible">' +
-					// TODO: Fix the buttons configuration with xeditable
 						'«buttons»' +
-						'<button type="submit" class="btn btn-primary" ' +
-								'data-ng-disabled="«formName».$waiting"> Save' +
-						'</button>' +
-						' <button type="button" class="btn btn-default" ' +
-								'ng-disabled="«formName».$waiting" ' +
-								'ng-click="«formName».$cancel()"> Cancel' +
-						'</button>' +
 					'</span>' +
 				'</div>' +
 			'</form>',
@@ -178,13 +170,13 @@ var pytangular = {
 				aField = pytangular[formKind].fieldSkeleton.replace(/«fieldContent»/g, aField);
 
 				// Change all «fieldName» references to real fieldName
-				aField = aField.replace(/«fieldName»/g, field.name  || ' ');
+				aField = aField.replace(/«fieldName»/g, field.name  || '');
 
 				// Define id if it exists or use field name
 				if (field.id) {
-					aField = aField.replace(/«fieldId»/g, field.id  || ' ');
+					aField = aField.replace(/«fieldId»/g, field.id  || '');
 				} else {
-					aField = aField.replace(/«fieldId»/g, field.name  || ' ');
+					aField = aField.replace(/«fieldId»/g, field.name  || '');
 				}
 				// Define helper text if exists
 				aField = aField.replace(/«helperText»/g, field.helperText || '');
@@ -265,6 +257,17 @@ var pytangular = {
 					var btIcon = '';
 				}
 
+				if (pytangular.config.xeditable == 'true') {
+					if (button.attrs == undefined) {
+						button.attrs = {};
+					}
+					// If is a cancel button add an extra atribute to reset the form
+					if(button.cancel == true) {
+						button.attrs['data-ng-click'] = '«formName».$cancel()';
+					}
+					button.attrs['data-ng-disabled'] = '«formName».$waiting';
+				}
+
 				// Inset all attributes if exists
 				var btAttrs = ' ';
 				if (button.attrs) {
@@ -275,8 +278,10 @@ var pytangular = {
 
 				btTemplate += '<button class="' + btClass + '"' + btType + btAttrs + '>' + btIcon + button.label + '</button> ';
 			});
-		}
 
+			// Replace tag for form name
+			btTemplate = btTemplate.replace(/«formName»/g, form.name || '');
+		}
 		// Insert the buttons into the form
 		formTemplate = formTemplate.replace(/«buttons»/g, btTemplate || '');
 		return formTemplate;
