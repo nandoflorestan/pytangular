@@ -1,0 +1,10 @@
+<pytangular formspec="theForm" fieldvalues="values" model="bruh">
+</pytangular>
+
+<script>
+	"use strict;"
+	var theForm = {$ form|json|safe $};
+	var bruh = {est_participants: theForm.fieldsets[0].fields[1].options[0].value};
+	console.log('bruh', bruh);
+	var values = {};
+</script>
