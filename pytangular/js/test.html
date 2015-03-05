@@ -164,7 +164,11 @@
 					label: 'Kind',
 					name: 'kind',
 					model: 'kind',
-					options: 'kindoptions',
+					options: [
+						{ label: 'Male', value: 'Boy'},
+						{ label: 'Female', value: 'Girl'},
+						{ label: 'Both', value: 'LOL!'},
+					],
 					helperText: 'Your gender',
 					input_attrs: {
 						'style': 'width: 8em;',
@@ -258,11 +262,11 @@
 				'Black',
 			];
 
-			$scope.kindoptions = [
-				{ label: 'Male', value: 'Boy'},
-				{ label: 'Female', value: 'Girl'},
-				{ label: 'Both', value: 'LOL!'},
-			];
+			// $scope.kindoptions = [
+			// 	{ label: 'Male', value: 'Boy'},
+			// 	{ label: 'Female', value: 'Girl'},
+			// 	{ label: 'Both', value: 'LOL!'},
+			// ];
 
 			fieldSets.push({fields: aFrom, legend: 'Simple web form'});
 			fieldSets.push({fields: cardFields, legend: 'Payment information'});

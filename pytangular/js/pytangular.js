@@ -70,8 +70,12 @@ var pytangular = {
 		// Hold all fieldSets
 		var allFieldSets = [];
 
-		// Count the fieldSets and register its indexes
+		// Count all fields of all fieldSets and register its indexes as a single array
+		// thats allow to create list os fields values that dont need now about fieldSets
+		var fsetSumIndex = 0;
+		// Count fieldSets and fields index
 		var fsetIndex = 0;
+		var fieldsIndex = 0;
 
 		form.fieldsets.forEach(function (fieldset) {
 			// Hold individual fieldSets
@@ -110,7 +114,8 @@ var pytangular = {
 
 				// If is a select define the list of values
 				if (field.widget == 'select') {
-					aField = aField.replace(/«itemsList»/g, field.options);
+					var optionPath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
+					aField = aField.replace(/«itemsList»/g, optionPath);
 				}
 				// If is a typeahead define the list of values
 				if (field.widget == 'typeahead') {
@@ -200,13 +205,16 @@ var pytangular = {
 
 				// Inset this field into the aFieldSet object organized by field name
 				aFieldSet[field.name] = aField;
+				// Increment fields index
+				fieldsIndex++;
 			});
 
 			// Call buildFieldSet function to build this fieldSet with the fields template if there is one
 			// The result will be inserted in the templatedFieldSet variable, that hold the final
 			// version of the fieldset with the template applied on the fields
-			var templatedFieldSet = pytangular.buildFieldSet(aFieldSet, fieldset.legend, fsetIndex, form, formKind);
-			// Increment de fieldSet index
+			var templatedFieldSet = pytangular.buildFieldSet(aFieldSet, fieldset.legend, fsetSumIndex, form, formKind);
+			// Increment de fsetIndex and fsetSumIndex indexes
+			fsetSumIndex++;
 			fsetIndex++;
 
 			// Insert this fieldSet into allFieldSets array organized by fieldset index
@@ -305,7 +313,7 @@ var pytangular = {
 		pytangular.populate(options);
 	},
 	// Position every field in a template for this fieldset
-	buildFieldSet: function (fieldSet, fsetLegend, fsetIndex, form, formKind) {
+	buildFieldSet: function (fieldSet, fsetLegend, fsetSumIndex, form, formKind) {
 
 		var fieldSetContent = '';
 		var newFieldSet = '';
@@ -315,9 +323,9 @@ var pytangular = {
 		}
 
 		//If there is a template for the fields in this fieldset
-		if (form.fieldsTemplate != undefined && form.fieldsTemplate[fsetIndex]) {
+		if (form.fieldsTemplate != undefined && form.fieldsTemplate[fsetSumIndex]) {
 			// Add the template to the newFieldSet variable
-			newFieldSet = form.fieldsTemplate[fsetIndex];
+			newFieldSet = form.fieldsTemplate[fsetSumIndex];
 			for (var key in fieldSet) {
 				// This replace all comands "add(field_name)" on the template for the field
 				var fieldToAdd = 'add(' + key + ')';
@@ -365,36 +373,37 @@ dvApp.directive('pytangular', function ($compile) {
 	return {
 		restrict: 'E',
 		link: function ($scope, element, attrs) {
-			var form = $scope[attrs.form];
+			$scope.formSpecName = attrs.form
+			$scope.formSpec = $scope[$scope.formSpecName] || window[$scope.formSpecName];
+			//var form = $scope[attrs.form];
 			var xeditable = attrs.xeditable || false;
 			var fieldvalues = $scope[attrs.fieldvalues] || [];
 			var model = $scope[attrs.model];
 			var modelName = attrs.model;
 			var apply_defaults = attrs.apply_defaults || true;
-			var options = {form: form, model: model, fieldvalues: fieldvalues, apply_defaults: apply_defaults};
+			var options = {form: $scope.formSpec, model: model, fieldvalues: fieldvalues, apply_defaults: apply_defaults};
 
 
 			// Create field error
-			console.log(model);
 			model.fieldError = {};
 			// Create field helper
 			model.fieldHelper = {};
 
 			//Add configurations from attrs into pytangular
 			pytangular.config = {
-				form: form,
+				form: $scope.formSpec,
 				xeditable: xeditable,
 				fieldvalues: fieldvalues,
 				model: model,
 				modelName: modelName,
 			};
-			if (form) {
+			if ($scope.formSpec) {
 				var template = pytangular.build(pytangular.config);
 				var linkFn = $compile(template);
 				var content = linkFn($scope);
 				element.append(content);
 				// Populate the form if values exists
-				//pytangular.populate(options);
+				pytangular.populate(options);
 			}
 		},
 	};
