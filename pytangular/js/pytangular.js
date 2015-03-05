@@ -368,13 +368,14 @@ dvApp.directive('pytangular', function ($compile) {
 			var form = $scope[attrs.form];
 			var xeditable = attrs.xeditable || false;
 			var fieldvalues = $scope[attrs.fieldvalues] || [];
-			var model = $scope[attrs.model] || 'pytangular';
-			var modelName = attrs.model || 'pytangular';
+			var model = $scope[attrs.model];
+			var modelName = attrs.model;
 			var apply_defaults = attrs.apply_defaults || true;
 			var options = {form: form, model: model, fieldvalues: fieldvalues, apply_defaults: apply_defaults};
 
 
 			// Create field error
+			console.log(model);
 			model.fieldError = {};
 			// Create field helper
 			model.fieldHelper = {};
@@ -393,7 +394,7 @@ dvApp.directive('pytangular', function ($compile) {
 				var content = linkFn($scope);
 				element.append(content);
 				// Populate the form if values exists
-				pytangular.populate(options);
+				//pytangular.populate(options);
 			}
 		},
 	};
