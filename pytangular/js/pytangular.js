@@ -3,19 +3,26 @@
 var pytangular = {
 	// Hold all configuration variables defined in the directive
 	config: {},
+	actions: {
+		submitForm: function (btIndex) {
+			var method = pytangular.config.formSpec.buttons[btIndex].method || 'POST';
+			var url = pytangular.config.formSpec.buttons[btIndex].url || '';
+			document.getElementById(pytangular.config.formSpec.name).submit();
+		},
+	},
 	// Hold the form field names
 	resetableFields: [],
 	resetableDefaultFields: [],
 	// Normal HTML5 field skeletons
 	simpleSkeletons: {
-		formSkeleton: '<form role="form" data-ng-submit="«fnSubmit»" id="«formName»" name="«formName»">«formContent» «buttons»</form>',
+		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<span data-ng-class="«formModel».fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»' +
 			'<span class="help-block" data-ng-if="«formModel».fieldError[\'«fieldName»\']" data-ng-bind="«formModel».fieldError[\'«fieldName»\']"></span></span>' +
 			'<span class="help-block">«helpText»</span>',
 		widgets : {
 			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs» «popOver»/>',
-			select: '<select class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
+			select: '<select class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» data-ng-options="item.label as item.value for item in «itemsList»"></select>',
 			textarea: '<textarea class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» «popOver»></textarea>',
 			checkbox: ' <input type="checkbox" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs» «popOver»/>',
 			typeahead: '<input type="text" ng-model="«ngModel»" «inputAttrs» «popOver» typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" class="form-control">',
@@ -47,7 +54,7 @@ var pytangular = {
 		widgets : {
 			defaultTemplate: ' <span editable-«inputType»="«ngModel»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" id="«fieldId»" data-ng-bind="«ngModel»"></span>',
 			password: '<span editable-text="«ngModel»" id="«fieldId»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" e-type="password">******</span>',
-			select: '<span editable-select="«ngModel»" e-ng-options="item.value as item.label for item in «itemsList»" data-ng-bind="«ngModel»"></span>',
+			select: '<span editable-select="«ngModel»" e-ng-options="item.label as item.value for item in «itemsList»" data-ng-bind="«ngModel»"></span>',
 			textarea: '<span editable-textarea="«ngModel»" id="«fieldId»" «inputAttrs»>' +
     					'<pre data-ng-bind="«ngModel»"></pre></span>',
     		checkbox: ' <span editable-checkbox="«ngModel»" id="«fieldId»" e-title="«title»">{{ «ngModel» && "«trueValue»" || "«falseValue»" }}<span>',
@@ -57,7 +64,7 @@ var pytangular = {
 	},
 	build: function () {
 		var modelName = pytangular.config.modelName;
-		var form = pytangular.config.form;
+		var formSpec = pytangular.config.formSpec;
 		var formTemplate = '';
 
 		// Allow select the kind of skeleton to use, if simples field or xeditable
@@ -77,7 +84,7 @@ var pytangular = {
 		var fsetIndex = 0;
 		var fieldsIndex = 0;
 
-		form.fieldsets.forEach(function (fieldset) {
+		formSpec.fieldsets.forEach(function (fieldset) {
 			// Hold individual fieldSets
 			var aFieldSet = {};
 
@@ -213,7 +220,7 @@ var pytangular = {
 			// Call buildFieldSet function to build this fieldSet with the fields template if there is one
 			// The result will be inserted in the templatedFieldSet variable, that hold the final
 			// version of the fieldset with the template applied on the fields
-			var templatedFieldSet = pytangular.buildFieldSet(aFieldSet, fieldset.legend, fsetSumIndex, form, formKind);
+			var templatedFieldSet = pytangular.buildFieldSet(aFieldSet, fieldset.legend, fsetSumIndex, formSpec, formKind);
 			// Increment de fsetIndex and fsetSumIndex indexes
 			fsetSumIndex++;
 			fsetIndex++;
@@ -223,37 +230,22 @@ var pytangular = {
 		});
 
 		// Call buildFrom to position allFieldSets into a template if it exists
-		formTemplate = pytangular.buildFrom(formKind, allFieldSets, form);
+		formTemplate = pytangular.buildFrom(formKind, allFieldSets, formSpec);
 		// Insert all fields inside formSkeleton
 		formTemplate = pytangular[formKind].formSkeleton.replace(/«formContent»/g, formTemplate);
 		// Insert form name
-		formTemplate = formTemplate.replace(/«formName»/g, form.name || ' ');
-		// Insert form submit function
-		formTemplate = formTemplate.replace(/«fnSubmit»/g, form.fnSubmit || ' ');
+		formTemplate = formTemplate.replace(/«formName»/g, formSpec.name || ' ');
 
+		// Help build fnSubmition attribute
+		var fnSubmit = '';
 		// Add form buttons if is present
-		if (form.buttons) {
+		if (formSpec.buttons) {
 			var btTemplate = '';
-			form.buttons.forEach(function (button) {
-				// Make bootstrap classes more easy or use user custom class
-				if (!button.class) {
-					var btClass = 'btn btn-default';
-				} else {
-					if (button.class == 'success') {
-						var btClass = 'btn btn-success';
-					} else if (button.class == 'info') {
-						var btClass = 'btn btn-info';
-					} else if (button.class == 'warning') {
-						var btClass = 'btn btn-warning';
-					} else if (button.class == 'danger') {
-						var btClass = 'btn btn-danger';
-					} else if (button.class == 'primary') {
-						var btClass = 'btn btn-primary';
-					} else {
-						var btClass = button.class;
-					}
-				}
-				// Check type of buttom
+			var btIndex = 0;
+			formSpec.buttons.forEach(function (button) {
+				var btClass = 'btn ' + button.class || 'btn-default';
+
+				// Check type of button
 				if (button.type) {
 					var btType = ' type="' + button.type + '"';
 				} else {
@@ -285,19 +277,36 @@ var pytangular = {
 					}
 				}
 
+				// Verify if form submit function exists and define it
+				if (formSpec.fnSubmit && !fnSubmit) {
+					fnSubmit = 'data-ng-submit="' + formSpec.fnSubmit + '"';
+				}
+
+				// TODO: Fix function problem with angular xeditable
+				if (button.action) {
+					if (button.type == 'submit') {
+						fnSubmit = 'onsubmit="pytangular.actions.' + button.action + '(' + btIndex + ')"';
+					} else {
+						btAttrs += 'onclick="pytangular.actions.' + button.action + '(' + btIndex + ');"';
+					}
+				}
+
 				btTemplate += '<button class="' + btClass + '"' + btType + btAttrs + '>' + btIcon + button.label + '</button> ';
 			});
 
 			// Replace tag for form name
-			btTemplate = btTemplate.replace(/«formName»/g, form.name || '');
+			btTemplate = btTemplate.replace(/«formName»/g, formSpec.name || '');
 		}
 		// Insert the buttons into the form
 		formTemplate = formTemplate.replace(/«buttons»/g, btTemplate || '');
+		// Insert form submit function
+		formTemplate = formTemplate.replace(/«fnSubmit»/g, fnSubmit || '');
+
 		return formTemplate;
 	},
 	//populate receives a dict with model, form, values, apply_defaults = true
 	populate: function (options) {
-		options.form.fieldsets.forEach(function (fieldset) {
+		options.formSpec.fieldsets.forEach(function (fieldset) {
 			fieldset.fields.forEach(function (field) {
 				options.model[field.model] = null;
 				if (options.apply_defaults && field.default != null) {
@@ -314,7 +323,7 @@ var pytangular = {
 		pytangular.populate(options);
 	},
 	// Position every field in a template for this fieldset
-	buildFieldSet: function (fieldSet, fsetLegend, fsetSumIndex, form, formKind) {
+	buildFieldSet: function (fieldSet, fsetLegend, fsetSumIndex, formSpec, formKind) {
 
 		var fieldSetContent = '';
 		var newFieldSet = '';
@@ -324,9 +333,9 @@ var pytangular = {
 		}
 
 		//If there is a template for the fields in this fieldset
-		if (form.fieldsTemplate != undefined && form.fieldsTemplate[fsetSumIndex]) {
+		if (formSpec.fieldsTemplate != undefined && formSpec.fieldsTemplate[fsetSumIndex]) {
 			// Add the template to the newFieldSet variable
-			newFieldSet = form.fieldsTemplate[fsetSumIndex];
+			newFieldSet = formSpec.fieldsTemplate[fsetSumIndex];
 			for (var key in fieldSet) {
 				// This replace all comands "add(field_name)" on the template for the field
 				var fieldToAdd = 'add(' + key + ')';
@@ -350,11 +359,11 @@ var pytangular = {
 	},
 
 	// Position every fieldset in a template for this form
-	buildFrom: function (formKind, allFieldSets, form) {
+	buildFrom: function (formKind, allFieldSets, formSpec) {
 		var newFieldSets = "";
 		// If there is a template for this fieldset
-		if (form.fieldSetTemplate != undefined) {
-			newFieldSets = form.fieldSetTemplate;
+		if (formSpec.fieldSetTemplate != undefined) {
+			newFieldSets = formSpec.fieldSetTemplate;
 			for (var key in allFieldSets) {
 				// This replace all comands "add(fieldset_index)" on the template for the field
 				var fieldSetToAdd = 'add(' + key + ')';
@@ -374,15 +383,15 @@ dvApp.directive('pytangular', function ($compile) {
 	return {
 		restrict: 'E',
 		link: function ($scope, element, attrs) {
-			$scope.formSpecName = attrs.form;
+			if (!attrs.formspec) throw 'Missing attribute "formspec" of directive "pytangular"';
+			$scope.formSpecName = attrs.formspec;
 			$scope.formSpec = $scope[$scope.formSpecName] || window[$scope.formSpecName];
-			//var form = $scope[attrs.form];
+			//var form = $scope[attrs.formspec];
 			var xeditable = attrs.xeditable || false;
 			var fieldvalues = $scope[attrs.fieldvalues] || [];
 			var model = $scope[attrs.model] || window[attrs.model];
 			var apply_defaults = attrs.apply_defaults || true;
-			var options = {form: $scope.formSpec, model: model, fieldvalues: fieldvalues, apply_defaults: apply_defaults};
-
+			var options = {formSpec: $scope.formSpec, model: model, fieldvalues: fieldvalues, apply_defaults: apply_defaults};
 
 			// Create field error
 			model.fieldError = {};
@@ -391,20 +400,18 @@ dvApp.directive('pytangular', function ($compile) {
 
 			//Add configurations from attrs into pytangular
 			pytangular.config = {
-				form: $scope.formSpec,
+				formSpec: $scope.formSpec,
 				xeditable: xeditable,
 				fieldvalues: fieldvalues,
 				model: model,
 				modelName: attrs.model,
 			};
-			if ($scope.formSpec) {
-				var template = pytangular.build(pytangular.config);
-				var linkFn = $compile(template);
-				var content = linkFn($scope);
-				element.append(content);
-				// Populate the form if values exists
-				pytangular.populate(options);
-			}
+			var template = pytangular.build(pytangular.config);
+			var linkFn = $compile(template);
+			var content = linkFn($scope);
+			element.append(content);
+			// Populate the form if values exists
+			pytangular.populate(options);
 		},
 	};
 });

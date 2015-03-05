@@ -60,28 +60,31 @@
 			</div>
 			<div class="container">
 				<div ng-if="selected=='aForm'">
-					<pytangular form="myForm"
+					<pytangular formspec="myForm"
 								model="pytangular"
 								fieldvalues="values">
 					</pytangular>
 				</div>
 				<div ng-if="selected=='aEdit'">
-					<pytangular form="editableForm"
+					<pytangular formspec="editableForm"
 								xeditable="true"
+								apply_defaults=true
 								model="pytangular"
 								fieldvalues="values">
 					</pytangular>
 				</div>
 				<div ng-if="selected=='bForm'">
-					<pytangular form="templatedSimpleForm"
+					<pytangular formspec="templatedSimpleForm"
 								xeditable="false"
+								apply_defaults=true
 								model="pytangular"
 								fieldvalues="values">
 					</pytangular>
 				</div>
 				<div ng-if="selected=='bEdit'">
-					<pytangular form="templatedForm"
+					<pytangular formspec="templatedForm"
 								xeditable="true"
+								apply_defaults=true
 								model="pytangular"
 								fieldvalues="values">
 					</pytangular>
@@ -111,6 +114,7 @@
 					label: 'Name',
 					name: 'name',
 					model: 'name',
+					default: 'Igor',
 					popover: {msg: 'Type your name here!', placement: 'top'},
 					input_attrs: {
 						'title': 'This is a title on field and label',
@@ -123,10 +127,12 @@
 					label: 'Fone',
 					name: 'fone',
 					model: 'fone',
+					default: '5585-4455',
 					popover: {msg: 'Type your fone', placement: 'bottom'},
 					input_attrs:{
 						'data-test': 'test',
 						'style': 'width: 12em;',
+						'required': 'required',
 					}
 				},
 				{
@@ -166,13 +172,15 @@
 					label: 'Kind',
 					name: 'kind',
 					model: 'kind',
+					default: 'Girl',
 					options: [
-						{ label: 'Male', value: 'Boy'},
-						{ label: 'Female', value: 'Girl'},
-						{ label: 'Both', value: 'LOL!'},
+						{ value: 'Male', label: 'Boy'},
+						{ value: 'Female', label: 'Girl'},
+						{ value: 'Both', label: 'LOL!'},
 					],
 					helpText: 'Your gender',
 					input_attrs: {
+						'required': 'required',
 						'style': 'width: 8em;',
 					},
 				},
@@ -239,7 +247,7 @@
 			cardFields.push(
 				{
 					widget: 'text',
-					label: 'Credit card Number',
+					label: 'Credit card number',
 					name: 'card',
 					model: 'card',
 					input_attrs: {
@@ -251,7 +259,7 @@
 			cardFields.push(
 				{
 					widget: 'text',
-					label: '3 digites security code',
+					label: '3 digits security code',
 					name: 'code',
 					model: 'code',
 					input_attrs: {
@@ -261,26 +269,23 @@
 				}
 			);
 
-			var fieldSets = [];
-
-			fieldSets.push({fields: aFrom, legend: 'Simple web form'});
-			fieldSets.push({fields: cardFields, legend: 'Payment information'});
 
 			var buttons = [
 				{
+					action: 'submitForm',
 					type: 'submit',
-					class: 'primary',
+					class: 'btn-primary',
 					icon: 'save',
 					label: 'Save',
 				},
 				{
 					type: 'reset',
-					class: 'danger',
+					class: 'btn-danger',
 					icon: 'remove-sign',
 					label: 'Remove',
 				},
 				{
-					class: 'success',
+					class: 'btn-success',
 					icon: 'plus-sign',
 					label: 'Add',
 					attrs: {'ng-click': 'callMe()'},
@@ -293,9 +298,6 @@
 
 			];
 
-			$scope.myForm = { name: 'aForm', fnSubmit: 'call()', fieldsets: fieldSets, buttons: buttons,};
-
-			$scope.editableForm = { name: 'bForm', fnSubmit: 'call()', fieldsets: fieldSets, buttons: buttons,};
 
 			$scope.values = {
 				name: 'John Doe',
@@ -318,7 +320,8 @@
 
 			var buttons2 = [
 				{
-					class: 'success',
+					action: 'formSubmit()',
+					class: 'btn-success',
 					icon: 'plus-sign',
 					label: 'Add',
 					attrs: {'ng-click': 'callMe()'},
@@ -332,7 +335,7 @@
 			];
 			var buttons3 = [
 				{
-					class: 'success',
+					class: 'btn-success',
 					icon: 'plus-sign',
 					label: 'Add',
 					attrs: {'ng-click': 'callMe()'},
@@ -344,11 +347,18 @@
 				},
 
 			];
+			var fieldSets = [];
+
+			fieldSets.push({fields: aFrom, legend: 'Simple web form'});
 			// Form with template
 			var fieldset1 = '<table><tr><td>add(name)</td><td>add(fone)</td><td style:"border:solid 2px;">add(age)</td></tr><tr><td>add(email)</td><td>add(kind)</td><td>add(msg)</td></tr><tr><td>add(like1)</td><td>add(like2)</td><td>add(color)</td><td></tr><tr><td>add(pwd)</td><td></td></tr></table>';
 			var fieldset2 = '<table><tr><td>add(card)</td><td>add(code)</td></tr></table>';
 			var fieldsTemplate = { '0': fieldset1, '1': fieldset2 };
 			var fieldSetTemplate = '<table><tr><td>add(0)</td><td>add(1)</td></tr></table>';
+			fieldSets.push({fields: cardFields, legend: 'Payment information'});
+
+			$scope.myForm = { name: 'aForm', fnSubmit: 'callMe()', fieldsets: fieldSets, buttons: buttons,};
+			$scope.editableForm = { name: 'bForm', fnSubmit: 'callMe()', fieldsets: fieldSets, buttons: buttons,};
 			$scope.templatedForm = { fieldsTemplate: fieldsTemplate, fieldSetTemplate: fieldSetTemplate, name: 'cForm', fnSubmit: 'call()', fieldsets: fieldSets, buttons: buttons2};
 			$scope.templatedSimpleForm = { fieldsTemplate: fieldsTemplate, fieldSetTemplate: fieldSetTemplate, name: 'dForm', fnSubmit: 'call()', fieldsets: fieldSets, buttons: buttons3};
 		});
