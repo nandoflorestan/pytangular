@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>Pytangular</title>
+		<title>Pytangular examples</title>
 		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 		<link href="xeditable.css" rel="stylesheet">
@@ -52,11 +52,11 @@
 		<div ng-app="dvApp" ng-controller="personController">
 			<h1>Pytangular examples</h1>
 			<div class="menuContainer">
-				<h3>Menu:</h3>
-				<p ng-click="toggleMenu('aForm')">Simple form</p>
-				<p ng-click="toggleMenu('aEdit')">Xeditable form</p>
-				<p ng-click="toggleMenu('bForm')">Simple templated form</p>
-				<p ng-click="toggleMenu('bEdit')">Xeditable templated form</p>
+				<p>Choose a pytangular demonstration:</p>
+				<p><a ng-click="toggleMenu('aForm')">Simple form</a></p>
+				<p><a ng-click="toggleMenu('aEdit')">Xeditable form</a></p>
+				<p><a ng-click="toggleMenu('bForm')">Simple templated form</a></p>
+				<p><a ng-click="toggleMenu('bEdit')">Xeditable templated form</a></p>
 			</div>
 			<div class="container">
 				<div ng-if="selected=='aForm'">
@@ -92,6 +92,7 @@
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.6.0/ui-bootstrap-tpls.min.js"></script>
 		<script src="xeditable.min.js"></script>
 		<script>
+			'use strict';
 			var dvApp = angular.module("dvApp", ['xeditable', 'ui.bootstrap', 'ui.bootstrap.popover']);
 			dvApp.run(function(editableOptions) {
 				editableOptions.theme = 'bs3'; // bootstrap3 theme. Can be also 'bs2', 'default'
@@ -99,6 +100,7 @@
 		</script>
 		<script src="pytangular.js"></script>
 		<script>
+		'use strict';
 		dvApp.controller('personController', function ($scope, $filter) {
 			$scope.toggleMenu = function (selected) {
 				$scope.selected = selected;

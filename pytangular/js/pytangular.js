@@ -374,13 +374,12 @@ dvApp.directive('pytangular', function ($compile) {
 	return {
 		restrict: 'E',
 		link: function ($scope, element, attrs) {
-			$scope.formSpecName = attrs.form
+			$scope.formSpecName = attrs.form;
 			$scope.formSpec = $scope[$scope.formSpecName] || window[$scope.formSpecName];
 			//var form = $scope[attrs.form];
 			var xeditable = attrs.xeditable || false;
 			var fieldvalues = $scope[attrs.fieldvalues] || [];
-			var model = $scope[attrs.model];
-			var modelName = attrs.model;
+			var model = $scope[attrs.model] || window[attrs.model];
 			var apply_defaults = attrs.apply_defaults || true;
 			var options = {form: $scope.formSpec, model: model, fieldvalues: fieldvalues, apply_defaults: apply_defaults};
 
@@ -396,7 +395,7 @@ dvApp.directive('pytangular', function ($compile) {
 				xeditable: xeditable,
 				fieldvalues: fieldvalues,
 				model: model,
-				modelName: modelName,
+				modelName: attrs.model,
 			};
 			if ($scope.formSpec) {
 				var template = pytangular.build(pytangular.config);
