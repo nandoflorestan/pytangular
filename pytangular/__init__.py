@@ -9,8 +9,10 @@ from nine import IS_PYTHON2, nimport, nine, range, str, basestring
 import colander as c
 
 
-def schema_to_json(*schemas, mode='simple'):
-    '''Serializes a Colander schema to JSON.'''
+def schema_to_json(*a, **kw):
+    '''Serializes a Colander schema to JSON. Takes the same arguments as the
+        schema_to_dict() function.
+        '''
     return dumps(schema_to_dict(*a, **kw))
 
 
@@ -53,6 +55,9 @@ def schema_to_dict(*schemas, mode='simple'):
             # Textarea
             _copy_attr(node, 'cols', attrs)
             _copy_attr(node, 'rows', attrs)
+
+            # Select
+            _copy_attr(node, 'options', field)
 
             # HTML5 forms: http://html5doctor.com/html5-forms-introduction-and-new-attributes/
             _copy_attr(node, 'placeholder', attrs)
@@ -141,3 +146,13 @@ def text_node(attrib, min_size=4, max_size=60, **kw):
     # TODO Add Length validator if not present
     # TODO Infer colander type based on sqlalchemy type
     return c.SchemaNode(c.Str(), **kw)
+
+
+class PytangularSchema(c.MappingSchema):
+    '''Self-describing mapping schema (has to_dict() and to_json()).'''
+
+    def to_dict(self, mode='simple'):
+        return schema_to_dict(self, mode=mode)
+
+    def to_json(self, mode='simple'):
+        return schema_to_json(self, mode=mode)

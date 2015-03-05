@@ -27,7 +27,7 @@ Then you get the json in javascript and the js component of pytangular
 creates an AngularJS template containing the web form.
 
 Although pytangular can be used with any web framework, it is developed and
-tested with Pyramid which, by the way, is years ahead of Django.
+tested with Pyramid.
 
 Retail rendering of the form is supported. I mean, you have the flexibility of putting fields where you want them.
 
