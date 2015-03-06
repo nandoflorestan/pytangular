@@ -247,7 +247,6 @@ var pytangular = {
 		var fnSubmit = '';
 		// Verify if form submit function exists and define it
 		if (formSpec.fnSubmit && !fnSubmit) {
-			console.log("Defined!");
 			fnSubmit = 'data-ng-submit="' + formSpec.fnSubmit + '"';
 		}
 
@@ -301,7 +300,6 @@ var pytangular = {
 
 				btTemplate += '<button class="' + btClass + '"' + btType + btAttrs + '>' + btIcon + button.label + '</button> ';
 			});
-
 			// Replace tag for form name
 			btTemplate = btTemplate.replace(/«formName»/g, pytangular.config.formSpecName || '');
 		}
@@ -394,7 +392,6 @@ dvApp.directive('pytangular', function ($compile) {
 			if (!attrs.formspec) throw 'Missing attribute "formspec" of directive "pytangular"';
 			$scope.formSpecName = attrs.formspec;
 			$scope.formSpec = $scope[$scope.formSpecName] || window[$scope.formSpecName];
-			console.log('$scope.formSpec', $scope.formSpec);
 			//var form = $scope[attrs.formspec];
 			var xeditable = attrs.xeditable || false;
 			var fieldvalues = $scope[attrs.fieldvalues] || [];
