@@ -321,8 +321,8 @@ var pytangular = {
 				if (options.apply_defaults && field.default != null) {
 					options.model[field.model] = field.default;
 				}
-				if (options.fieldvalues[field.name] != null) {
-					options.model[field.model] = options.fieldvalues[field.name];
+				if (options.values[field.name] != null) {
+					options.model[field.model] = options.values[field.name];
 				}
 			});
 		});
@@ -397,7 +397,7 @@ dvApp.directive('pytangular', function ($compile) {
 			$scope.formSpec = $scope[$scope.formSpecName] || window[$scope.formSpecName];
 			//var form = $scope[attrs.formspec];
 			var xeditable = attrs.xeditable || false;
-			var fieldvalues = $scope[attrs.fieldvalues] || [];
+			var values = $scope[attrs.values] || [];
 			var model = $scope[attrs.model] || window[attrs.model];
 			var apply_defaults = attrs.apply_defaults || true;
 
@@ -411,7 +411,7 @@ dvApp.directive('pytangular', function ($compile) {
 				formSpec: $scope.formSpec,
 				formSpecName: $scope.formSpecName,
 				xeditable: xeditable,
-				fieldvalues: fieldvalues,
+				values: values,
 				model: model,
 				modelName: attrs.model,
 				apply_defaults: apply_defaults,
