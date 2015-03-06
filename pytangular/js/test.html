@@ -46,6 +46,9 @@
 			div[ng-app] {
 				margin: 50px;
 			}
+			td {
+				padding: 1em;
+			}
 		</style>
 	</head>
 	<body>
@@ -351,10 +354,29 @@
 
 			fieldSets.push({fields: aFrom, legend: 'Simple web form'});
 			// Form with template
-			var fieldset1 = '<table><tr><td>add(name)</td><td>add(fone)</td><td style:"border:solid 2px;">add(age)</td></tr><tr><td>add(email)</td><td>add(kind)</td><td>add(msg)</td></tr><tr><td>add(like1)</td><td>add(like2)</td><td>add(color)</td><td></tr><tr><td>add(pwd)</td><td></td></tr></table>';
+			var fieldset1 = '<table>' +
+								'<tr>' +
+									'<td>add(name)</td><td>add(fone)</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td>add(email)</td><td>add(pwd)</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td>add(color)</td><td>add(age)</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td>add(kind)</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td colspan="2">add(msg)</td>' +
+								'</tr>' +
+								'<tr>' +
+									'<td><div>add(like1)</div><div>add(like2)</div></td><td></td>' +
+								'</tr>' +
+							'</table>';
 			var fieldset2 = '<table><tr><td>add(card)</td><td>add(code)</td></tr></table>';
 			var fieldsTemplate = { '0': fieldset1, '1': fieldset2 };
-			var fieldSetTemplate = '<table><tr><td>add(0)</td><td>add(1)</td></tr></table>';
+			var fieldSetTemplate = '<div>add(0)</div><div>add(1)</div>';
 			fieldSets.push({fields: cardFields, legend: 'Payment information'});
 
 			$scope.myForm = { name: 'aForm', fnSubmit: 'callMe()', fieldsets: fieldSets, buttons: buttons,};
