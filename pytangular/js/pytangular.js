@@ -255,13 +255,16 @@ var pytangular = {
 			var btTemplate = '';
 			var btIndex = 0;
 			formSpec.buttons.forEach(function (button) {
-				var btClass = 'btn ' + button.class || 'btn-default';
+				var btClass = 'btn ';
+				if (button.class) btClass += button.class;
+				else  btClass += 'btn-default';
 
 				// Check type of button
-				if (button.type) {
-					var btType = ' type="' + button.type + '"';
+				if (button.type || button.action == 'submitForm') {
+					var type = button.type || 'submit';
+					var btType = ' type="' + type + '"';
 				} else {
-					var btType = '';
+					var btType = ' type="button"';
 				}
 				// Check for icon and make more easy
 				if (button.icon) {
