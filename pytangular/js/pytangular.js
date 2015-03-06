@@ -371,8 +371,8 @@ var pytangular = {
 	buildFrom: function (formKind, allFieldSets, formSpec) {
 		var newFieldSets = "";
 		// If there is a template for this fieldset
-		if (formSpec.fieldSetTemplate != undefined) {
-			newFieldSets = formSpec.fieldSetTemplate;
+		if (formSpec.fieldSetsTemplate != undefined) {
+			newFieldSets = formSpec.fieldSetsTemplate;
 			for (var key in allFieldSets) {
 				// This replace all comands "add(fieldset_index)" on the template for the field
 				var fieldSetToAdd = 'add(' + key + ')';

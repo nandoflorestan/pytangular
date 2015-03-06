@@ -63,13 +63,13 @@
 			</div>
 			<div class="container">
 				<div ng-if="selected=='aForm'">
-					<pytangular formspec="myForm"
+					<pytangular formspec="simpleForm"
 								model="pytangular"
 								>
 					</pytangular>
 				</div>
 				<div ng-if="selected=='aEdit'">
-					<pytangular formspec="editableForm"
+					<pytangular formspec="xeditableForm"
 								xeditable="true"
 								apply_defaults=true
 								model="pytangular"
@@ -85,7 +85,7 @@
 					</pytangular>
 				</div>
 				<div ng-if="selected=='bEdit'">
-					<pytangular formspec="templatedForm"
+					<pytangular formspec="templatedXeditableForm"
 								xeditable="true"
 								apply_defaults=true
 								model="pytangular"
@@ -111,7 +111,9 @@
 			$scope.toggleMenu = function (selected) {
 				$scope.selected = selected;
 			}
-			var aFrom = [
+
+			// Define fields for all example forms
+			var personDataFields = [
 				{
 					widget: 'text',
 					label: 'Name',
@@ -246,8 +248,8 @@
 				},
 			];
 
-			var cardFields = [];
-			cardFields.push(
+			// Define fields for all example forms
+			var creditCardFields = [
 				{
 					widget: 'text',
 					label: 'Credit card number',
@@ -257,9 +259,7 @@
 						'data-test': 'test',
 						'style': 'width: 20em;',
 					}
-				}
-			);
-			cardFields.push(
+				},
 				{
 					widget: 'text',
 					label: '3 digits security code',
@@ -269,10 +269,42 @@
 						'data-test': 'test',
 						'style': 'width: 4em;',
 					}
-				}
-			);
+				},
+			];
 
+			// Templates for simple and xeditable forms
+			// Template for each fields of this fieldSet
+			var templateFieldsetPersonDataFields = '<table>' +
+							'<tr>' +
+								'<td>add(name)</td><td>add(fone)</td>' +
+							'</tr>' +
+							'<tr>' +
+								'<td>add(email)</td><td>add(pwd)</td>' +
+							'</tr>' +
+							'<tr>' +
+								'<td>add(color)</td><td>add(age)</td>' +
+							'</tr>' +
+							'<tr>' +
+								'<td>add(kind)</td>' +
+							'</tr>' +
+							'<tr>' +
+								'<td colspan="2">add(msg)</td>' +
+							'</tr>' +
+							'<tr>' +
+								'<td><div>add(like1)</div><div>add(like2)</div></td><td></td>' +
+							'</tr>' +
+						'</table>';
+			// Template for each fields of this fieldSet
+			var templateFieldsetCreditCardFields = '<table>' +
+										'<tr>' +
+											'<td>add(card)</td><td>add(code)</td>' +
+										'</tr>' +
+									'</table>';
 
+			// Template for positon of each fieldSet
+			var fieldSetsTemplate = '<div>add(0)</div><div>add(1)</div>';
+
+			// Buttons for simple and xeditable forms
 			var buttons = [
 				{
 					action: 'submitForm',
@@ -301,7 +333,108 @@
 
 			];
 
+			// Define a simple form
+			$scope.simpleForm = {
+				name: 'aForm',
+				fnSubmit: 'callMe()',
+				fieldsets: [
+					{
+						fields: personDataFields, legend: 'Simple web form'
+					},
+					{
+						fields: creditCardFields, legend: 'Payment information'
+					},
+				],
+				buttons: buttons,
+			};
 
+			// Define an Xeditable form
+			$scope.xeditableForm = {
+				name: 'bForm',
+				fnSubmit: 'callMe()',
+				fieldsets: [
+					{
+						fields: personDataFields, legend: 'Xeditable web form'
+					},
+					{
+						fields: creditCardFields, legend: 'Payment information'
+					}
+				],
+				buttons: buttons,
+			};
+
+			// Define a simple form with two templates, one to positon fildsets
+			// and other to all individual fields of the fieldset
+			$scope.templatedSimpleForm = {
+				fieldsTemplate: {
+					'0': templateFieldsetPersonDataFields,
+					'1': templateFieldsetCreditCardFields,
+				},
+				fieldSetsTemplate: fieldSetsTemplate,
+				name: 'dForm',
+				fnSubmit: 'callMe()',
+				fieldsets: [
+					{
+						fields: personDataFields, legend: 'Templated web form'
+					},
+					{
+						fields: creditCardFields, legend: 'Payment information'
+					}
+				],
+				buttons: [
+					{
+						class: 'btn-success',
+						icon: 'plus-sign',
+						label: 'Add',
+						attrs: {'ng-click': 'callMe()'},
+					},
+					{
+						icon: 'remove-sign',
+						label: 'Cancel',
+						cancel: true,
+					},
+				],
+			};
+
+			// Define an Xeditable form with two templates, one to positon fildsets
+			// and other to all individual fields of the fieldset
+			$scope.templatedXeditableForm = {
+				fieldsTemplate: {
+					'0': templateFieldsetPersonDataFields,
+					'1': templateFieldsetCreditCardFields,
+				},
+				fieldSetsTemplate: fieldSetsTemplate,
+				name: 'cForm',
+				fnSubmit: 'call()',
+				fieldsets: [
+					{
+						fields: personDataFields, legend: 'Templated xeditable web form'
+					},
+					{
+						fields: creditCardFields, legend: 'Payment information'
+					}
+				],
+				buttons: [
+					{
+						action: 'formSubmit()',
+						class: 'btn-success',
+						icon: 'plus-sign',
+						label: 'Add',
+						attrs: {'ng-click': 'callMe()'},
+					},
+					{
+						icon: 'remove-sign',
+						label: 'Cancel',
+						cancel: true,
+					},
+
+				],
+			};
+
+			// Page model thats hold all form data information
+			$scope.pytangular = {};
+
+			// Initial values to be used with the forms
 			$scope.values = {
 				name: 'John Doe',
 				fone: '5544-1234',
@@ -316,73 +449,11 @@
 				card: '5033-5544-3585',
 				code: '585',
 			};
+
+			// Hipotetical function use with some buttons of the forms
 			$scope.callMe = function () {
 				console.log("Called");
 			}
-			$scope.pytangular = {};
-
-			var buttons2 = [
-				{
-					action: 'formSubmit()',
-					class: 'btn-success',
-					icon: 'plus-sign',
-					label: 'Add',
-					attrs: {'ng-click': 'callMe()'},
-				},
-				{
-					icon: 'remove-sign',
-					label: 'Cancel',
-					cancel: true,
-				},
-
-			];
-			var buttons3 = [
-				{
-					class: 'btn-success',
-					icon: 'plus-sign',
-					label: 'Add',
-					attrs: {'ng-click': 'callMe()'},
-				},
-				{
-					icon: 'remove-sign',
-					label: 'Cancel',
-					cancel: true,
-				},
-
-			];
-			var fieldSets = [];
-
-			fieldSets.push({fields: aFrom, legend: 'Simple web form'});
-			// Form with template
-			var fieldset1 = '<table>' +
-								'<tr>' +
-									'<td>add(name)</td><td>add(fone)</td>' +
-								'</tr>' +
-								'<tr>' +
-									'<td>add(email)</td><td>add(pwd)</td>' +
-								'</tr>' +
-								'<tr>' +
-									'<td>add(color)</td><td>add(age)</td>' +
-								'</tr>' +
-								'<tr>' +
-									'<td>add(kind)</td>' +
-								'</tr>' +
-								'<tr>' +
-									'<td colspan="2">add(msg)</td>' +
-								'</tr>' +
-								'<tr>' +
-									'<td><div>add(like1)</div><div>add(like2)</div></td><td></td>' +
-								'</tr>' +
-							'</table>';
-			var fieldset2 = '<table><tr><td>add(card)</td><td>add(code)</td></tr></table>';
-			var fieldsTemplate = { '0': fieldset1, '1': fieldset2 };
-			var fieldSetTemplate = '<div>add(0)</div><div>add(1)</div>';
-			fieldSets.push({fields: cardFields, legend: 'Payment information'});
-
-			$scope.myForm = { name: 'aForm', fnSubmit: 'callMe()', fieldsets: fieldSets, buttons: buttons,};
-			$scope.editableForm = { name: 'bForm', fnSubmit: 'callMe()', fieldsets: fieldSets, buttons: buttons,};
-			$scope.templatedForm = { fieldsTemplate: fieldsTemplate, fieldSetTemplate: fieldSetTemplate, name: 'cForm', fnSubmit: 'call()', fieldsets: fieldSets, buttons: buttons2};
-			$scope.templatedSimpleForm = { fieldsTemplate: fieldsTemplate, fieldSetTemplate: fieldSetTemplate, name: 'dForm', fnSubmit: 'call()', fieldsets: fieldSets, buttons: buttons3};
 		});
 		</script>
 	</body>
