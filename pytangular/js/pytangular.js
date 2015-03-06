@@ -7,7 +7,7 @@ var pytangular = {
 		submitForm: function (btIndex) {
 			var method = pytangular.config.formSpec.buttons[btIndex].method || 'POST';
 			var url = pytangular.config.formSpec.buttons[btIndex].url || '';
-			document.getElementById(pytangular.config.formSpec.name).submit();
+			document.getElementById(pytangular.config.formSpecName).submit();
 		},
 	},
 	// Hold the form field names
@@ -22,7 +22,7 @@ var pytangular = {
 			'<span class="help-block">«helpText»</span>',
 		widgets : {
 			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs» «popOver»/>',
-			select: '<select class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» data-ng-options="item.label as item.value for item in «itemsList»"></select>',
+			select: '<select class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
 			textarea: '<textarea class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» «popOver»></textarea>',
 			checkbox: ' <input type="checkbox" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs» «popOver»/>',
 			typeahead: '<input type="text" ng-model="«ngModel»" «inputAttrs» «popOver» typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" class="form-control">',
@@ -54,7 +54,7 @@ var pytangular = {
 		widgets : {
 			defaultTemplate: ' <span editable-«inputType»="«ngModel»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" id="«fieldId»" data-ng-bind="«ngModel»"></span>',
 			password: '<span editable-text="«ngModel»" id="«fieldId»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" e-type="password">******</span>',
-			select: '<span editable-select="«ngModel»" e-ng-options="item.label as item.value for item in «itemsList»" data-ng-bind="«ngModel»"></span>',
+			select: '<span editable-select="«ngModel»" e-ng-options="item.value as item.label for item in «itemsList»" data-ng-bind="«ngModel»"></span>',
 			textarea: '<span editable-textarea="«ngModel»" id="«fieldId»" «inputAttrs»>' +
     					'<pre data-ng-bind="«ngModel»"></pre></span>',
     		checkbox: ' <span editable-checkbox="«ngModel»" id="«fieldId»" e-title="«title»">{{ «ngModel» && "«trueValue»" || "«falseValue»" }}<span>',
@@ -122,7 +122,14 @@ var pytangular = {
 				// If is a select define the list of values
 				if (field.widget == 'select') {
 					var optionPath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
+					if (field.default) {
+						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].default"';
+					} else {
+						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options[0].value"';
+					}
+
 					aField = aField.replace(/«itemsList»/g, optionPath);
+					aField = aField.replace(/«selectedItem»/g, selectedPath);
 				}
 				// If is a typeahead define the list of values
 				if (field.widget == 'typeahead') {
@@ -234,7 +241,7 @@ var pytangular = {
 		// Insert all fields inside formSkeleton
 		formTemplate = pytangular[formKind].formSkeleton.replace(/«formContent»/g, formTemplate);
 		// Insert form name
-		formTemplate = formTemplate.replace(/«formName»/g, formSpec.name || ' ');
+		formTemplate = formTemplate.replace(/«formName»/g, pytangular.config.formSpecName || ' ');
 
 		// Help build fnSubmition attribute
 		var fnSubmit = '';
@@ -295,7 +302,7 @@ var pytangular = {
 			});
 
 			// Replace tag for form name
-			btTemplate = btTemplate.replace(/«formName»/g, formSpec.name || '');
+			btTemplate = btTemplate.replace(/«formName»/g, pytangular.config.formSpecName || '');
 		}
 		// Insert the buttons into the form
 		formTemplate = formTemplate.replace(/«buttons»/g, btTemplate || '');
@@ -312,7 +319,7 @@ var pytangular = {
 				if (options.apply_defaults && field.default != null) {
 					options.model[field.model] = field.default;
 				}
-				if (options.fieldvalues[field.name] !== undefined) {
+				if (options.fieldvalues[field.name] != null) {
 					options.model[field.model] = options.fieldvalues[field.name];
 				}
 			});
@@ -386,6 +393,7 @@ dvApp.directive('pytangular', function ($compile) {
 			if (!attrs.formspec) throw 'Missing attribute "formspec" of directive "pytangular"';
 			$scope.formSpecName = attrs.formspec;
 			$scope.formSpec = $scope[$scope.formSpecName] || window[$scope.formSpecName];
+			console.log('$scope.formSpec', $scope.formSpec);
 			//var form = $scope[attrs.formspec];
 			var xeditable = attrs.xeditable || false;
 			var fieldvalues = $scope[attrs.fieldvalues] || [];
@@ -401,12 +409,14 @@ dvApp.directive('pytangular', function ($compile) {
 			//Add configurations from attrs into pytangular
 			pytangular.config = {
 				formSpec: $scope.formSpec,
+				formSpecName: $scope.formSpecName,
 				xeditable: xeditable,
 				fieldvalues: fieldvalues,
 				model: model,
 				modelName: attrs.model,
 			};
-			var template = pytangular.build(pytangular.config);
+
+			var template = pytangular.build();
 			var linkFn = $compile(template);
 			var content = linkFn($scope);
 			element.append(content);

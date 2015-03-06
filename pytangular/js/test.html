@@ -62,7 +62,7 @@
 				<div ng-if="selected=='aForm'">
 					<pytangular formspec="myForm"
 								model="pytangular"
-								fieldvalues="values">
+								>
 					</pytangular>
 				</div>
 				<div ng-if="selected=='aEdit'">
@@ -174,9 +174,9 @@
 					model: 'kind',
 					default: 'Girl',
 					options: [
-						{ value: 'Male', label: 'Boy'},
-						{ value: 'Female', label: 'Girl'},
-						{ value: 'Both', label: 'LOL!'},
+						{ value: 'Boy', label: 'Male'},
+						{ value: 'Girl', label: 'Female'},
+						{ value: 'LOL!', label: 'Both'},
 					],
 					helpText: 'Your gender',
 					input_attrs: {
@@ -236,7 +236,7 @@
 					model: 'time',
 				},
 				{
-					widget: 'datetime',
+					widget: 'date',
 					label: 'Local date',
 					name: 'date',
 					model: 'date',
