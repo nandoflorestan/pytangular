@@ -245,6 +245,12 @@ var pytangular = {
 
 		// Help build fnSubmition attribute
 		var fnSubmit = '';
+		// Verify if form submit function exists and define it
+		if (formSpec.fnSubmit && !fnSubmit) {
+			console.log("Defined!");
+			fnSubmit = 'data-ng-submit="' + formSpec.fnSubmit + '"';
+		}
+
 		// Add form buttons if is present
 		if (formSpec.buttons) {
 			var btTemplate = '';
@@ -284,14 +290,9 @@ var pytangular = {
 					}
 				}
 
-				// Verify if form submit function exists and define it
-				if (formSpec.fnSubmit && !fnSubmit) {
-					fnSubmit = 'data-ng-submit="' + formSpec.fnSubmit + '"';
-				}
-
 				// TODO: Fix function problem with angular xeditable
 				if (button.action) {
-					if (button.type == 'submit') {
+					if (button.type == 'submit' || button.action == 'submitForm') {
 						fnSubmit = 'onsubmit="pytangular.actions.' + button.action + '(' + btIndex + ')"';
 					} else {
 						btAttrs += 'onclick="pytangular.actions.' + button.action + '(' + btIndex + ');"';
@@ -327,7 +328,7 @@ var pytangular = {
 	},
 
 	reset: function (model) {
-		pytangular.populate(options);
+		pytangular.populate(pytangular.config);
 	},
 	// Position every field in a template for this fieldset
 	buildFieldSet: function (fieldSet, fsetLegend, fsetSumIndex, formSpec, formKind) {
@@ -399,7 +400,6 @@ dvApp.directive('pytangular', function ($compile) {
 			var fieldvalues = $scope[attrs.fieldvalues] || [];
 			var model = $scope[attrs.model] || window[attrs.model];
 			var apply_defaults = attrs.apply_defaults || true;
-			var options = {formSpec: $scope.formSpec, model: model, fieldvalues: fieldvalues, apply_defaults: apply_defaults};
 
 			// Create field error
 			model.fieldError = {};
@@ -414,6 +414,7 @@ dvApp.directive('pytangular', function ($compile) {
 				fieldvalues: fieldvalues,
 				model: model,
 				modelName: attrs.model,
+				apply_defaults: apply_defaults,
 			};
 
 			var template = pytangular.build();
@@ -421,7 +422,7 @@ dvApp.directive('pytangular', function ($compile) {
 			var content = linkFn($scope);
 			element.append(content);
 			// Populate the form if values exists
-			pytangular.populate(options);
+			pytangular.populate(pytangular.config);
 		},
 	};
 });
