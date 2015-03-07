@@ -3,8 +3,11 @@
 
 <script>
 	"use strict;"
-	var theForm = {$ form|json|safe $};
-	var bruh = {est_participants: theForm.fieldsets[0].fields[1].options[0].value};
-	console.log('theForm', theForm);
-	var values = {};
+	var formspec = {$ formspec|json|safe $};
+	var state = {};
+	// TODO The above vars belong inside theForm:
+	var theForm = {
+		values: {$ values|json|safe $},
+		errors: {$ errors|json|safe $},
+	};
 </script>
