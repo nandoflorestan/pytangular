@@ -313,12 +313,12 @@ var pytangular = {
 
 		return formTemplate;
 	},
-	//populate receives a dict with model, form, values, apply_defaults = true
+	//populate receives a dict with model, form, values, applyDefaults = true
 	populate: function (options) {
 		options.formSpec.fieldsets.forEach(function (fieldset) {
 			fieldset.fields.forEach(function (field) {
 				options.model[field.model] = null;
-				if (options.apply_defaults && field.default != null) {
+				if (options.applyDefaults && field.default != null) {
 					options.model[field.model] = field.default;
 				}
 				if (options.values[field.name] != null) {
@@ -393,14 +393,94 @@ dvApp.directive('pytangular', function ($compile) {
 		restrict: 'E',
 		link: function ($scope, element, attrs) {
 			if (!attrs.formspec) throw 'Missing attribute "formspec" of directive "pytangular"';
-			$scope.formSpecName = attrs.formspec;
-			$scope.formSpec = $scope[$scope.formSpecName] || window[$scope.formSpecName];
-			//var form = $scope[attrs.formspec];
-			var xeditable = attrs.xeditable || false;
-			var values = $scope[attrs.values] || [];
-			var model = $scope[attrs.model] || window[attrs.model];
-			var apply_defaults = attrs.apply_defaults || true;
+			if (!attrs.model) throw 'Missing attribute "model" of directive "pytangular"';
 
+			// Create complex object model
+			// its subistitue the old code:
+			// $scope[attrs.model] || window[attrs.model];
+			// This way it deals with complex models like "model.selected.asset"
+			// Use split to divide the model name string in each dot than register
+			// each part of object in tempModel with the nex variable (the key)
+			var model = attrs.model.split('.');
+			// If model exist is complex object, else is just a simple string name (no dot)
+			if (model) {
+				// Select model for complex string (has dots like in model.selected.asset)
+				var tempModel = $scope;
+				model.forEach(function (key) {
+					tempModel = tempModel[key];
+				});
+				if (!tempModel) {
+					var tempModel = window;
+					model.forEach(function (key) {
+						tempModel = tempModel[key];
+					});
+					model = tempModel; // window.model
+				} else {
+					model = tempModel; // $scope.model
+				}
+			} else {
+				// Select model for simple string (no dot)
+				if ($scope[attrs.model]) model = $scope[attrs.model];
+				else model = window[attrs.model];
+			}
+
+			// Do the same as model, this replace this old code:
+			// $scope.formSpec = $scope[attrs.formspec] || window[attrs.formspec];
+			var formSpec = attrs.formspec.split('.');
+			// If model exist is complex object, else is just a simple string name (no dot)
+			if (formSpec) {
+				// Select model for complex string (has dots like in model.selected.asset)
+				var tempFormSpec = $scope;
+				formSpec.forEach(function (key) {
+					tempFormSpec = tempFormSpec[key];
+				});
+				if (!tempFormSpec) {
+					var tempFormSpec = window;
+					formSpec.forEach(function (key) {
+						tempFormSpec = tempFormSpec[key];
+					});
+					formSpec = tempFormSpec; // window.formSpec
+				} else {
+					formSpec = tempFormSpec; // $scope.formSpec
+				}
+			} else {
+				// Select formSpec for simple string (no dot)
+				if ($scope[attrs.formSpec]) formSpec = $scope[attrs.formSpec];
+				else formSpec = window[attrs.formSpec];
+			}
+
+			// Do the same as model, but values is optional so need check if exists
+			if (attrs.values) {
+				var values = attrs.values.split('.');
+				// If model exist is complex object, else is just a simple string name (no dot)
+				if (values) {
+					// Select model for complex string (has dots like in values.selected.asset)
+					var tempValues = $scope;
+					values.forEach(function (key) {
+						tempValues = tempValues[key];
+					});
+					if (!tempValues) {
+						var tempValues = window;
+						values.forEach(function (key) {
+							tempValues = tempValues[key];
+						});
+						values = tempValues; // window.values
+					} else {
+						values = tempValues; // $scope.values
+					}
+				} else {
+					// Select values for simple string (no dot)
+					if ($scope[attrs.values]) values = $scope[attrs.values];
+					else values = window[attrs.values];
+				}
+			}
+
+			$scope.formSpecName = attrs.formspec;
+			var applyDefaults = attrs.applyDefaults;
+			var xeditable = attrs.xeditable || false;
+
+			console.log('Directive values:', values, attrs.values, applyDefaults);
+			console.log('Directive model:', model, attrs.model);
 			// Create field error
 			model.fieldError = {};
 			// Create field helper
@@ -408,21 +488,23 @@ dvApp.directive('pytangular', function ($compile) {
 
 			//Add configurations from attrs into pytangular
 			pytangular.config = {
-				formSpec: $scope.formSpec,
+				formSpec: formSpec,
 				formSpecName: $scope.formSpecName,
 				xeditable: xeditable,
-				values: values,
+				values: values || {},
 				model: model,
 				modelName: attrs.model,
-				apply_defaults: apply_defaults,
+				applyDefaults: applyDefaults,
 			};
 
 			var template = pytangular.build();
 			var linkFn = $compile(template);
 			var content = linkFn($scope);
 			element.append(content);
-			// Populate the form if values exists
-			pytangular.populate(pytangular.config);
+			// Populate the form with values or default attrs of formSpec
+			if (values || applyDefaults) {
+				pytangular.populate(pytangular.config);
+			}
 		},
 	};
 });
