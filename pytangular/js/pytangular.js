@@ -162,7 +162,7 @@ var pytangular = {
 						// Verify if is required to put * in the label
 						if (key == 'required') {
 							if (formKind == 'xeditableSkeletons') {
-								labelStar = '<span ng-if="xeditableForm.$visible">*</span>';
+								labelStar = '<span ng-if="«formName».$visible">*</span>';
 							} else {
 								labelStar = '*';
 							}
