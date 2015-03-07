@@ -27,7 +27,7 @@ var pytangular = {
 			checkbox: ' <input type="checkbox" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs» «popOver»/>',
 			typeahead: '<input type="text" ng-model="«ngModel»" «inputAttrs» «popOver» typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" class="form-control">',
 		},
-		 labelSkeleton: '<label for="«fieldName»" «inputTitle» class="control-label">«fieldLabel»</label>',
+		 labelSkeleton: '<label for="«fieldName»" «inputTitle» class="control-label">«fieldLabel»«labelStar» </label>',
 	},
 	// Xeditable skeletons
 	xeditableSkeletons: {
@@ -60,7 +60,7 @@ var pytangular = {
     		checkbox: ' <span editable-checkbox="«ngModel»" id="«fieldId»" e-title="«title»">{{ «ngModel» && "«trueValue»" || "«falseValue»" }}<span>',
     		typeahead: ' <span editable-text="«ngModel»" «inputAttrs» e-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8">{{ «ngModel» }}</span>',
 		},
-		 labelSkeleton: '<span class="title" «inputTitle»>«fieldLabel» </span>',
+		 labelSkeleton: '<span class="title" «inputTitle»>«fieldLabel»«labelStar» </span>',
 	},
 	build: function () {
 		var modelName = pytangular.config.modelName;
@@ -151,6 +151,7 @@ var pytangular = {
 				}
 
 				var fieldTitle = '';
+				var labelStar = '';
 				// Inset all attributes if exists
 				if (field.input_attrs) {
 					for (var key in field.input_attrs) {
@@ -158,6 +159,10 @@ var pytangular = {
 						// Capture fild title if exists to inset also in the label
 						if (key == 'title') {
 							fieldTitle = 'title="' + field.input_attrs[key] + '"';
+						}
+						// Verify if is required to put * in the label
+						if (key == 'required') {
+							labelStar = '*';
 						}
 					}
 				}
@@ -203,6 +208,8 @@ var pytangular = {
 
 				// Define title to label if exists
 				aField = aField.replace(/«inputTitle»/g, fieldTitle);
+				// Add * to required fields label
+				aField = aField.replace(/«labelStar»/g, labelStar);
 
 				// Define a popover if exists
 				if (field.popover) {
