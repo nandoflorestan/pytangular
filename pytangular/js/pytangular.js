@@ -162,7 +162,8 @@ var pytangular = {
 						}
 						// Verify if is required to put * in the label
 						if (key == 'required') {
-							labelStar = '*';
+							if (formKind == 'xeditableSkeletons') labelStar = '<span data-ng-if="xeditableForm.$visible">*</span>';
+							else labelStar = '*';
 						}
 					}
 				}
