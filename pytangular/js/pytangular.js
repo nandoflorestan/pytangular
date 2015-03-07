@@ -18,7 +18,7 @@ var pytangular = {
 		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<span data-ng-class="«formModel».fieldError[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»' +
-			'<span class="help-block" data-ng-if="«formModel».fieldError[\'«fieldName»\']" data-ng-bind="«formModel».fieldError[\'«fieldName»\']"></span></span>' +
+			'<span class="error-msg" data-ng-if="«formModel».fieldError[\'«fieldName»\']" data-ng-bind="«formModel».fieldError[\'«fieldName»\']"></span></span>' +
 			'<span class="help-block">«helpText»</span>',
 		widgets : {
 			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs» «popOver»/>',
@@ -486,8 +486,6 @@ dvApp.directive('pytangular', function ($compile) {
 			console.log('Directive model:', model, attrs.model);
 			// Create field error
 			model.fieldError = {};
-			// Create field helper
-			model.fieldHelper = {};
 
 			//Add configurations from attrs into pytangular
 			pytangular.config = {
