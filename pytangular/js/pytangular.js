@@ -204,7 +204,7 @@ var pytangular = {
 				} else {
 					aField = aField.replace(/«fieldId»/g, field.name  || '');
 				}
-				// Define helper text if exists
+				// Define helpText if exists
 				aField = aField.replace(/«helpText»/g, field.helpText || '');
 
 				// Define title to label if exists
