@@ -70,24 +70,24 @@
 				</div>
 				<div ng-if="selected=='aEdit'">
 					<pytangular formspec="xeditableForm"
-								xeditable="true"
-								apply-defaults=true
+								use-xeditable="true"
+								apply-defaults="true"
 								model="pytangular"
 								values="values">
 					</pytangular>
 				</div>
 				<div ng-if="selected=='bForm'">
 					<pytangular formspec="templatedSimpleForm"
-								xeditable="false"
-								apply-defaults=true
+								use-xeditable="false"
+								apply-defaults="true"
 								model="pytangular"
 								values="values">
 					</pytangular>
 				</div>
 				<div ng-if="selected=='bEdit'">
 					<pytangular formspec="templatedXeditableForm"
-								xeditable="true"
-								apply-defaults=true
+								use-xeditable="true"
+								apply-defaults="true"
 								model="pytangular"
 								values="values">
 					</pytangular>
@@ -405,7 +405,7 @@
 				},
 				fieldSetsTemplate: fieldSetsTemplate,
 				name: 'cForm',
-				fnSubmit: 'call()',
+				fnSubmit: 'callMe()',
 				fieldsets: [
 					{
 						fields: personDataFields, legend: 'Templated xeditable web form'

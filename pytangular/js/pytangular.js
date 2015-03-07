@@ -35,7 +35,7 @@ var pytangular = {
 			'<form role="form" ' +
 						'id="«formName»"' +
 						'editable-form ' +
-						'onaftersave="«fnSubmit»" ' +
+						'«fnSubmit» ' +
 						'name="«formName»">' +
 				'«formContent»' +
 				'<div class="buttons">' +
@@ -60,7 +60,7 @@ var pytangular = {
     		checkbox: ' <span editable-checkbox="«ngModel»" id="«fieldId»" e-title="«title»">{{ «ngModel» && "«trueValue»" || "«falseValue»" }}<span>',
     		typeahead: ' <span editable-text="«ngModel»" «inputAttrs» e-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8">{{ «ngModel» }}</span>',
 		},
-		 labelSkeleton: '<span class="title" «inputTitle»>«fieldLabel»«labelStar» </span>',
+		 labelSkeleton: '<span class="title" «inputTitle»>«fieldLabel»</span>«labelStar» ',
 	},
 	build: function () {
 		var modelName = pytangular.config.modelName;
@@ -161,8 +161,11 @@ var pytangular = {
 						}
 						// Verify if is required to put * in the label
 						if (key == 'required') {
-							if (formKind == 'xeditableSkeletons') labelStar = '<span data-ng-if="xeditableForm.$visible">*</span>';
-							else labelStar = '*';
+							if (formKind == 'xeditableSkeletons') {
+								labelStar = '<span ng-if="xeditableForm.$visible">*</span>';
+							} else {
+								labelStar = '*';
+							}
 						}
 					}
 				}
@@ -302,9 +305,15 @@ var pytangular = {
 				// TODO: Fix function problem with angular xeditable
 				if (button.action) {
 					if (button.type == 'submit' || button.action == 'submitForm') {
-						fnSubmit = 'onsubmit="pytangular.actions.' + button.action + '(' + btIndex + ')"';
+						if (formKind == 'simpleSkeletons') {
+							fnSubmit = 'onsubmit="pytangular.actions.' + button.action + '(' + btIndex + ')"';
+						} else {
+							fnSubmit = 'onaftersave="pytangular.actions.' + button.action + '(' + btIndex + ')"';
+						}
 					} else {
-						btAttrs += 'onclick="pytangular.actions.' + button.action + '(' + btIndex + ');"';
+						if (formKind == 'simpleSkeletons') {
+							btAttrs += 'onclick="pytangular.actions.' + button.action + '(' + btIndex + ');"';
+						}
 					}
 				}
 
