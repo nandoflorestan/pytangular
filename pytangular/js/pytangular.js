@@ -60,7 +60,7 @@ var pytangular = {
     		checkbox: ' <span editable-checkbox="«ngModel»" id="«fieldId»" e-title="«title»">{{ «ngModel» && "«trueValue»" || "«falseValue»" }}<span>',
     		typeahead: ' <span editable-text="«ngModel»" «inputAttrs» e-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8">{{ «ngModel» }}</span>',
 		},
-		 labelSkeleton: '<span class="title">«fieldLabel» </span>',
+		 labelSkeleton: '<span class="title" «inputTitle»>«fieldLabel» </span>',
 	},
 	build: function () {
 		var modelName = pytangular.config.modelName;
@@ -396,13 +396,12 @@ dvApp.directive('pytangular', function ($compile) {
 			if (!attrs.model) throw 'Missing attribute "model" of directive "pytangular"';
 
 			// Create complex object model
-			// its subistitue the old code:
-			// $scope[attrs.model] || window[attrs.model];
-			// This way it deals with complex models like "model.selected.asset"
+			// its replace the old code: '$scope[attrs.model] || window[attrs.model];''
+			// This way it deals with complex models like 'model.selected.asset'
 			// Use split to divide the model name string in each dot than register
 			// each part of object in tempModel with the nex variable (the key)
 			var model = attrs.model.split('.');
-			// If model exist is complex object, else is just a simple string name (no dot)
+			// If model exist is a complex object, else is just a simple string name (no dot)
 			if (model) {
 				// Select model for complex string (has dots like in model.selected.asset)
 				var tempModel = $scope;
@@ -479,11 +478,9 @@ dvApp.directive('pytangular', function ($compile) {
 			}
 
 			$scope.formSpecName = attrs.formspec;
-			var applyDefaults = attrs.applyDefaults;
+			var applyDefaults = attrs.applyDefaults || true;
 			var xeditable = attrs.xeditable || false;
 
-			console.log('Directive values:', values, attrs.values, applyDefaults);
-			console.log('Directive model:', model, attrs.model);
 			// Create field error
 			model.errors = {};
 
@@ -503,7 +500,7 @@ dvApp.directive('pytangular', function ($compile) {
 			var content = linkFn($scope);
 			element.append(content);
 			// Populate the form with values or default attrs of formSpec
-			if (values || applyDefaults) {
+			if (values || applyDefaults != 'false') {
 				pytangular.populate(pytangular.config);
 			}
 		},
