@@ -439,14 +439,17 @@ dvApp.directive('pytangular', function ($compile) {
 					formSpec.forEach(function (key) {
 						tempFormSpec = tempFormSpec[key];
 					});
-					formSpec = tempFormSpec; // window.formSpec
+					$scope['formSpec'] = tempFormSpec; // window.formSpec
 				} else {
-					formSpec = tempFormSpec; // $scope.formSpec
+					$scope['formSpec'] = tempFormSpec; // $scope.formSpec
 				}
 			} else {
 				// Select formSpec for simple string (no dot)
-				if ($scope[attrs.formSpec]) formSpec = $scope[attrs.formSpec];
-				else formSpec = window[attrs.formSpec];
+				if ($scope[attrs.formSpec]) {
+					$scope['formSpec'] = $scope[attrs.formSpec];
+				} else {
+					$scope['formSpec'] = window[attrs.formSpec];
+				}
 			}
 
 			// Do the same as model, but values is optional so need check if exists
@@ -488,7 +491,7 @@ dvApp.directive('pytangular', function ($compile) {
 
 			//Add configurations from attrs into pytangular
 			pytangular.config = {
-				formSpec: formSpec,
+				formSpec: $scope['formSpec'],
 				formSpecName: $scope.formSpecName,
 				xeditable: xeditable,
 				values: values || {},
