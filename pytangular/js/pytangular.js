@@ -1,8 +1,8 @@
 'use strict';
 
 var pytangular = {
-	// Hold all configuration variables defined in the directive
-	config: {},
+	// A *config* variable is injected into this object.
+
 	actions: {
 		submitForm: function (btIndex) {
 			var method = pytangular.config.formSpec.buttons[btIndex].method || 'POST';
@@ -67,11 +67,10 @@ var pytangular = {
 		var formSpec = pytangular.config.formSpec;
 		var formTemplate = '';
 
-		// Allow select the kind of skeleton to use, if simples field or xeditable
-		if (pytangular.config.xeditable == undefined || pytangular.config.xeditable != 'true') {
-			var formKind = 'simpleSkeletons';
-		} else if (pytangular.config.xeditable == 'true'){
+		if (pytangular.config.useXeditable) {
 			var formKind = 'xeditableSkeletons';
+		} else {
+			var formKind = 'simpleSkeletons';
 		}
 
 		// Hold all fieldSets
@@ -321,8 +320,14 @@ var pytangular = {
 
 		return formTemplate;
 	},
-	//populate receives a dict with model, form, values, applyDefaults = true
+
 	populate: function (options) {
+		/* *options* must contain:
+			- formspec: a form description including fieldsets and fields
+			- values: initial field values
+			- model: where angular keeps the state
+			- applyDefaults: whether or not to apply default values contained in the formspec.
+		*/
 		options.formSpec.fieldsets.forEach(function (fieldset) {
 			fieldset.fields.forEach(function (field) {
 				options.model[field.model] = null;
@@ -402,6 +407,10 @@ dvApp.directive('pytangular', function ($compile) {
 		link: function ($scope, element, attrs) {
 			if (!attrs.formspec) throw 'Missing attribute "formspec" of directive "pytangular"';
 			if (!attrs.model) throw 'Missing attribute "model" of directive "pytangular"';
+
+			var useXeditable = attrs.useXeditable == 'true';
+			// applyDefaults is true by default
+			var applyDefaults = attrs.applyDefaults != 'false';
 
 			// Create complex object model
 			// its replace the old code: '$scope[attrs.model] || window[attrs.model];''
@@ -486,17 +495,26 @@ dvApp.directive('pytangular', function ($compile) {
 			}
 
 			$scope.formSpecName = attrs.formspec;
-			var applyDefaults = attrs.applyDefaults || true;
-			var xeditable = attrs.xeditable || false;
 
 			// Create field error
 			model.errors = {};
 
-			//Add configurations from attrs into pytangular
+			/* TODO:
+			var builder = new pytangular({
+				formSpec: $scope['formSpec'],
+				formSpecName: $scope.formSpecName,
+				useXeditable: useXeditable,
+				values: values || {},
+				model: model,
+				modelName: attrs.model,
+				applyDefaults: applyDefaults,
+				});
+			*/
+
 			pytangular.config = {
 				formSpec: $scope['formSpec'],
 				formSpecName: $scope.formSpecName,
-				xeditable: xeditable,
+				useXeditable: useXeditable,
 				values: values || {},
 				model: model,
 				modelName: attrs.model,
@@ -508,7 +526,7 @@ dvApp.directive('pytangular', function ($compile) {
 			var content = linkFn($scope);
 			element.append(content);
 			// Populate the form with values or default attrs of formSpec
-			if (values || applyDefaults != 'false') {
+			if (values || applyDefaults) {
 				pytangular.populate(pytangular.config);
 			}
 		},
