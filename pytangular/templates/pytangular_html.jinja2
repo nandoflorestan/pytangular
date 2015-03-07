@@ -1,13 +1,5 @@
-<pytangular formspec="theForm" values="values" model="bruh" apply-defaults="true">
-</pytangular>
-
-<script>
-	"use strict;"
-	var formspec = {$ formspec|json|safe $};
-	var state = {};
-	// TODO The above vars belong inside theForm:
-	var theForm = {
-		values: {$ values|json|safe $},
-		errors: {$ errors|json|safe $},
-	};
-</script>
+<div ng-controller="genericFormController">
+	<pytangular formspec="theForm.formspec" values="values"
+		model="theForm.state"
+		apply-defaults="true"></pytangular>
+</div>

@@ -1,0 +1,12 @@
+<script>
+	"use strict;"
+	dvApp.controller('genericFormController', function ($scope, $filter) {
+		$scope.values = {$ values|json|safe $};
+		// TODO values belong inside theForm below
+		$scope.theForm = {
+			formspec: {$ formspec|json|safe $},
+			errors: {$ errors|json|safe $},
+			state: {},
+		};
+	});
+</script>
