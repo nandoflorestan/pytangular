@@ -131,7 +131,6 @@ var pytangular = {
 							tempField = tempField.replace(/«prependSymbol»/g, field.prepend);
 							tempField = tempField.replace(/«appendSymbol»/g, field.append);
 							aField = tempField;
-							console.log("ESTOU AQUI!!", field.prepend, prepend, append);
 						}
 					}
 					aField = aField.replace(/«inputType»/g, field.widget);
