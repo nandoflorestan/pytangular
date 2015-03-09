@@ -7,6 +7,16 @@
 		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 		<link href="xeditable.css" rel="stylesheet">
 		<style>
+			/* Let me specify the damn *size* attribute. Please, bootstrap? */
+			.form-control {
+			  width: auto;
+			}
+
+			.form-horizontal input + .help-block, .form-horizontal select + .help-block, .form-horizontal textarea + .help-block, .form-horizontal .uneditable-input + .help-block, .form-horizontal .input-prepend + .help-block, .form-horizontal .input-append + .help-block{
+			  margin-top: 3px; /* keep help text close to the input above it */
+			}
+			span.error { font-weight: bold; }
+			/* Fields config */
 			.container {
 				width: 50em;
 				display: inline-block;
@@ -141,6 +151,22 @@
 					}
 				},
 				{
+					widget: 'text',
+					label: 'Pretended salary',
+					name: 'salary',
+					model: 'salary',
+					default: '100000',
+					append: '<span>.00</span>',
+					prepend: '<span>$</span>',
+					popover: {msg: 'How greed you are?', placement: 'bottom'},
+					input_attrs:{
+						'data-test': 'test',
+						'size': 4,
+						'required': 'required',
+						'style': 'text-align: right;',
+					}
+				},
+				{
 					widget: 'number',
 					label: 'Age',
 					name: 'age',
@@ -149,7 +175,7 @@
 					input_attrs: {
 						'data-test': 'test',
 						'data-ng-teste2': 'outro-teste',
-						'style': 'width: 4em;',
+						'style': 'width: 5em;',
 					},
 				},
 				{
@@ -157,9 +183,11 @@
 					label: 'E-mail',
 					name: 'email',
 					model: 'email',
+					append: '<span class="glyphicon glyphicon-envelope"></span>',
 					helpText: 'Type your e-mail',
 					input_attrs: {
-						'style': 'width: 14em;',
+						// 'style': 'width: 14em;',
+						size: 14
 					},
 				},
 				{
@@ -167,6 +195,7 @@
 					label: 'Password',
 					name: 'pwd',
 					model: 'pwd',
+					prepend: '<span class="glyphicon glyphicon-lock"></span>',
 					helpText: 'Mix numbers and letters',
 					input_attrs: {
 						'style': 'width: 10em;',
@@ -285,7 +314,7 @@
 								'<td>add(color)</td><td>add(age)</td>' +
 							'</tr>' +
 							'<tr>' +
-								'<td>add(kind)</td>' +
+								'<td valign="top">add(kind)</td><td valign="top">add(salary)</td>' +
 							'</tr>' +
 							'<tr>' +
 								'<td colspan="2">add(msg)</td>' +

@@ -22,6 +22,9 @@ var pytangular = {
 			'<span class="error-msg" data-ng-if="«formModel».errors[\'«fieldName»\']" data-ng-bind="«formModel».errors[\'«fieldName»\']"></span></span>' +
 			'<span class="help-block">«helpText»</span>',
 		widgets : {
+			inputGroup: '<div class="input-group">«prepend»«defaultTemplate»«append»</div>',
+			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
+			append: '<div class="input-group-addon">«appendSymbol»</div>',
 			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
 			select: '<select class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
 			textarea: '<textarea class="form-control" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>',
@@ -91,10 +94,13 @@ var pytangular = {
 			fieldset.fields.forEach(function (field) {
 				// Hold individual fields;
 				var aField = '';
+				var aLabel = '';
 				// Define label if exists
 				if (field.label) {
-					aField += pytangular[formKind].labelSkeleton;
-					aField = aField.replace(/«fieldLabel»/g, field.label  || ' ');
+					// aField += pytangular[formKind].labelSkeleton;
+					// aField = aField.replace(/«fieldLabel»/g, field.label  || '');
+					aLabel = pytangular[formKind].labelSkeleton;
+					aLabel = aLabel.replace(/«fieldLabel»/g, field.label  || '');
 				}
 
 				// Define the type of field and get the input template
@@ -106,6 +112,20 @@ var pytangular = {
 					} else {
 						// Default inputs
 						aField += pytangular[formKind].widgets.defaultTemplate;
+						// Verify for append and prepend and add if exists
+						if (field.append || field.prepend) {
+							var tempField = pytangular[formKind].widgets.inputGroup;
+							if (field.prepend) var prepend = pytangular[formKind].widgets.prepend;
+							if (field.append) var append = pytangular[formKind].widgets.append;
+
+							tempField = tempField.replace(/«defaultTemplate»/g, aField);
+							tempField = tempField.replace(/«prepend»/g, prepend || '');
+							tempField = tempField.replace(/«append»/g, append || '');
+							tempField = tempField.replace(/«prependSymbol»/g, field.prepend);
+							tempField = tempField.replace(/«appendSymbol»/g, field.append);
+							aField = tempField;
+							console.log("ESTOU AQUI!!", field.prepend, prepend, append);
+						}
 					}
 					aField = aField.replace(/«inputType»/g, field.widget);
 				// Special inputs
@@ -136,6 +156,9 @@ var pytangular = {
 					var typeaheadList = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
 					aField = aField.replace(/«typeaheadList»/g, typeaheadList);
 				}
+
+				// After select the type of imput add de label before it
+				aField = aLabel + aField;
 
 				// Build all other field attributes
 				var aFieldAttrs = '';
@@ -226,9 +249,8 @@ var pytangular = {
 				aField = aField.replace(/«popOver»/g, popoverAtrr || '');
 
 				// Define the models
-					aField = aField.replace(/«formModel»/g, modelName || ' ');
-					aField = aField.replace(/«ngModel»/g, ngModel || ' ');
-
+					aField = aField.replace(/«formModel»/g, modelName || '');
+					aField = aField.replace(/«ngModel»/g, ngModel || '');
 				// Inset this field into the aFieldSet object organized by field name
 				aFieldSet[field.name] = aField;
 				// Increment fields index
