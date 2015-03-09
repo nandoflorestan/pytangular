@@ -11,6 +11,7 @@ from nine import IS_PYTHON2, nimport, nine, range, str, basestring
 
 
 colander_types = {  # maps SQLAlchemy types to colander types
+    types.Boolean: c.Boolean,
     types.String: c.String,
     types.Unicode: c.String,
     types.Date: c.Date,
@@ -68,6 +69,7 @@ def schema_to_dict(*schemas, mode='simple'):
             if node.description:
                 field['helpText'] = node.description
             _copy_attr(node, 'tooltip', field, 'title')
+            _copy_attr(node, 'popover', field)
 
             # Bootstrap prepend and append
             _copy_attr(node, 'prepend', field)
