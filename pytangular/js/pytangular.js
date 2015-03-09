@@ -113,7 +113,7 @@ var pytangular = {
 						// Default inputs
 						aField += pytangular[formKind].widgets.defaultTemplate;
 						// Verify for append and prepend and add if exists
-						if (field.append || field.prepend) {
+						if ((field.append || field.prepend) && formKind == 'simpleSkeletons') {
 							var tempField = pytangular[formKind].widgets.inputGroup;
 							if (field.prepend) var prepend = pytangular[formKind].widgets.prepend;
 							if (field.append) var append = pytangular[formKind].widgets.append;
@@ -438,6 +438,7 @@ var pytangular = {
 
 dvApp.directive('pytangular', function ($compile) {
 	return {
+
 		restrict: 'E',
 		link: function ($scope, element, attrs) {
 			if (!attrs.formspec) throw 'Missing attribute "formspec" of directive "pytangular"';
@@ -448,85 +449,15 @@ dvApp.directive('pytangular', function ($compile) {
 			var applyDefaults = attrs.applyDefaults != 'false';
 
 			// Create complex object model
-			// its replace the old code: '$scope[attrs.model] || window[attrs.model];''
-			// This way it deals with complex models like 'model.selected.asset'
-			// Use split to divide the model name string in each dot than register
-			// each part of object in tempModel with the nex variable (the key)
-			var model = attrs.model.split('.');
-			// If model exist is a complex object, else is just a simple string name (no dot)
-			if (model) {
-				// Select model for complex string (has dots like in model.selected.asset)
-				var tempModel = $scope;
-				model.forEach(function (key) {
-					tempModel = tempModel[key];
-				});
-				if (!tempModel) {
-					var tempModel = window;
-					model.forEach(function (key) {
-						tempModel = tempModel[key];
-					});
-					model = tempModel; // window.model
-				} else {
-					model = tempModel; // $scope.model
-				}
-			} else {
-				// Select model for simple string (no dot)
-				if ($scope[attrs.model]) model = $scope[attrs.model];
-				else model = window[attrs.model];
-			}
-
-			// Do the same as model, this replace this old code:
-			// $scope.formSpec = $scope[attrs.formspec] || window[attrs.formspec];
-			var formSpec = attrs.formspec.split('.');
-			// If model exist is complex object, else is just a simple string name (no dot)
-			if (formSpec) {
-				// Select model for complex string (has dots like in model.selected.asset)
-				var tempFormSpec = $scope;
-				formSpec.forEach(function (key) {
-					tempFormSpec = tempFormSpec[key];
-				});
-				if (!tempFormSpec) {
-					var tempFormSpec = window;
-					formSpec.forEach(function (key) {
-						tempFormSpec = tempFormSpec[key];
-					});
-					$scope['formSpec'] = tempFormSpec; // window.formSpec
-				} else {
-					$scope['formSpec'] = tempFormSpec; // $scope.formSpec
-				}
-			} else {
-				// Select formSpec for simple string (no dot)
-				if ($scope[attrs.formSpec]) {
-					$scope['formSpec'] = $scope[attrs.formSpec];
-				} else {
-					$scope['formSpec'] = window[attrs.formSpec];
-				}
-			}
+			var model =  $scope.$eval(attrs.model);
+			var formSpec = $scope.$eval(attrs.formspec);
+			// Add formSpec on scope
+			$scope['formSpec'] = formSpec;
 
 			// Do the same as model, but values is optional so need check if exists
-			if (attrs.values) {
-				var values = attrs.values.split('.');
-				// If model exist is complex object, else is just a simple string name (no dot)
-				if (values) {
-					// Select model for complex string (has dots like in values.selected.asset)
-					var tempValues = $scope;
-					values.forEach(function (key) {
-						tempValues = tempValues[key];
-					});
-					if (!tempValues) {
-						var tempValues = window;
-						values.forEach(function (key) {
-							tempValues = tempValues[key];
-						});
-						values = tempValues; // window.values
-					} else {
-						values = tempValues; // $scope.values
-					}
-				} else {
-					// Select values for simple string (no dot)
-					if ($scope[attrs.values]) values = $scope[attrs.values];
-					else values = window[attrs.values];
-				}
+			var values = attrs.values;
+			if (values) {
+				values = $scope.$eval(attrs.values);
 			}
 
 			$scope.formSpecName = attrs.formspec;
