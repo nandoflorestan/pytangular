@@ -492,12 +492,12 @@ dvApp.directive('pytangular', function ($compile) {
 				var formaction = pytangular.config.formSpec.buttons[btIndex].formaction || '';
 
 				var myForm = document.createElement("form");
-				myForm.method="post" ;
+				myForm.method = "post" ;
 				myForm.action = formaction ;
-				for (var k in model) {
+				for (var key in model) {
 				  var myInput = document.createElement("input") ;
-				  myInput.setAttribute("name", k) ;
-				  myInput.setAttribute("value", model[k]);
+				  myInput.setAttribute("name", key) ;
+				  myInput.setAttribute("value", model[key]);
 				  myForm.appendChild(myInput) ;
 				}
 				document.body.appendChild(myForm) ;
