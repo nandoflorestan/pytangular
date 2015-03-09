@@ -5,11 +5,11 @@ var pytangular = {
 
 	// TODO Remove actions in favor of formaction and formmethod.
 	actions: {
-		submitForm: function (btIndex) {
-			var method = pytangular.config.formSpec.buttons[btIndex].method || 'POST';
-			var url = pytangular.config.formSpec.buttons[btIndex].url || '';
-			document.getElementById(pytangular.config.formSpecName).submit();
-		},
+		// submitForm: function (btIndex) {
+		// 	var method = pytangular.config.formSpec.buttons[btIndex].method || 'POST';
+		// 	var url = pytangular.config.formSpec.buttons[btIndex].url || '';
+		// 	document.getElementById(pytangular.config.formSpecName).submit();
+		// },
 	},
 	// Hold the form field names
 	resetableFields: [],
@@ -310,9 +310,9 @@ var pytangular = {
 				//if (button.action) {
 					if (button.type == 'submit' && !button.action) {
 						if (formKind == 'simpleSkeletons') {
-							fnSubmit = 'data-ng-submit="pytangular.actions.submitForm(' + btIndex + ')"';
+							fnSubmit = 'data-ng-submit="submitForm(' + btIndex + ')"';
 						} else {
-							fnSubmit = 'onaftersave="pytangular.actions.submitForm(' + btIndex + ')"';
+							fnSubmit = 'onaftersave="submitForm(' + btIndex + ')"';
 						}
 					} else {
 						if (formKind == 'simpleSkeletons') {
@@ -533,6 +533,14 @@ dvApp.directive('pytangular', function ($compile) {
 				modelName: attrs.model,
 				applyDefaults: applyDefaults,
 			};
+
+			$scope.submitForm = function (btIndex, $http) {
+				console.log("submit");
+				//var method = pytangular.config.formSpec.buttons[btIndex].method || 'POST';
+				var url = pytangular.config.formSpec.buttons[btIndex].url || '';
+				$http.post(url, model);
+				//document.getElementById(pytangular.config.formSpecName).submit();
+			}
 
 			var template = pytangular.build();
 			var linkFn = $compile(template);
