@@ -534,12 +534,22 @@ dvApp.directive('pytangular', function ($compile) {
 				applyDefaults: applyDefaults,
 			};
 
-			$scope.submitForm = function (btIndex, $http) {
-				console.log("submit");
-				//var method = pytangular.config.formSpec.buttons[btIndex].method || 'POST';
-				var url = pytangular.config.formSpec.buttons[btIndex].url || '';
-				$http.post(url, model);
-				//document.getElementById(pytangular.config.formSpecName).submit();
+			$scope.submitForm = function (btIndex) {
+				var method = pytangular.config.formSpec.buttons[btIndex].method || 'post';
+				var formaction = pytangular.config.formSpec.buttons[btIndex].formaction || '';
+
+				var myForm = document.createElement("form");
+				myForm.method="post" ;
+				myForm.action = formaction ;
+				for (var k in model) {
+				  var myInput = document.createElement("input") ;
+				  myInput.setAttribute("name", k) ;
+				  myInput.setAttribute("value", model[k]);
+				  myForm.appendChild(myInput) ;
+				}
+				document.body.appendChild(myForm) ;
+				myForm.submit() ;
+				document.body.removeChild(myForm) ;
 			}
 
 			var template = pytangular.build();
