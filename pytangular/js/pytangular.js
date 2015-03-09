@@ -271,9 +271,12 @@ var pytangular = {
 				else  btClass += 'btn-default';
 
 
-				if (button.type || button.action == 'submitForm') {
+				if (button.type) { // || button.action == 'submitForm') {
 					var type = button.type || 'submit';
 					var btType = ' type="' + type + '"';
+					if (formSpec.fnSubmit == undefined) {
+						var autoSubmitFunction = true;
+					}
 				} else {
 					var btType = ' type="button"';
 				}
@@ -296,27 +299,27 @@ var pytangular = {
 				}
 
 				// Inset all attributes if exists
-				var btAttrs = ' ';
+				var btAttrs = '';
 				if (button.attrs) {
 					for (var key in button.attrs) {
 						btAttrs += key + '="' + button.attrs[key] + '" ';
 					}
 				}
 
-				// TODO: Fix function problem with angular xeditable
-				if (button.action) {
-					if (button.type == 'submit' || button.action == 'submitForm') {
+				// Action buttons kind (submitForm is default)
+				//if (button.action) {
+					if (button.type == 'submit' && !button.action) {
 						if (formKind == 'simpleSkeletons') {
-							fnSubmit = 'onsubmit="pytangular.actions.' + button.action + '(' + btIndex + ')"';
+							fnSubmit = 'data-ng-submit="pytangular.actions.submitForm(' + btIndex + ')"';
 						} else {
-							fnSubmit = 'onaftersave="pytangular.actions.' + button.action + '(' + btIndex + ')"';
+							fnSubmit = 'onaftersave="pytangular.actions.submitForm(' + btIndex + ')"';
 						}
 					} else {
 						if (formKind == 'simpleSkeletons') {
-							btAttrs += 'onclick="pytangular.actions.' + button.action + '(' + btIndex + ');"';
+							btAttrs += 'data-ng-submit="pytangular.actions.' + button.action + '(' + btIndex + ');"';
 						}
 					}
-				}
+				//}
 
 				btTemplate += '<button class="' + btClass + '"' + btType + btAttrs + '>' + btIcon + button.label + '</button> ';
 			});
