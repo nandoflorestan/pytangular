@@ -3,6 +3,7 @@
 var pytangular = {
 	// A *config* variable is injected into this object.
 
+	// TODO Remove actions in favor of formaction and formmethod.
 	actions: {
 		submitForm: function (btIndex) {
 			var method = pytangular.config.formSpec.buttons[btIndex].method || 'POST';
@@ -21,10 +22,10 @@ var pytangular = {
 			'<span class="error-msg" data-ng-if="«formModel».errors[\'«fieldName»\']" data-ng-bind="«formModel».errors[\'«fieldName»\']"></span></span>' +
 			'<span class="help-block">«helpText»</span>',
 		widgets : {
-			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs» «popOver»/>',
-			select: '<select class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
-			textarea: '<textarea class="form-control" data-ng-model="«ngModel»" id="«fieldId»" «inputAttrs» «popOver»></textarea>',
-			checkbox: ' <input type="checkbox" id="«fieldId»" data-ng-model="«ngModel»" name="«fieldName»" «inputAttrs» «popOver»/>',
+			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
+			select: '<select class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
+			textarea: '<textarea class="form-control" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>',
+			checkbox: ' <input type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
 			typeahead: '<input type="text" ng-model="«ngModel»" «inputAttrs» «popOver» typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" class="form-control">',
 		},
 		 labelSkeleton: '<label for="«fieldName»" «inputTitle» class="control-label">«fieldLabel»«labelStar» </label>',
@@ -251,7 +252,7 @@ var pytangular = {
 		// Insert all fields inside formSkeleton
 		formTemplate = pytangular[formKind].formSkeleton.replace(/«formContent»/g, formTemplate);
 		// Insert form name
-		formTemplate = formTemplate.replace(/«formName»/g, pytangular.config.formSpecName || ' ');
+		formTemplate = formTemplate.replace(/«formName»/g, pytangular.config.formSpecName || 'defaultForm');
 
 		// Help build fnSubmition attribute
 		var fnSubmit = '';
@@ -269,14 +270,14 @@ var pytangular = {
 				if (button.class) btClass += button.class;
 				else  btClass += 'btn-default';
 
-				// Check type of button
+
 				if (button.type || button.action == 'submitForm') {
 					var type = button.type || 'submit';
 					var btType = ' type="' + type + '"';
 				} else {
 					var btType = ' type="button"';
 				}
-				// Check for icon and make more easy
+
 				if (button.icon) {
 					var btIcon = '<span class="glyphicon glyphicon-' + button.icon + '"></span> ';
 				} else {
