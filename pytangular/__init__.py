@@ -4,9 +4,28 @@
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
+import colander as c
+from sqlalchemy import types
 from json import dumps
 from nine import IS_PYTHON2, nimport, nine, range, str, basestring
-import colander as c
+
+
+colander_types = {  # maps SQLAlchemy types to colander types
+    types.String: c.String,
+    types.Unicode: c.String,
+    types.Date: c.Date,
+    types.Time: c.Time,
+    types.DateTime: c.DateTime,
+    types.Integer: c.Integer,
+    types.Float: c.Float,
+    types.DECIMAL: c.Decimal,
+    # types.Enum: build_enumeration,
+    }
+
+
+def _colander_type_from(attrib):
+    sqla_type = type(attrib.property.columns[0].type)
+    return colander_types[sqla_type]
 
 
 def schema_to_json(*a, **kw):
@@ -49,6 +68,11 @@ def schema_to_dict(*schemas, mode='simple'):
             if node.description:
                 field['helpText'] = node.description
             _copy_attr(node, 'tooltip', field, 'title')
+
+            # Bootstrap prepend and append
+            _copy_attr(node, 'prepend', field)
+            _copy_attr(node, 'append', field)
+
             _copy_attr(node, 'size', attrs)
             _copy_attr(node, 'maxlength', attrs)
 
@@ -144,8 +168,26 @@ def text_node(attrib, min_size=4, max_size=60, **kw):
     # print(kw)
 
     # TODO Add Length validator if not present
-    # TODO Infer colander type based on sqlalchemy type
-    return c.SchemaNode(c.Str(), **kw)
+
+    # Infer the type and return a SchemaNode
+    return c.SchemaNode(_colander_type_from(attrib)(), **kw)
+
+
+def select_node(attrib, options, validators=None, **kw):
+    '''*attrib* must be the SQLAlchemy model attribute where the value
+        will be stored. *options* should be a sequence of (value, label)
+        tuples. Additional *validators* may be passed in, but this function
+        creates a OneOf validator, too.
+        '''
+    assert isinstance(options, (list, tuple, set, frozenset))
+    one_of = c.OneOf([t[0] for t in options])
+    validator = c.All(one_of, *validators) if validators else one_of
+    return c.SchemaNode(
+        _colander_type_from(attrib)(),
+        widget='select',
+        options=[{'value': t[0], 'label': t[1]} for t in options],
+        validator=validator,
+        **kw)
 
 
 class PytangularSchema(c.MappingSchema):
