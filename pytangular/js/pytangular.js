@@ -66,6 +66,13 @@ var pytangular = {
 		},
 		 labelSkeleton: '<span class="title" «inputTitle»>«fieldLabel»</span>«labelStar» ',
 	},
+
+	// TODO Switch to a more structured hierarchy:
+	skeletons: {
+		'simple': {},
+		'xeditable': {},
+	},
+
 	build: function () {
 		var modelName = pytangular.config.modelName;
 		var formSpec = pytangular.config.formSpec;
