@@ -8,12 +8,12 @@
 		<link href="xeditable.css" rel="stylesheet">
 		<style>
 			/* Let me specify the damn *size* attribute. Please, bootstrap? */
-			.form-control {
-			  width: auto;
+			.form-control, .input-group-addon {
+				width: auto;
 			}
 
 			.form-horizontal input + .help-block, .form-horizontal select + .help-block, .form-horizontal textarea + .help-block, .form-horizontal .uneditable-input + .help-block, .form-horizontal .input-prepend + .help-block, .form-horizontal .input-append + .help-block{
-			  margin-top: 3px; /* keep help text close to the input above it */
+				margin-top: 3px; /* keep help text close to the input above it */
 			}
 			span.error { font-weight: bold; }
 			/* Fields config */
@@ -131,10 +131,10 @@
 					model: 'name',
 					default: 'Igor',
 					popover: {msg: 'Type your name here!', placement: 'top'},
+					size: 35,
 					input_attrs: {
 						'title': 'This is a title on field and label',
 						'data-test': 'test',
-						'style': 'width: 20em;',
 					}
 				},
 				{
@@ -142,11 +142,11 @@
 					label: 'Fone',
 					name: 'fone',
 					model: 'fone',
+					size: 12,
 					default: '5585-4455',
 					popover: {msg: 'Type your fone', placement: 'bottom'},
 					input_attrs:{
 						'data-test': 'test',
-						'style': 'width: 12em;',
 						'required': 'required',
 					}
 				},
@@ -159,9 +159,9 @@
 					append: '<span>.00</span>',
 					prepend: '<span>$</span>',
 					popover: {msg: 'How greed you are?', placement: 'bottom'},
+					size: 3,
 					input_attrs:{
 						'data-test': 'test',
-						'size': 4,
 						'required': 'required',
 						'style': 'text-align: right;',
 					}
@@ -175,7 +175,6 @@
 					input_attrs: {
 						'data-test': 'test',
 						'data-ng-teste2': 'outro-teste',
-						'style': 'width: 5em;',
 					},
 				},
 				{
@@ -185,10 +184,6 @@
 					model: 'email',
 					append: '<span class="glyphicon glyphicon-envelope"></span>',
 					helpText: 'Type your e-mail',
-					input_attrs: {
-						// 'style': 'width: 14em;',
-						size: 14
-					},
 				},
 				{
 					widget: 'password',

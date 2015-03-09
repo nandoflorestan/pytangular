@@ -25,7 +25,7 @@ var pytangular = {
 			inputGroup: '<div class="input-group">«prepend»«defaultTemplate»«append»</div>',
 			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
 			append: '<div class="input-group-addon">«appendSymbol»</div>',
-			defaultTemplate: '<input type="«inputType»" class="form-control" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
+			defaultTemplate: '<input type="«inputType»" «size» class="form-control" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
 			select: '<select class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
 			textarea: '<textarea class="form-control" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>',
 			checkbox: ' <input type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
@@ -224,6 +224,10 @@ var pytangular = {
 
 				// Insert all field attributes on the template
 				aField = aField.replace(/«inputAttrs»/g, aFieldAttrs);
+
+				// Insert size on the template
+				if (field.size) var size = 'size = "' + field.size + '"';
+				aField = aField.replace(/«size»/g, size || '');
 
 				// Insert the aField inside of fieldSkeleton
 				aField = pytangular[formKind].fieldSkeleton.replace(/«fieldContent»/g, aField);
