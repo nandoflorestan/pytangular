@@ -56,13 +56,13 @@ var pytangular = {
 		fieldSetSkeleton: '<fieldset style="margin-bottom: 2em;"><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<div class="form-group">«fieldContent»</div>',
 		widgets : {
-			defaultTemplate: '<br><span editable-«inputType»="«ngModel»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" e-id="«fieldId»" data-ng-bind="«ngModel»"></span>',
-			password: '<br><span editable-text="«ngModel»" id="«fieldId»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" e-type="password">******</span>',
-			select: '<br><span editable-select="«ngModel»" e-ng-options="item.value as item.label for item in «itemsList»" data-ng-bind="«ngModel»"></span>',
-			textarea: '<br><span editable-textarea="«ngModel»" e-id="«fieldId»" «inputAttrs»>' +
+			defaultTemplate: '<br data-ng-if="«formName».$visible"><span editable-«inputType»="«ngModel»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" e-id="«fieldId»" data-ng-bind="«ngModel»"></span>',
+			password: '<br data-ng-if="«formName».$visible"><span editable-text="«ngModel»" id="«fieldId»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" e-type="password">******</span>',
+			select: '<br data-ng-if="«formName».$visible"><span editable-select="«ngModel»" e-ng-options="item.value as item.label for item in «itemsList»" data-ng-bind="«ngModel»"></span>',
+			textarea: '<br data-ng-if="«formName».$visible"><span editable-textarea="«ngModel»" e-id="«fieldId»" «inputAttrs»>' +
     					'<pre data-ng-bind="«ngModel»"></pre></span>',
     		checkbox: ' <span editable-checkbox="«ngModel»" e-id="«fieldId»" e-title="«title»">{{ «ngModel» && "«trueValue»" || "«falseValue»" }}<span>',
-    		typeahead: '<br><span editable-text="«ngModel»" e-id="«fieldId»" «inputAttrs» e-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" e-typeahead-on-select="onSelect_«fieldName»($item, $model, $label)">{{ «ngModel» }}</span>',
+    		typeahead: '<br data-ng-if="«formName».$visible"><span editable-text="«ngModel»" e-id="«fieldId»" «inputAttrs» e-ng-change="onChange_«fieldName»()" e-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" e-typeahead-on-select="onSelect_«fieldName»($item, $model, $label)">{{ «ngModel» }}</span>',
 		},
 		 labelSkeleton: '<span class="title" «inputTitle»>«fieldLabel»</span>«labelStar» ',
 	},
