@@ -11,7 +11,7 @@
 // .find(predicate) returns a single element, or undefined.
 // Polyfill from ECMAScript 6 (Harmony):
 if (!Array.prototype.find) {
-  Array.prototype.find = function(predicate) {
+  Object.defineProperty(Array.prototype, 'find', function(predicate) {
     if (this == null) {
       throw new TypeError('Array.prototype.find called on null or undefined');
     }
@@ -30,11 +30,11 @@ if (!Array.prototype.find) {
       }
     }
     return undefined;
-  };
+  });
 }
 // Polyfill from ECMAScript 6 (Harmony):
 if (!Array.prototype.findIndex) {
-  Array.prototype.findIndex = function(predicate) {
+  Object.defineProperty(Array.prototype, 'findIndex', function(predicate) {
     if (this == null) {
       throw new TypeError('Array.prototype.findIndex called on null or undefined');
     }
@@ -53,17 +53,17 @@ if (!Array.prototype.findIndex) {
       }
     }
     return -1;
-  };
+  });
 }
 
 
 // Assuming the array items are objects, filter them according to the *conditions* and return a new array.
 // conditions are strings or 2-tuples. Example:
 // arr.query("age >= 7", "city.state != 'CA'", ['name ==', givenName])
-Array.prototype.query = function () {
+Object.defineProperty(Array.prototype, 'query', function () {
 	return this.filter(this._mkPredicate(arguments));
-}
-Array.prototype._mkPredicate = function (conditions) {
+});
+Object.defineProperty(Array.prototype, '_mkPredicate', function (conditions) {
 	return function (elem, i, array) {
 		for (var i = 0; i < conditions.length; i++) {
 			var cond = conditions[i];
@@ -80,45 +80,46 @@ Array.prototype._mkPredicate = function (conditions) {
 		};
 		return true;
 	};
-}
+});
 // Faster: Similar to query(), but stops searching and returns the first found:
-Array.prototype.query1 = function () {
+Object.defineProperty(Array.prototype, 'query1', function () {
 	return this.find(this._mkPredicate(arguments));
-}
-Array.prototype.queryIndex = function () {
+});
+Object.defineProperty(Array.prototype, 'queryIndex', function () {
 	return this.findIndex(this._mkPredicate(arguments));
-}
+});
 
 // [{a: 1}, {a: 2}].listOf('a') returns [1, 2]
-Array.prototype.listOf = function (fieldName) {
+Object.defineProperty(Array.prototype, 'listOf', function (fieldName) {
 	var result = [];
 	for (var i = 0; i < this.length; i++) {
 		result.push(this[i][fieldName]);
 	};
 	return result;
-}
+});
 
 // Replaces or appends a *newObj*
-Array.prototype.put = function (newObj, fieldName) {
+Object.defineProperty(Array.prototype, 'put', function (newObj, fieldName) {
 	fieldName = fieldName || 'id';
 	var index = this.findIndex(function (elem) {
 		if (elem[fieldName] == newObj[fieldName])  return true;
 	});
   if (index == -1)  this.push(newObj);
   else  this.splice(index, 1, newObj);
-}
+});
 
-Array.prototype.remove = function (value, fieldName) {
+Object.defineProperty(Array.prototype, 'remove', function (value, fieldName) {
 	fieldName = fieldName || 'id';
 	var index = this.findIndex(function (elem) {
 		if (elem[fieldName] == value)  return true;
 	});
 	this.splice(index, 1);
-}
+});
 
 /* TESTS
 require('./protoplus.js')
 var a = [{id: 1, cor: 'verde'}, {id: 2, cor: 'vermelho'}, {id: 3, cor: 'amarelo'}, {id: 4, cor: 'azul'}];
+for (var o in a) {console.log(o)};
 a.queryIndex('cor == "verde"')  // 0
 a.queryIndex('cor == "azul"')  // 3
 var azul = 'azul';
