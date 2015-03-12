@@ -14,6 +14,7 @@ colander_types = {  # maps SQLAlchemy types to colander types
     types.Boolean: c.Boolean,
     types.String: c.String,
     types.Unicode: c.String,
+    types.UnicodeText: c.String,
     types.Date: c.Date,
     types.Time: c.Time,
     types.DateTime: c.DateTime,
@@ -105,14 +106,30 @@ def schema_to_dict(*schemas, mode='simple'):
 
 
 def get_validator(typ, node):
-    if isinstance(node.validator, c.All):
-        validators = node.validator.validators
-    else:
-        validators = [node.validator]
+    # The *node* arg actually may be a SchemaNode or a validator
+    original = node.validator if isinstance(node, c.SchemaNode) else node
 
+    # Support All -- Prepare a list for the next step
+    if isinstance(original, c.All):
+        validators = original.validators
+    else:
+        validators = [original]
+
+    # Search for validator by its type
     for validator in validators:
         if isinstance(validator, typ):
             return validator
+
+
+def mix_validators(*validators):
+    '''Gets arbitrary validators and joins them in a single All().'''
+    result = []
+    for validator in validators:
+        if isinstance(validator, c.All):
+            result.extend(validator.validators)
+        else:
+            result.append(validator)
+    return c.All(*result)
 
 
 def get_widget(node):
@@ -121,6 +138,7 @@ def get_widget(node):
 
     if isinstance(node.typ, c.String):
         length_validator = get_validator(c.Length, node)
+        # print(node, length_validator)
         return 'textarea' if length_validator is None else 'text'
 
     typ = type(node.typ)
@@ -167,11 +185,16 @@ def text_node(attrib, min_size=4, max_size=60, **kw):
         if size > max_size:
             size = max_size
         kw['size'] = size
-    # print(kw)
 
-    # TODO Add Length validator if not present
+    # Add Length validator if not present
+    if maxlength:
+        original = kw.get('validator')
+        length_validator = get_validator(c.Length, original)
+        if length_validator is None:
+            kw['validator'] = mix_validators(original, c.Length(max=maxlength))
 
     # Infer the type and return a SchemaNode
+    # print(kw)
     return c.SchemaNode(_colander_type_from(attrib)(), **kw)
 
 
