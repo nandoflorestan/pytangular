@@ -56,8 +56,8 @@ var pytangular = {
 		fieldSetSkeleton: '<fieldset style="margin-bottom: 2em;"><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<div class="form-group">«fieldContent»</div>',
 		widgets : {
-			defaultTemplate: '<br data-ng-if="«formName».$visible"><span editable-«inputType»="«ngModel»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" e-id="«fieldId»" data-ng-bind="«ngModel»"></span>',
-			password: '<br data-ng-if="«formName».$visible"><span editable-text="«ngModel»" id="«fieldId»" e-name="«fieldName»" onbeforesave="check«fieldName»($data)" e-type="password">******</span>',
+			defaultTemplate: '<br data-ng-if="«formName».$visible"><span editable-«inputType»="«ngModel»" «inputAttrs» e-name="«fieldName»" onbeforesave="fieldsValidation($data, \'«fieldName»\')" e-id="«fieldId»" data-ng-bind="«ngModel»"></span>',
+			password: '<br data-ng-if="«formName».$visible"><span editable-text="«ngModel»" id="«fieldId»" e-name="«fieldName»" onbeforesave="fieldsValidation($data, \'«fieldName»\')" e-type="password">******</span>',
 			select: '<br data-ng-if="«formName».$visible"><span editable-select="«ngModel»" e-ng-options="item.value as item.label for item in «itemsList»" data-ng-bind="«ngModel»"></span>',
 			textarea: '<br data-ng-if="«formName».$visible"><span editable-textarea="«ngModel»" e-id="«fieldId»" «inputAttrs»>' +
     					'<pre data-ng-bind="«ngModel»"></pre></span>',
@@ -290,7 +290,11 @@ var pytangular = {
 		var fnSubmit = '';
 		// Verify if form submit function exists and define it
 		if (formSpec.fnSubmit && !fnSubmit) {
-			fnSubmit = 'data-ng-submit="' + formSpec.fnSubmit + '"';
+			if (formKind == 'simpleSkeletons') {
+				fnSubmit = 'data-ng-submit="' + formSpec.fnSubmit + '"';
+			} else {
+				fnSubmit = 'onaftersave="' + formSpec.fnSubmit + '"';
+			}
 		}
 
 		// Add form buttons if is present
@@ -339,13 +343,21 @@ var pytangular = {
 				}
 
 				// Action buttons kind (submitForm is default)
-				//if (button.action) {
-					if (button.type == 'submit' && !button.action) {
+				//if is submit and no fnSubmit and no action, define a default submitForm function
+					if (button.type == 'submit' && (!button.action && !formSpec.fnSubmit)) {
 						if (formKind == 'simpleSkeletons') {
 							fnSubmit = 'data-ng-submit="submitForm(' + btIndex + ')"';
 						} else {
 							fnSubmit = 'onaftersave="submitForm(' + btIndex + ')"';
 						}
+					// If is submit and have fnSubmit use it
+					} else if (button.type == 'submit' && (!button.action && formSpec.fnSubmit)) {
+						if (formKind == 'simpleSkeletons') {
+							fnSubmit = 'data-ng-submit="' + formSpec.fnSubmit + '"';
+						} else {
+							fnSubmit = 'onaftersave="' + formSpec.fnSubmit + '"';
+						}
+					// Else use button.action
 					} else {
 						if (formKind == 'simpleSkeletons') {
 							btAttrs += 'data-ng-submit="pytangular.actions.' + button.action + '(' + btIndex + ');"';
