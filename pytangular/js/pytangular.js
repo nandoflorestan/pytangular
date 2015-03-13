@@ -141,11 +141,11 @@ var pytangular = {
 
 				// If it is a select define the list of values
 				if (field.widget == 'select') {
-					var optionPath = formSpecName + '.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
+					var optionPath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
 					if (field.default) {
-						var selectedPath = 'data-ng-init="«ngModel»=' + formSpecName + '.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].default"';
+						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].default"';
 					} else {
-						var selectedPath = 'data-ng-init="«ngModel»=' + formSpecName + '.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options[0].value"';
+						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options[0].value"';
 					}
 
 					aField = aField.replace(/«itemsList»/g, optionPath);
@@ -153,7 +153,7 @@ var pytangular = {
 				}
 				// If it is a typeahead define the list of values
 				if (field.widget == 'typeahead') {
-					var typeaheadList = formSpecName + '.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
+					var typeaheadList = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
 					aField = aField.replace(/«typeaheadList»/g, typeaheadList);
 				}
 
@@ -431,6 +431,7 @@ var pytangular = {
 
 dvApp.directive('pytangular', function ($compile) {
 	return {
+		scope: true,
 		restrict: 'E',
 		link: function ($scope, element, attrs) {
 			if (!attrs.formspec) throw 'Missing attribute "formspec" of directive "pytangular"';
@@ -449,11 +450,14 @@ dvApp.directive('pytangular', function ($compile) {
 				values = $scope.$eval(attrs.values);
 			}
 
+			// Create a formSpec in directive scope
+			$scope.formSpec = $scope.$eval(attrs.formspec);
+
 			// Insert into model a config file to pytangular methods load need information
 			var config = {
 				model: model,
 				formSpecName: attrs.formspec,
-				formSpec: $scope.$eval(attrs.formspec),
+				formSpec: $scope.formSpec,
 				useXeditable: useXeditable,
 				values: values || '',
 				modelName: attrs.model,
@@ -470,11 +474,14 @@ dvApp.directive('pytangular', function ($compile) {
 				*/
 				var formSpec = config.formSpec;
 				var model = config.model;
-				//var values = $scope[config.valuesPath] || '';
 				var values = config.values || '';
 
 				formSpec.fieldsets.forEach(function (fieldset) {
 					fieldset.fields.forEach(function (field) {
+						// If there is no model use field name as model name
+						if(field.model == undefined) {
+							field.model = field.name;
+						}
 						model[field.model] = null;
 						if (config.applyDefaults && field.default != null) {
 							model[field.model] = field.default;
