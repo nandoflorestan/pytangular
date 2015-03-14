@@ -16,7 +16,7 @@ var pytangular = {
 			inputGroup: '<div class="input-group">«prepend»«defaultTemplate»«append»</div>',
 			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
 			append: '<div class="input-group-addon">«appendSymbol»</div>',
-			defaultTemplate: '<input type="«inputType»" «size» class="form-control" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
+			defaultTemplate: '<input type="«inputType»" «size» «validation» class="form-control" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
 			select: '<select class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
 			textarea: '<textarea class="form-control" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>',
 			checkbox: ' <input type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
@@ -47,8 +47,8 @@ var pytangular = {
 		fieldSetSkeleton: '<fieldset style="margin-bottom: 2em;"><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<div class="form-group">«fieldContent»</div>',
 		widgets : {
-			defaultTemplate: '<br data-ng-if="«formName».$visible"><span editable-«inputType»="«ngModel»" «inputAttrs» e-name="«fieldName»" onbeforesave="fieldsValidation($data, \'«fieldName»\')" e-id="«fieldId»" data-ng-bind="«ngModel»"></span>',
-			password: '<br data-ng-if="«formName».$visible"><span editable-text="«ngModel»" id="«fieldId»" e-name="«fieldName»" onbeforesave="fieldsValidation($data, \'«fieldName»\')" e-type="password">******</span>',
+			defaultTemplate: '<br data-ng-if="«formName».$visible"><span editable-«inputType»="«ngModel»" «inputAttrs» e-name="«fieldName»" «validation» e-id="«fieldId»" data-ng-bind="«ngModel»"></span>',
+			password: '<br data-ng-if="«formName».$visible"><span editable-text="«ngModel»" id="«fieldId»" e-name="«fieldName»" «validation» e-type="password">******</span>',
 			select: '<br data-ng-if="«formName».$visible"><span editable-select="«ngModel»" e-ng-options="item.value as item.label for item in «itemsList»" data-ng-bind="«ngModel»"></span>',
 			textarea: '<br data-ng-if="«formName».$visible"><span editable-textarea="«ngModel»" e-id="«fieldId»" «inputAttrs»>' +
     					'<pre data-ng-bind="«ngModel»"></pre></span>',
@@ -241,7 +241,16 @@ var pytangular = {
 				aField = aField.replace(/«inputTitle»/g, fieldTitle);
 				// Add * to required fields label
 				aField = aField.replace(/«labelStar»/g, labelStar);
-
+				// Add validation function (onbeforesave for xeditable and ng-change to simples forms)
+				var fnValidation = '';
+				if (formSpec.fnValidation) {
+					if (config.useXeditable) {
+					 	fnValidation = 'onbeforesave="' + formSpec.fnValidation + '($data, \'' + field.name + '\')"';
+					} else {
+						fnValidation = 'data-ng-change="' + formSpec.fnValidation + '(«ngModel», \'' + field.name + '\')"';
+					}
+				}
+				aField = aField.replace(/«validation»/g, fnValidation);
 				// Define a popover if exists
 				if (field.popover) {
 					var poptrigger = field.popover.trigger || 'mouseenter';
