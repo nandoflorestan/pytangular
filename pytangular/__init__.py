@@ -122,14 +122,24 @@ def get_validator(typ, node):
 
 
 def mix_validators(*validators):
-    '''Gets arbitrary validators and joins them in a single All().'''
+    '''Gets arbitrary validators and joins them.
+        May return a single All instance, or a single validator, or None.
+        '''
     result = []
     for validator in validators:
+        if validator is None:
+            continue
         if isinstance(validator, c.All):
             result.extend(validator.validators)
         else:
             result.append(validator)
-    return c.All(*result)
+
+    if len(result) == 0:
+        return None
+    elif len(result) == 1:
+        return result[0]
+    else:
+        return c.All(*result)
 
 
 def get_widget(node):
