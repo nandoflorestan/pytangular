@@ -53,7 +53,7 @@ var pytangular = {
 			textarea: '<br data-ng-if="«formName».$visible"><span editable-textarea="«ngModel»" e-id="«fieldId»" «inputAttrs»>' +
     					'<pre data-ng-bind="«ngModel»"></pre></span>',
     		checkbox: ' <span editable-checkbox="«ngModel»" e-id="«fieldId»" e-title="«title»">{{ «ngModel» && "«trueValue»" || "«falseValue»" }}<span>',
-    		typeahead: '<br data-ng-if="«formName».$visible"><span editable-text="«ngModel»" e-id="«fieldId»" «inputAttrs» e-ng-change="onChange_«fieldName»()" e-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" e-typeahead-on-select="onSelect_«fieldName»($item, $model, $label)">{{ «ngModel» }}</span>',
+    		typeahead: '<br data-ng-if="«formName».$visible"><span editable-text="«ngModel»" edit-disabled="«disable»" e-id="«fieldId»" «inputAttrs» «validation» e-ng-change="onChange_«fieldName»()" e-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" e-typeahead-on-select="onSelect_«fieldName»($item, $model, $label)">{{ «ngModel» }}</span>',
 		},
 		 labelSkeleton: '<span class="title" «inputTitle»>«fieldLabel»</span>«labelStar» ',
 	},
@@ -154,7 +154,10 @@ var pytangular = {
 				// If it is a typeahead define the list of values
 				if (field.widget == 'typeahead') {
 					var typeaheadList = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
+					var typeaheadDisable = config.modelName + '.' + field.name + 'Disabled';
+
 					aField = aField.replace(/«typeaheadList»/g, typeaheadList);
+					aField = aField.replace(/«disable»/g, typeaheadDisable);
 				}
 
 				// After select the type of imput add de label before it
@@ -245,7 +248,7 @@ var pytangular = {
 				var fnValidation = '';
 				if (formSpec.fnValidation) {
 					if (config.useXeditable) {
-					 	fnValidation = 'onbeforesave="' + formSpec.fnValidation + '($data, \'' + field.name + '\')"';
+					 	fnValidation = 'onbeforesave="' + formSpec.fnValidation + '($data, \'' + field.name + '\', true)"';
 					} else {
 						fnValidation = 'data-ng-change="' + formSpec.fnValidation + '(«ngModel», \'' + field.name + '\')"';
 					}
