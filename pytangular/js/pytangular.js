@@ -24,6 +24,30 @@ var pytangular = {
 		},
 		 labelSkeleton: '<label for="«fieldName»" «inputTitle» class="control-label">«fieldLabel»«labelStar» </label>',
 	},
+	// Editable field skeletons
+	editSkeletons: {
+		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form><button type="button" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
+		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
+		fieldSkeleton: '<span data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'form-group \'">«fieldContent»' +
+			'<span class="error-msg" data-ng-if="«formModel».errors[\'«fieldName»\']" data-ng-bind="«formModel».errors[\'«fieldName»\']"></span></span>' +
+			'<span class="help-block">«helpText»</span>',
+		widgets : {
+			inputGroup: '<div data-ng-show="«formModel».isEditing" class="input-group">«prepend»«defaultTemplate»«append»</div>',
+			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
+			append: '<div class="input-group-addon">«appendSymbol»</div>',
+			defaultTemplate: '<input data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» class="form-control" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
+				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
+			select: '<select data-ng-show="«formModel».isEditing" class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>' +
+				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
+			textarea: '<textarea data-ng-show="«formModel».isEditing" class="form-control" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>' +
+				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
+			checkbox: ' <input data-ng-show="«formModel».isEditing" type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
+				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
+			typeahead: '<input data-ng-show="«formModel».isEditing" data-ng-change="onChange_«fieldName»()" type="text" ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control">' +
+				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
+		},
+		 labelSkeleton: '<label for="«fieldName»" «inputTitle» class="control-label">«fieldLabel»«labelStar» </label> ',
+	},
 	// Xeditable skeletons
 	xeditableSkeletons: {
 		formSkeleton:
@@ -73,6 +97,8 @@ var pytangular = {
 
 		if (config.useXeditable) {
 			var formKind = 'xeditableSkeletons';
+		} else if (config.useEditForm) {
+			var formKind = 'editSkeletons';
 		} else {
 			var formKind = 'simpleSkeletons';
 		}
@@ -154,7 +180,7 @@ var pytangular = {
 				// If it is a typeahead define the list of values
 				if (field.widget == 'typeahead') {
 					var typeaheadList = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
-					var typeaheadDisable = config.modelName + '.' + field.name + 'Disabled';
+					var typeaheadDisable = modelName + '.' + field.name + 'Disabled';
 
 					aField = aField.replace(/«typeaheadList»/g, typeaheadList);
 					aField = aField.replace(/«disable»/g, typeaheadDisable);
@@ -189,9 +215,9 @@ var pytangular = {
 						// Verify if is required to put * in the label
 						if (key == 'required') {
 							if (config.useXeditable) {
-								labelStar = '<span ng-if="«formName».$visible">*</span>';
+								labelStar = '<span data-ng-if="«formName».$visible">*</span>';
 							} else {
-								labelStar = '*';
+								labelStar = '<span data-ng-if="«formModel».isEditing==true">*</span>';
 							}
 						}
 					}
@@ -313,14 +339,14 @@ var pytangular = {
 				else  btClass += 'btn-default';
 
 
-				if (button.type) { // || button.action == 'submitForm') {
+				if (button.type) {
 					var type = button.type || 'submit';
-					var btType = ' type="' + type + '"';
+					var btType = ' type="' + type + '" data-ng-if=\'«formModel».isEditing==true\'';
 					if (formSpec.fnSubmit == undefined) {
 						var autoSubmitFunction = true;
 					}
 				} else {
-					var btType = ' type="button"';
+					var btType = ' type="button" data-ng-if=\'«formModel».isEditing==true\'';
 				}
 
 				if (button.icon) {
@@ -364,11 +390,12 @@ var pytangular = {
 							fnSubmit = 'data-ng-submit="' + formSpec.fnSubmit + '"';
 						}
 					// Else use button.action
-					} else {
-						if (!config.useXeditable) {
-							btAttrs += 'data-ng-submit="pytangular.actions.' + button.action + '(' + btIndex + ');"';
-						}
 					}
+					//  else {
+					// 	if (!config.useXeditable) {
+					// 		btAttrs += 'data-ng-submit="pytangular.actions.' + button.action + '(' + btIndex + ');"';
+					// 	}
+					// }
 				//}
 
 				btTemplate += '<button class="' + btClass + '"' + btType + btAttrs + '>' + btIcon + button.label + '</button> ';
@@ -380,6 +407,7 @@ var pytangular = {
 		formTemplate = formTemplate.replace(/«buttons»/g, btTemplate || '');
 		// Insert form submit function
 		formTemplate = formTemplate.replace(/«fnSubmit»/g, fnSubmit || '');
+		formTemplate = formTemplate.replace(/«formModel»/g, modelName);
 
 		return formTemplate;
 	},
@@ -450,6 +478,7 @@ dvApp.directive('pytangular', function ($compile) {
 			if (!attrs.model) throw 'Missing attribute "model" of directive "pytangular"';
 
 			var useXeditable = attrs.useXeditable == 'true';
+			var useEditForm = attrs.useEditForm == 'true';
 			// applyDefaults is true by default
 			var applyDefaults = attrs.applyDefaults != 'false';
 
@@ -470,6 +499,7 @@ dvApp.directive('pytangular', function ($compile) {
 				model: model,
 				formSpecName: attrs.formspec,
 				formSpec: $scope.formSpec,
+				useEditForm: useEditForm,
 				useXeditable: useXeditable,
 				values: values || '',
 				modelName: attrs.model,
