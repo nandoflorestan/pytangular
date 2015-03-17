@@ -38,7 +38,7 @@ var pytangular = {
 			defaultTemplate: '<input data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» class="form-control" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
 				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
 			select: '<select data-ng-show="«formModel».isEditing" class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>' +
-				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
+				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«selectedLabe»"></span>',
 			textarea: '<textarea data-ng-show="«formModel».isEditing" class="form-control" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>' +
 				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
 			checkbox: ' <input data-ng-show="«formModel».isEditing" type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
@@ -168,6 +168,7 @@ var pytangular = {
 				// If it is a select define the list of values
 				if (field.widget == 'select') {
 					var optionPath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
+					var optionByValuePath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].optionsByValue';
 					if (field.default) {
 						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].default"';
 					} else {
@@ -176,6 +177,9 @@ var pytangular = {
 
 					aField = aField.replace(/«itemsList»/g, optionPath);
 					aField = aField.replace(/«selectedItem»/g, selectedPath);
+					// Out of editing mode (in a simple span) shows the selected option
+					var showOption = optionByValuePath + '[«ngModel»]';
+					aField = aField.replace(/«selectedLabe»/g, showOption);
 				}
 				// If it is a typeahead define the list of values
 				if (field.widget == 'typeahead') {
@@ -493,6 +497,18 @@ dvApp.directive('pytangular', function ($compile) {
 
 			// Create a formSpec in directive scope
 			$scope.formSpec = $scope.$eval(attrs.formspec);
+
+			// Assemble options by value to display in simple mode
+			$scope.formSpec.fieldsets.forEach(function (fieldset) {
+				fieldset.fields.forEach(function (field) {
+					if (field.widget == 'select') {
+						field.optionsByValue = {};
+						field.options.forEach(function (option) {
+							field.optionsByValue[option.value] = option.label;
+						});
+					}
+				});
+			});
 
 			// Insert into model a config file to pytangular methods load need information
 			var config = {
