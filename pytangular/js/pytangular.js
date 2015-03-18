@@ -38,7 +38,7 @@ var pytangular = {
 			defaultTemplate: '<input data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» class="form-control" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
 				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
 			select: '<select data-ng-show="«formModel».isEditing" class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>' +
-				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«selectedLabe»"></span>',
+				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«selectedLabel»"></span>',
 			textarea: '<textarea data-ng-show="«formModel».isEditing" class="form-control" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>' +
 				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
 			checkbox: ' <input data-ng-show="«formModel».isEditing" type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
@@ -179,7 +179,7 @@ var pytangular = {
 					aField = aField.replace(/«selectedItem»/g, selectedPath);
 					// Out of editing mode (in a simple span) shows the selected option
 					var showOption = optionByValuePath + '[«ngModel»]';
-					aField = aField.replace(/«selectedLabe»/g, showOption);
+					aField = aField.replace(/«selectedLabel»/g, showOption);
 				}
 				// If it is a typeahead define the list of values
 				if (field.widget == 'typeahead') {
