@@ -171,8 +171,6 @@ var pytangular = {
 					var optionByValuePath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].optionsByValue';
 					if (field.default) {
 						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].default"';
-					} else {
-						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options[0].value"';
 					}
 
 					aField = aField.replace(/«itemsList»/g, optionPath);
@@ -345,12 +343,12 @@ var pytangular = {
 
 				if (button.type) {
 					var type = button.type || 'submit';
-					var btType = ' type="' + type + '" data-ng-if=\'«formModel».isEditing==true\'';
+					var btType = ' type="' + type + '" ';
 					if (formSpec.fnSubmit == undefined) {
 						var autoSubmitFunction = true;
 					}
 				} else {
-					var btType = ' type="button" data-ng-if=\'«formModel».isEditing==true\'';
+					var btType = ' type="button"';
 				}
 
 				if (button.icon) {
@@ -578,7 +576,6 @@ dvApp.directive('pytangular', function ($compile) {
 			if (values || applyDefaults) {
 				populate(config);
 			}
-
 			var template = pytangular.build(config);
 			var linkFn = $compile(template);
 			var content = linkFn($scope);
