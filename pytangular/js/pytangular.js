@@ -221,7 +221,11 @@ var pytangular = {
 							if (config.useXeditable) {
 								labelStar = '<span data-ng-if="«formName».$visible">*</span>';
 							} else {
-								labelStar = '<span data-ng-if="«formModel».isEditing==true">*</span>';
+								if (config.useEditForm) {
+									labelStar = '<span data-ng-if="«formModel».isEditing==true">*</span>';
+								} else {
+									labelStar = '<span>*</span>';
+								}
 							}
 						}
 					}
