@@ -171,6 +171,8 @@ var pytangular = {
 					var optionByValuePath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].optionsByValue';
 					if (field.default) {
 						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].default"';
+					} else {
+						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options[0].value"';
 					}
 
 					aField = aField.replace(/«itemsList»/g, optionPath);
