@@ -172,7 +172,7 @@ var pytangular = {
 					if (field.default) {
 						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].default"';
 					} else {
-						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options[0].value"';
+						var selectedPath = 'data-ng-init="«ngModel»=«ngModel» || formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options[0].value"';
 					}
 
 					aField = aField.replace(/«itemsList»/g, optionPath);
