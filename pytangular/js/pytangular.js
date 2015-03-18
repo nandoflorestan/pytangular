@@ -333,7 +333,7 @@ var pytangular = {
 			}
 		}
 
-		// Add form buttons if is present
+		// Add form buttons if present
 		if (formSpec.buttons) {
 			var btTemplate = '';
 			var btIndex = 0;
@@ -345,12 +345,20 @@ var pytangular = {
 
 				if (button.type) {
 					var type = button.type || 'submit';
-					var btType = ' type="' + type + '" ';
+					if (config.useEditForm) {
+						var btType = ' type="' + type + '" data-ng-if=\'«formModel».isEditing==true\'';
+					} else {
+						var btType = ' type="' + type + '" ';
+					}
 					if (formSpec.fnSubmit == undefined) {
 						var autoSubmitFunction = true;
 					}
 				} else {
-					var btType = ' type="button"';
+					if (config.useEditForm) {
+						var btType = ' type="button" data-ng-if=\'«formModel».isEditing==true\'';
+					} else {
+						var btType = ' type="button"';
+					}
 				}
 
 				if (button.icon) {
@@ -370,7 +378,7 @@ var pytangular = {
 					button.attrs['data-ng-disabled'] = '«formName».$waiting';
 				}
 
-				// Inset all attributes if exists
+				// Insert all attributes
 				var btAttrs = '';
 				if (button.attrs) {
 					for (var key in button.attrs) {
@@ -380,27 +388,20 @@ var pytangular = {
 
 				// Action buttons kind (submitForm is default)
 				//if is submit and no fnSubmit and no action, define a default submitForm function
-					if (button.type == 'submit' && (!button.action && !formSpec.fnSubmit)) {
-						if (config.useXeditable) {
-							fnSubmit = 'onaftersave="submitForm(' + btIndex + ')"';
-						} else {
-							fnSubmit = 'data-ng-submit="submitForm(' + btIndex + ')"';
-						}
-					// If it is submit and have fnSubmit use it
-					} else if (button.type == 'submit' && (!button.action && formSpec.fnSubmit)) {
-						if (config.useXeditable) {
-							fnSubmit = 'onaftersave="' + formSpec.fnSubmit + '"';
-						} else {
-							fnSubmit = 'data-ng-submit="' + formSpec.fnSubmit + '"';
-						}
-					// Else use button.action
+				if (button.type == 'submit' && (!button.action && !formSpec.fnSubmit)) {
+					if (config.useXeditable) {
+						fnSubmit = 'onaftersave="submitForm(' + btIndex + ')"';
+					} else {
+						fnSubmit = 'data-ng-submit="submitForm(' + btIndex + ')"';
 					}
-					//  else {
-					// 	if (!config.useXeditable) {
-					// 		btAttrs += 'data-ng-submit="pytangular.actions.' + button.action + '(' + btIndex + ');"';
-					// 	}
-					// }
-				//}
+				// If it is submit and have fnSubmit use it
+				} else if (button.type == 'submit' && (!button.action && formSpec.fnSubmit)) {
+					if (config.useXeditable) {
+						fnSubmit = 'onaftersave="' + formSpec.fnSubmit + '"';
+					} else {
+						fnSubmit = 'data-ng-submit="' + formSpec.fnSubmit + '"';
+					}
+				}
 
 				btTemplate += '<button class="' + btClass + '"' + btType + btAttrs + '>' + btIcon + button.label + '</button> ';
 			});
