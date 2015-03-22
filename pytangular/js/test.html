@@ -122,6 +122,26 @@
 				$scope.selected = selected;
 			}
 
+			$scope.onChange_color = function () {
+				console.log('Color change!');
+			}
+			$scope.onSelect_color = function () {
+				console.log('Color selected!');
+			}
+
+			$scope.kindOptions = [
+				{ value: 'Boy', label: 'Male'},
+				{ value: 'Girl', label: 'Female'},
+				{ value: 'LOL!', label: 'Both'},
+			];
+			$scope.colorOptions = [
+				'Blue',
+				'Aqua',
+				'Brown',
+				'Cian',
+				'Yellow',
+				'Black',
+			];
 			// Define fields for all example forms
 			var personDataFields = [
 				{
@@ -202,11 +222,9 @@
 					name: 'kind',
 					model: 'kind',
 					default: 'Girl',
-					options: [
-						{ value: 'Boy', label: 'Male'},
-						{ value: 'Girl', label: 'Female'},
-						{ value: 'LOL!', label: 'Both'},
-					],
+					itemValue: 'value',
+					itemLabel: 'label',
+					options: 'kindOptions',
 					helpText: 'Your gender',
 					input_attrs: {
 						'required': 'required',
@@ -246,14 +264,7 @@
 					name: 'color',
 					model: 'color',
 					popover: {msg: 'This is a typeahead field!', trigger:'focus', placement: 'top'},
-					options: [
-						'Blue',
-						'Aqua',
-						'Brown',
-						'Cian',
-						'Yellow',
-						'Black',
-					],
+					options: 'colorOptions',
 					input_attrs:{
 						'title': 'ui.bootstrap typeahead',
 					},

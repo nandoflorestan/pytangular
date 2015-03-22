@@ -17,7 +17,7 @@ var pytangular = {
 			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
 			append: '<div class="input-group-addon">«appendSymbol»</div>',
 			defaultTemplate: '<input type="«inputType»" «size» «validation» class="form-control" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
-			select: '<select class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>',
+			select: '<select class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»"></select>',
 			textarea: '<textarea class="form-control" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>',
 			checkbox: ' <input type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
 			typeahead: '<input data-ng-change="onChange_«fieldName»()" type="text" ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control">',
@@ -37,7 +37,7 @@ var pytangular = {
 			append: '<div class="input-group-addon">«appendSymbol»</div>',
 			defaultTemplate: '<input data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» class="form-control" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
 				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
-			select: '<select data-ng-show="«formModel».isEditing" class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.value as item.label for item in «itemsList»"></select>' +
+			select: '<select data-ng-show="«formModel».isEditing" class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»"></select>' +
 				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«selectedLabel»"></span>',
 			textarea: '<textarea data-ng-show="«formModel».isEditing" class="form-control" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>' +
 				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
@@ -167,26 +167,30 @@ var pytangular = {
 
 				// If it is a select define the list of values
 				if (field.widget == 'select') {
-					var optionPath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
-					var optionByValuePath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].optionsByValue';
+					// var optionPath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
+					// var optionByValuePath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].optionsByValue';
 					if (field.default) {
 						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].default"';
 					} else {
-						var selectedPath = 'data-ng-init="«ngModel»=«ngModel» || formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options[0].value"';
+						var selectedPath = 'data-ng-init="«ngModel»=«ngModel» || ' + field.options + '[0].«itemValue»"';
 					}
 
-					aField = aField.replace(/«itemsList»/g, optionPath);
+					aField = aField.replace(/«itemsList»/g, field.options);
+					// aField = aField.replace(/«itemsList»/g, optionPath);
 					aField = aField.replace(/«selectedItem»/g, selectedPath);
+					aField = aField.replace(/«itemLabel»/g, field.itemLabel);
+					aField = aField.replace(/«itemValue»/g, field.itemValue);
 					// Out of editing mode (in a simple span) shows the selected option
-					var showOption = optionByValuePath + '[«ngModel»]';
-					aField = aField.replace(/«selectedLabel»/g, showOption);
+					// var showOption = optionByValuePath + '[«ngModel»]';
+					aField = aField.replace(/«selectedLabel»/g, field.selectedLabel);
 				}
 				// If it is a typeahead define the list of values
 				if (field.widget == 'typeahead') {
-					var typeaheadList = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
+				//	var typeaheadList = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
 					var typeaheadDisable = modelName + '.' + field.name + 'Disabled';
 
-					aField = aField.replace(/«typeaheadList»/g, typeaheadList);
+					// aField = aField.replace(/«typeaheadList»/g, typeaheadList);
+					aField = aField.replace(/«typeaheadList»/g, field.options);
 					aField = aField.replace(/«disable»/g, typeaheadDisable);
 				}
 
@@ -504,16 +508,16 @@ dvApp.directive('pytangular', function ($compile) {
 			$scope.formSpec = $scope.$eval(attrs.formspec);
 
 			// Assemble options by value to display in simple mode
-			$scope.formSpec.fieldsets.forEach(function (fieldset) {
-				fieldset.fields.forEach(function (field) {
-					if (field.widget == 'select') {
-						field.optionsByValue = {};
-						field.options.forEach(function (option) {
-							field.optionsByValue[option.value] = option.label;
-						});
-					}
-				});
-			});
+			// $scope.formSpec.fieldsets.forEach(function (fieldset) {
+			// 	fieldset.fields.forEach(function (field) {
+			// 		if (field.widget == 'select') {
+			// 			field.optionsByValue = {};
+			// 			field.options.forEach(function (option) {
+			// 				field.optionsByValue[option.value] = option.label;
+			// 			});
+			// 		}
+			// 	});
+			// });
 
 			// Insert into model a config file to pytangular methods load need information
 			var config = {
