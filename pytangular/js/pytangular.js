@@ -1,7 +1,6 @@
 'use strict';
 
-var pytangular = {
-
+var pytangular = {  // Does NOT depend on angularjs
 	// Hold the form field names
 	resetableFields: [],
 	resetableDefaultFields: [],
@@ -89,7 +88,6 @@ var pytangular = {
 	},
 
 	build: function (config) {
-
 		var modelName = config.modelName;
 		var formSpecName = config.formSpecName;
 		var formSpec = config.formSpec;
@@ -427,7 +425,6 @@ var pytangular = {
 
 	// Position every field in a template for this fieldset
 	buildFieldSet: function (fieldSet, fsetLegend, fsetSumIndex, formSpec, formKind) {
-
 		var fieldSetContent = '';
 		var newFieldSet = '';
 		// Add the field set content if there is a fieldset / legend
@@ -581,7 +578,6 @@ dvApp.directive('pytangular', function ($compile) {
 				myForm.submit() ;
 				document.body.removeChild(myForm) ;
 			};
-
 
 			// Populate the form with values or default attrs of formSpec
 			if (values || applyDefaults) {
