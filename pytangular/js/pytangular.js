@@ -165,29 +165,37 @@ var pytangular = {  // Does NOT depend on angularjs
 
 				// If it is a select define the list of values
 				if (field.widget == 'select') {
-					// var optionPath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
-					// var optionByValuePath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].optionsByValue';
+					if(field.options.push) {
+						var optionPath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
+						aField = aField.replace(/«itemsList»/g, optionPath);
+					}
 					if (field.default) {
 						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].default"';
 					} else {
-						var selectedPath = 'data-ng-init="«ngModel»=«ngModel» || ' + field.options + '[0].«itemValue»"';
+						if(field.options.push) {
+							var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options[0].value"';
+							field.itemLabel = 'label';
+							field.itemValue = 'value';
+
+						} else {
+							var selectedPath = 'data-ng-init="«ngModel»=«ngModel» || ' + field.options + '[0].«itemValue»"';
+						}
 					}
 
-					aField = aField.replace(/«itemsList»/g, field.options);
-					// aField = aField.replace(/«itemsList»/g, optionPath);
-					aField = aField.replace(/«selectedItem»/g, selectedPath);
-					aField = aField.replace(/«itemLabel»/g, field.itemLabel);
-					aField = aField.replace(/«itemValue»/g, field.itemValue);
-					// Out of editing mode (in a simple span) shows the selected option
-					// var showOption = optionByValuePath + '[«ngModel»]';
-					aField = aField.replace(/«selectedLabel»/g, field.selectedLabel);
+					aField = aField.replace(/«itemsList»/g, field.options || '');
+					aField = aField.replace(/«selectedItem»/g, selectedPath || '');
+					aField = aField.replace(/«itemLabel»/g, field.itemLabel  || '');
+					aField = aField.replace(/«itemValue»/g, field.itemValue || '');
+					aField = aField.replace(/«selectedLabel»/g, field.selectedLabel || '');
 				}
 				// If it is a typeahead define the list of values
 				if (field.widget == 'typeahead') {
-				//	var typeaheadList = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
+					if (field.options.push) {
+						var typeaheadList = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
+						aField = aField.replace(/«typeaheadList»/g, typeaheadList);
+					}
 					var typeaheadDisable = modelName + '.' + field.name + 'Disabled';
 
-					// aField = aField.replace(/«typeaheadList»/g, typeaheadList);
 					aField = aField.replace(/«typeaheadList»/g, field.options);
 					aField = aField.replace(/«disable»/g, typeaheadDisable);
 				}
@@ -504,19 +512,6 @@ dvApp.directive('pytangular', function ($compile) {
 			// Create a formSpec in directive scope
 			$scope.formSpec = $scope.$eval(attrs.formspec);
 			$scope.formSpec.editPermission = $scope.$eval(attrs.editPermission) || false;
-			console.log($scope.formSpec.editPermission);
-
-			// Assemble options by value to display in simple mode
-			// $scope.formSpec.fieldsets.forEach(function (fieldset) {
-			// 	fieldset.fields.forEach(function (field) {
-			// 		if (field.widget == 'select') {
-			// 			field.optionsByValue = {};
-			// 			field.options.forEach(function (option) {
-			// 				field.optionsByValue[option.value] = option.label;
-			// 			});
-			// 		}
-			// 	});
-			// });
 
 			// Insert into model a config file to pytangular methods load need information
 			var config = {
