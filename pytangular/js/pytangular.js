@@ -25,7 +25,7 @@ var pytangular = {  // Does NOT depend on angularjs
 	},
 	// Editable field skeletons
 	editSkeletons: {
-		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form><button type="button" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
+		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form><button type="button" data-ng-if="formSpec.editPermission" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<span data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'form-group \'">«fieldContent»' +
 			'<span class="error-msg" data-ng-if="«formModel».errors[\'«fieldName»\']" data-ng-bind="«formModel».errors[\'«fieldName»\']"></span></span>' +
@@ -503,6 +503,8 @@ dvApp.directive('pytangular', function ($compile) {
 
 			// Create a formSpec in directive scope
 			$scope.formSpec = $scope.$eval(attrs.formspec);
+			$scope.formSpec.editPermission = $scope.$eval(attrs.editPermission) || false;
+			console.log($scope.formSpec.editPermission);
 
 			// Assemble options by value to display in simple mode
 			// $scope.formSpec.fieldsets.forEach(function (fieldset) {
