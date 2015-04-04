@@ -116,6 +116,10 @@ Object.defineProperty(Array.prototype, 'remove', {value: function (value, fieldN
 	this.splice(index, 1);
 }});
 
+Object.defineProperty(Array.prototype, 'contains', {value: function (o) {
+  return this.indexOf(o) != -1;
+}});
+
 /* TESTS
 require('./protoplus.js')
 var a = [{id: 1, cor: 'verde'}, {id: 2, cor: 'vermelho'}, {id: 3, cor: 'amarelo'}, {id: 4, cor: 'azul'}];
