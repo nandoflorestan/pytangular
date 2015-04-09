@@ -1,59 +1,59 @@
 'use strict';
 
 /* protoplus.js adds methods to Array so it becomes a more competent collection
-   for model manipulation. Requires ECMAScript 5.
-   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+	for model manipulation. Requires ECMAScript 5.
+	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-   .filter(predicate) returns a new array with the elements that pass *predicate*. (This is part of ECMAScript 5.)
-   The *predicate* fn signature is: (element, index, array): boolean
+	.filter(predicate) returns a new array with the elements that pass *predicate*. (This is part of ECMAScript 5.)
+	The *predicate* fn signature is: (element, index, array): boolean
 */
 
 // .find(predicate) returns a single element, or undefined.
 // Polyfill from ECMAScript 6 (Harmony):
 if (!Array.prototype.find) {
-  Object.defineProperty(Array.prototype, 'find', {value: function (predicate) {
-    if (this == null) {
-      throw new TypeError('Array.prototype.find called on null or undefined');
-    }
-    if (typeof predicate !== 'function') {
-      throw new TypeError('predicate must be a function');
-    }
-    var list = Object(this);
-    var length = list.length >>> 0;
-    var thisArg = arguments[1];
-    var value;
+	Object.defineProperty(Array.prototype, 'find', {value: function (predicate) {
+		if (this == null) {
+			throw new TypeError('Array.prototype.find called on null or undefined');
+		}
+		if (typeof predicate !== 'function') {
+			throw new TypeError('predicate must be a function');
+		}
+		var list = Object(this);
+		var length = list.length >>> 0;
+		var thisArg = arguments[1];
+		var value;
 
-    for (var i = 0; i < length; i++) {
-      value = list[i];
-      if (predicate.call(thisArg, value, i, list)) {
-        return value;
-      }
-    }
-    return undefined;
-  }});
+		for (var i = 0; i < length; i++) {
+			value = list[i];
+			if (predicate.call(thisArg, value, i, list)) {
+				return value;
+			}
+		}
+		return undefined;
+	}});
 }
 // Polyfill from ECMAScript 6 (Harmony):
 if (!Array.prototype.findIndex) {
-  Object.defineProperty(Array.prototype, 'findIndex', {value: function (predicate) {
-    if (this == null) {
-      throw new TypeError('Array.prototype.findIndex called on null or undefined');
-    }
-    if (typeof predicate !== 'function') {
-      throw new TypeError('predicate must be a function');
-    }
-    var list = Object(this);
-    var length = list.length >>> 0;
-    var thisArg = arguments[1];
-    var value;
+	Object.defineProperty(Array.prototype, 'findIndex', {value: function (predicate) {
+		if (this == null) {
+			throw new TypeError('Array.prototype.findIndex called on null or undefined');
+		}
+		if (typeof predicate !== 'function') {
+			throw new TypeError('predicate must be a function');
+		}
+		var list = Object(this);
+		var length = list.length >>> 0;
+		var thisArg = arguments[1];
+		var value;
 
-    for (var i = 0; i < length; i++) {
-      value = list[i];
-      if (predicate.call(thisArg, value, i, list)) {
-        return i;
-      }
-    }
-    return -1;
-  }});
+		for (var i = 0; i < length; i++) {
+			value = list[i];
+			if (predicate.call(thisArg, value, i, list)) {
+				return i;
+			}
+		}
+		return -1;
+	}});
 }
 
 
@@ -104,8 +104,8 @@ Object.defineProperty(Array.prototype, 'put', {value: function (newObj, fieldNam
 	var index = this.findIndex(function (elem) {
 		if (elem[fieldName] == newObj[fieldName])  return true;
 	});
-  if (index == -1)  this.push(newObj);
-  else  this.splice(index, 1, newObj);
+	if (index == -1)  this.push(newObj);
+	else  this.splice(index, 1, newObj);
 }});
 
 Object.defineProperty(Array.prototype, 'remove', {value: function (value, fieldName) {
@@ -117,7 +117,7 @@ Object.defineProperty(Array.prototype, 'remove', {value: function (value, fieldN
 }});
 
 Object.defineProperty(Array.prototype, 'contains', {value: function (o) {
-  return this.indexOf(o) != -1;
+	return this.indexOf(o) != -1;
 }});
 
 /* TESTS
@@ -132,3 +132,24 @@ a.listOf('cor')
 a.put({id: 2, cor: 'rosa'});
 a.remove(3);
 */
+
+// Generate UUID
+function generateUUID () {
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+		var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+		return v.toString(16);
+	});
+}
+
+// Get the time to display a message
+function getReadingTime(obj, min, speed) {
+	speed = speed || 90;  // Takes one second to read 11 chars
+	min = min || 3000;  // but the min is 3 seconds
+	var len = 0;
+	if (obj.title) len += obj.title.length;
+	if (obj.msg)   len += obj.msg.length;
+
+	var duration = len * speed;
+	if (duration < min)  duration = min;
+	return duration;
+}
