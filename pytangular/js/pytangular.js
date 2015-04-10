@@ -183,7 +183,11 @@ var pytangular = {  // Does NOT depend on angularjs
 							field.itemValue = 'value';
 
 						} else {
-							var selectedPath = 'data-ng-init="«ngModel»=«ngModel» || ' + field.options + '[0].«itemValue»"';
+							if(field.emptyValue == true) {
+								var selectedPath = 'data-ng-init="«ngModel»=«ngModel»"';
+							} else {
+								var selectedPath = 'data-ng-init="«ngModel»=«ngModel» || ' + field.options + '[0].«itemValue»"';
+							}
 						}
 					}
 
