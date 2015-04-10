@@ -7,6 +7,7 @@ var pytangular = {  // Does NOT depend on angularjs
 	// Normal HTML5 field skeletons
 	simpleSkeletons: {
 		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form>',
+		noformSkeleton: '«formContent» «buttons»',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<span data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»' +
 			'<span class="help-block" data-ng-if="«formModel».errors[\'«fieldName»\']" data-ng-bind="«formModel».errors[\'«fieldName»\']"></span></span>' +
@@ -26,6 +27,7 @@ var pytangular = {  // Does NOT depend on angularjs
 	// Editable field skeletons
 	editSkeletons: {
 		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form><button type="button" data-ng-if="formSpec.editPermission" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
+		noformSkeleton: '«formContent» «buttons» <button type="button" data-ng-if="formSpec.editPermission" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<span data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'form-group \'">«fieldContent»' +
 			'<span class="help-block" data-ng-if="«formModel».errors[\'«fieldName»\']" data-ng-bind="«formModel».errors[\'«fieldName»\']"></span></span>' +
@@ -340,10 +342,14 @@ var pytangular = {  // Does NOT depend on angularjs
 
 		// Call buildFrom to position allFieldSets into a template if it exists
 		formTemplate = pytangular.buildFrom(formKind, allFieldSets, formSpec);
-		// Insert all fields inside formSkeleton
-		formTemplate = pytangular[formKind].formSkeleton.replace(/«formContent»/g, formTemplate);
-		// Insert form name
-		formTemplate = formTemplate.replace(/«formName»/g, config.formSpecName || 'defaultForm');
+		// Insert all fields inside formSkeleton or noformSkeleton
+		if (config.noform) {
+			formTemplate = pytangular[formKind].noformSkeleton.replace(/«formContent»/g, formTemplate);
+		} else {
+			formTemplate = pytangular[formKind].formSkeleton.replace(/«formContent»/g, formTemplate);
+			// Insert form name
+			formTemplate = formTemplate.replace(/«formName»/g, config.formSpecName || 'defaultForm');
+		}
 
 		// Help build fnSubmition attribute
 		var fnSubmit = '';
@@ -532,6 +538,7 @@ dvApp.directive('pytangular', function ($compile) {
 				values: values || '',
 				modelName: attrs.model,
 				applyDefaults: applyDefaults,
+				noform: attrs.noform || null,
 			};
 
 			var populate = function (config) {
