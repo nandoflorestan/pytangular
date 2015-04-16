@@ -233,3 +233,9 @@ class PytangularSchema(c.MappingSchema):
 
     def to_json(self, mode='simple'):
         return schema_to_json(self, mode=mode)
+
+
+def capitalize(value):  # Colander preparer
+    if value in (None, c.null):
+        return value
+    return str.capitalize(value)
