@@ -570,6 +570,16 @@ dvApp.directive('pytangular', function ($compile) {
 				});
 			};
 
+			$scope.formSpec.showError = function (response, status, headers, config) {
+				var error = {};
+				angular.copy(response, error);
+				delete error.error_type;
+				
+				for (var key in error) {
+					model.errors[key] = error[key];
+				}
+			};
+
 			$scope.$on('populate', function (event) {
 				populate(config);
 			});
