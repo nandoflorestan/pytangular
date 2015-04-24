@@ -175,6 +175,7 @@ def text_node(attrib, min_size=4, max_size=60, **kw):
         When ``widget`` is missing, it is set to ``text``.
         And when ``widget`` is not ``textarea``,
         a smart formula calculates ``size`` based on ``maxlength``.
+        Also, a Length validator is added to the schema if not present.
         '''
     from bag.sqlalchemy.tricks import length
 
