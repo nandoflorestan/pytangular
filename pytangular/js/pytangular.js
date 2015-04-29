@@ -171,8 +171,8 @@ var pytangular = {  // Does NOT depend on angularjs
 						var optionPath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
 						aField = aField.replace(/«itemsList»/g, optionPath);
 					}
-					if(field.emptyValue == true) {
-						var emptyValue = '<option value="">---</option>';
+					if(field.emptyValue) {
+						var emptyValue = '<option value="">' + field.emptyValue + '</option>';
 					}
 					aField = aField.replace(/«emptyValue»/g, emptyValue || '');
 
@@ -185,7 +185,7 @@ var pytangular = {  // Does NOT depend on angularjs
 							field.itemValue = 'value';
 
 						} else {
-							if(field.emptyValue == true) {
+							if(field.emptyValue) {
 								var selectedPath = 'data-ng-init="«ngModel»=«ngModel»"';
 							} else {
 								var selectedPath = 'data-ng-init="«ngModel»=«ngModel» || ' + field.options + '[0].«itemValue»"';
@@ -574,7 +574,7 @@ dvApp.directive('pytangular', function ($compile) {
 				var error = {};
 				angular.copy(response, error);
 				delete error.error_type;
-				
+
 				for (var key in error) {
 					model.errors[key] = error[key];
 				}
