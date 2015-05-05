@@ -239,4 +239,4 @@ class PytangularSchema(c.MappingSchema):
 def capitalize(value):  # Colander preparer
     if value in (None, c.null):
         return value
-    return str.capitalize(value)
+    return value[0].upper() + value[1:] if value else value
