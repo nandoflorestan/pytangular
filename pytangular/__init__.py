@@ -163,7 +163,7 @@ def get_widget(node):
         }[typ]
 
 
-def text_node(attrib, min_size=4, max_size=60, **kw):
+def text_node(attrib, max_size=60, **kw):
     '''Helps you define colander SchemaNodes for text fields that
         will be stored in SQLAlchemy -- typing less.
 
