@@ -5,6 +5,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import colander as c
+from bag.text import capitalize
 from sqlalchemy import types
 from json import dumps
 from nine import IS_PYTHON2, nimport, nine, range, str, basestring
@@ -236,7 +237,7 @@ class PytangularSchema(c.MappingSchema):
         return schema_to_json(self, mode=mode)
 
 
-def capitalize(value):  # Colander preparer
-    if value in (None, c.null):
+def capitalize_preparer(value):  # Colander preparer
+    if value is c.null:
         return value
-    return value[0].upper() + value[1:] if value else value
+    return capitalize(value)

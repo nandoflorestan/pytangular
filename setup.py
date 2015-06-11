@@ -9,7 +9,7 @@ from codecs import open
 with open('README.rst', encoding='utf-8') as f:
     long_description = f.read()
 
-dependencies = ['nine>=0.3.4']
+dependencies = ['bag']
 # from sys import version_info
 # if version_info[:2] < (3, 4):
 #     dependencies.append('pathlib')
