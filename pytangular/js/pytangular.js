@@ -571,12 +571,8 @@ dvApp.directive('pytangular', function ($compile) {
 			};
 
 			$scope.formSpec.showError = function (response, status, headers, config) {
-				var error = {};
-				angular.copy(response, error);
-				delete error.error_type;
-
-				for (var key in error) {
-					model.errors[key] = error[key];
+				for (var key in response.invalid) {
+					model.errors[key] = response.invalid[key];
 				}
 			};
 
