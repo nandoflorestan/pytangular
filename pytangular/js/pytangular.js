@@ -1,4 +1,12 @@
 'use strict';
+function showFormErrors(response, fieldFinder) {
+	if (response.invalid) {
+		for (var key in response.invalid) {
+			var field = fieldFinder(key);
+			field.error = response.invalid[key];
+		}
+	}
+}
 
 var pytangular = {  // Does NOT depend on angularjs
 	// Hold the form field names
