@@ -3,7 +3,7 @@ function showFormErrors(response, fieldFinder) {
 	if (response.invalid) {
 		for (var key in response.invalid) {
 			var field = fieldFinder(key);
-			field.error = response.invalid[key];
+			field.errors[key] = response.invalid[key];
 		}
 	}
 }
