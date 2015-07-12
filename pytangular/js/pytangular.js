@@ -44,11 +44,11 @@ var pytangular = {  // Does NOT depend on angularjs
 			inputGroup: '<div data-ng-show="«formModel».isEditing" class="input-group">«prepend»«defaultTemplate»«append»</div>',
 			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
 			append: '<div class="input-group-addon">«appendSymbol»</div>',
-			defaultTemplate: '<input data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» class="form-control" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
+			defaultTemplate: '<input data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» data-ng-class="!«formModel».isEditing ? \'pytangular_hide\' : \'form-control\'" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
 				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
-			select: '<select data-ng-show="«formModel».isEditing" class="form-control" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>' +
+			select: '<select data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular_hide\' : \'form-control\'" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>' +
 				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«selectedLabel»"></span>',
-			textarea: '<textarea data-ng-show="«formModel».isEditing" class="form-control" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>' +
+			textarea: '<textarea data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular_hide\' : \'form-control\'" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>' +
 				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
 			checkbox: ' <input data-ng-show="«formModel».isEditing" type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
 				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
