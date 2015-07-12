@@ -17,9 +17,9 @@ var pytangular = {  // Does NOT depend on angularjs
 		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form>',
 		noformSkeleton: '«formContent» «buttons»',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
-		fieldSkeleton: '<span data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»' +
-			'<span class="help-block" data-ng-if="«formModel».errors[\'«fieldName»\']" data-ng-bind="«formModel».errors[\'«fieldName»\']"></span></span>' +
-			'<span class="help-block">«helpText»</span>',
+		fieldSkeleton: '<div data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»' +
+			'<div class="help-block" data-ng-if="«formModel».errors[\'«fieldName»\']" data-ng-bind="«formModel».errors[\'«fieldName»\']"></div></div>' +
+			'<div class="help-block">«helpText»</div>',
 		widgets : {
 			inputGroup: '<div class="input-group">«prepend»«defaultTemplate»«append»</div>',
 			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
@@ -37,23 +37,23 @@ var pytangular = {  // Does NOT depend on angularjs
 		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form><button type="button" data-ng-if="formSpec.editPermission" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
 		noformSkeleton: '«formContent» «buttons» <button type="button" data-ng-if="formSpec.editPermission" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
-		fieldSkeleton: '<span data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'form-group \'">«fieldContent»' +
-			'<span class="help-block" data-ng-if="«formModel».errors[\'«fieldName»\']" data-ng-bind="«formModel».errors[\'«fieldName»\']"></span></span>' +
-			'<span class="help-block">«helpText»</span>',
+		fieldSkeleton: '<div id="pytangular_editformgroup" data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'form-group \'">«fieldContent»' +
+			'<div class="help-block" data-ng-if="«formModel».errors[\'«fieldName»\']" data-ng-bind="«formModel».errors[\'«fieldName»\']"></div></div>' +
+			'<div class="help-block">«helpText»</div>',
 		widgets : {
 			inputGroup: '<div data-ng-show="«formModel».isEditing" class="input-group">«prepend»«defaultTemplate»«append»</div>',
 			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
 			append: '<div class="input-group-addon">«appendSymbol»</div>',
 			defaultTemplate: '<input data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» data-ng-class="!«formModel».isEditing ? \'pytangular_hide\' : \'form-control\'" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
-				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
+				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel» || \'None\'"></div>',
 			select: '<select data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular_hide\' : \'form-control\'" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>' +
-				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«selectedLabel»"></span>',
+				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«selectedLabel»"></div>',
 			textarea: '<textarea data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular_hide\' : \'form-control\'" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>' +
-				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
+				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel» || \'None\'"></div>',
 			checkbox: ' <input data-ng-show="«formModel».isEditing" type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
-				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
+				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></div>',
 			typeahead: '<input data-ng-show="«formModel».isEditing" data-ng-change="onChange_«fieldName»()" type="text" ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control">' +
-				'<span data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></span>',
+				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></div>',
 		},
 		 labelSkeleton: '<label for="«fieldName»" «inputTitle» class="control-label">«fieldLabel»«labelStar» </label> ',
 	},
