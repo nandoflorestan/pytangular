@@ -37,18 +37,18 @@ var pytangular = {  // Does NOT depend on angularjs
 		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form><button type="button" data-ng-if="formSpec.editPermission" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
 		noformSkeleton: '«formContent» «buttons» <button type="button" data-ng-if="formSpec.editPermission" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
-		fieldSkeleton: '<div id="pytangular_editformgroup" data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'form-group \'">«fieldContent»' +
+		fieldSkeleton: '<div id="pytangular-edit-form-group" data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'form-group \'">«fieldContent»' +
 			'<div class="help-block" data-ng-if="«formModel».errors[\'«fieldName»\']" data-ng-bind="«formModel».errors[\'«fieldName»\']"></div></div>' +
 			'<div class="help-block">«helpText»</div>',
 		widgets : {
 			inputGroup: '<div data-ng-show="«formModel».isEditing" class="input-group">«prepend»«defaultTemplate»«append»</div>',
 			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
 			append: '<div class="input-group-addon">«appendSymbol»</div>',
-			defaultTemplate: '<input data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» data-ng-class="!«formModel».isEditing ? \'pytangular_hide\' : \'form-control\'" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
+			defaultTemplate: '<input data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel» || \'None\'"></div>',
-			select: '<select data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular_hide\' : \'form-control\'" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>' +
+			select: '<select data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«selectedLabel»"></div>',
-			textarea: '<textarea data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular_hide\' : \'form-control\'" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>' +
+			textarea: '<textarea data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel» || \'None\'"></div>',
 			checkbox: ' <input data-ng-show="«formModel».isEditing" type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></div>',
