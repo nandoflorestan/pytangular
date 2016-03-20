@@ -120,9 +120,9 @@ Object.defineProperty(Array.prototype, 'contains', {value: function (o) {
 	return this.indexOf(o) != -1;
 }});
 
-// Example of using move: array = [1,2,3,4,5,6,7,8];
-// Move 3 up to create array = [1,2,4,3,5,6,7,8]
-// array.move(2, 3);
+// Example of using move: myArray = [1,2,3,4,5,6,7,8];
+// Move 3 up to create myArray = [1,2,4,3,5,6,7,8]
+// myArray.move(2, 3);
 // (move the item with index 2 to position 3)
 Object.defineProperty(Array.prototype, 'move', {value: function (old_index, new_index) {
 	if (new_index >= this.length) {
