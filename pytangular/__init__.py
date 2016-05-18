@@ -23,7 +23,7 @@ colander_types = {  # maps SQLAlchemy types to colander types
     types.Float: c.Float,
     types.DECIMAL: c.Decimal,
     # types.Enum: build_enumeration,
-    }
+}
 
 
 def _colander_type_from(attrib):
@@ -61,9 +61,9 @@ def schema_to_dict(*schemas, mode='simple'):
                 'name': node.name,
                 'label': node.title,
                 'widget': get_widget(node) if node.widget is None
-                    else node.widget,
+                else node.widget,
                 'input_attrs': {},
-                }
+            }
             fieldset['fields'].append(field)
             attrs = field['input_attrs']
             if node.default is not c.null:
@@ -161,7 +161,7 @@ def get_widget(node):
         c.Bool: 'checkbox',
         c.Int: 'number',
         c.Float: 'number',
-        }[typ]
+    }[typ]
 
 
 def text_node(attrib, max_size=60, **kw):
