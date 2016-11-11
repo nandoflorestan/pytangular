@@ -102,13 +102,14 @@ var pytangular = {  // Does NOT depend on angularjs
 		var formSpecName = config.formSpecName;
 		var formSpec = config.formSpec;
 		var formTemplate = '';
+		var formKind;
 
 		if (config.useXeditable) {
-			var formKind = 'xeditableSkeletons';
+			formKind = 'xeditableSkeletons';
 		} else if (config.useEditForm) {
-			var formKind = 'editSkeletons';
+			formKind = 'editSkeletons';
 		} else {
-			var formKind = 'simpleSkeletons';
+			formKind = 'simpleSkeletons';
 		}
 
 		// Hold all fieldSets
@@ -139,6 +140,7 @@ var pytangular = {  // Does NOT depend on angularjs
 
 				// Define the type of field and get the input template
 				if ((field.widget != 'textarea') && (field.widget != 'select') && (field.widget != 'checkbox') && (field.widget != 'typeahead')) {
+					var prepend;
 					// All other input types (text, number, password, etc)
 					// Xeditable uses a different password template
 					if (field.widget == 'password' && config.useXeditable) {
@@ -150,8 +152,8 @@ var pytangular = {  // Does NOT depend on angularjs
 						// Also verify if is a simple form (not xeditable)
 						if ((field.append || field.prepend) && !config.useXeditable) {
 							var tempField = pytangular[formKind].widgets.inputGroup;
-							if (field.prepend) var prepend = pytangular[formKind].widgets.prepend;
-							if (field.append) var append = pytangular[formKind].widgets.append;
+							if (field.prepend) prepend = pytangular[formKind].widgets.prepend;
+							if (field.append) append = pytangular[formKind].widgets.append;
 
 							tempField = tempField.replace(/«defaultTemplate»/g, aField);
 							tempField = tempField.replace(/«prepend»/g, prepend || '');
@@ -175,28 +177,29 @@ var pytangular = {  // Does NOT depend on angularjs
 
 				// If it is a select define the list of values
 				if (field.widget == 'select') {
+					var selectedPath, emptyValue;
 					if(field.options.push) {
 						var optionPath = 'formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options';
 						aField = aField.replace(/«itemsList»/g, optionPath);
 					}
 					if(field.emptyValue) {
-						var emptyValue = '<option value="">' + field.emptyValue + '</option>';
+						emptyValue = '<option value="">' + field.emptyValue + '</option>';
 					}
 					aField = aField.replace(/«emptyValue»/g, emptyValue || '');
 
 					if (field.default) {
-						var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].default"';
+						selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].default"';
 					} else {
 						if(field.options.push) {
-							var selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options[0].value"';
+							selectedPath = 'data-ng-init="«ngModel»=formSpec.fieldsets[' + fsetIndex + '].fields[' + fieldsIndex + '].options[0].value"';
 							field.itemLabel = 'label';
 							field.itemValue = 'value';
 
 						} else {
 							if(field.emptyValue) {
-								var selectedPath = 'data-ng-init="«ngModel»=«ngModel»"';
+								selectedPath = 'data-ng-init="«ngModel»=«ngModel»"';
 							} else {
-								var selectedPath = 'data-ng-init="«ngModel»=«ngModel» || ' + field.options + '[0].«itemValue»"';
+								selectedPath = 'data-ng-init="«ngModel»=«ngModel» || ' + field.options + '[0].«itemValue»"';
 							}
 						}
 					}
@@ -277,7 +280,7 @@ var pytangular = {  // Does NOT depend on angularjs
 					if(config.useXeditable) {
 						aField = aField.replace(/«trueValue»/g, field['true-value'] || 'Yes');
 						aField = aField.replace(/«falseValue»/g, field['false-value'] || 'No');
-						aField = aField.replace(/«title»/g, field['title']);
+						aField = aField.replace(/«title»/g, field.title);
 					}
 				}
 
@@ -285,7 +288,8 @@ var pytangular = {  // Does NOT depend on angularjs
 				aField = aField.replace(/«inputAttrs»/g, aFieldAttrs);
 
 				// Insert size on the template
-				if (field.size) var size = 'size = "' + field.size + '"';
+				var size ;
+				if (field.size) size = 'size = "' + field.size + '"';
 				aField = aField.replace(/«size»/g, size || '');
 
 				// Insert the aField inside of fieldSkeleton
@@ -318,9 +322,10 @@ var pytangular = {  // Does NOT depend on angularjs
 				}
 				aField = aField.replace(/«validation»/g, fnValidation);
 				// Define a popover if exists
+				var popoverAtrr;
 				if (field.popover) {
 					var poptrigger = field.popover.trigger || 'mouseenter';
-					var popoverAtrr = 'Popover-animation="true" popover="' + field.popover.msg + '" popover-trigger="' + poptrigger + '"';
+					popoverAtrr = 'Popover-animation="true" popover="' + field.popover.msg + '" popover-trigger="' + poptrigger + '"';
 					// Popover
 					var placement = field.popover.placement || 'top';
 					popoverAtrr = ' popover-placement="' + field.popover.placement + '"' + popoverAtrr;
@@ -371,11 +376,12 @@ var pytangular = {  // Does NOT depend on angularjs
 		}
 
 		// Add form buttons if present
+		var btTemplate = '';
 		if (formSpec.buttons) {
-			var btTemplate = '';
 			var btIndex = 0;
 			formSpec.buttons.forEach(function (button) {
 				var btClass = 'btn ';
+				var btType, btIcon;
 				if (button.class) btClass += button.class;
 				else  btClass += 'btn-default';
 
@@ -383,33 +389,33 @@ var pytangular = {  // Does NOT depend on angularjs
 				if (button.type) {
 					var type = button.type || 'submit';
 					if (config.useEditForm) {
-						var btType = ' type="' + type + '" data-ng-if=\'«formModel».isEditing==true\'';
+						btType = ' type="' + type + '" data-ng-if=\'«formModel».isEditing==true\'';
 					} else {
-						var btType = ' type="' + type + '" ';
+						btType = ' type="' + type + '" ';
 					}
-					if (formSpec.fnSubmit == undefined) {
-						var autoSubmitFunction = true;
+					if (formSpec.fnSubmit === undefined) {
+						autoSubmitFunction = true;
 					}
 				} else {
 					if (config.useEditForm) {
-						var btType = ' type="button" data-ng-if=\'«formModel».isEditing==true\'';
+						btType = ' type="button" data-ng-if=\'«formModel».isEditing==true\'';
 					} else {
-						var btType = ' type="button"';
+						btType = ' type="button"';
 					}
 				}
 
 				if (button.icon) {
-					var btIcon = '<span class="glyphicon glyphicon-' + button.icon + '"></span> ';
+					btIcon = '<span class="glyphicon glyphicon-' + button.icon + '"></span> ';
 				} else {
-					var btIcon = '';
+					btIcon = '';
 				}
 
 				if (config.useXeditable) {
-					if (button.attrs == undefined) {
+					if (button.attrs === undefined) {
 						button.attrs = {};
 					}
 					// If it is a cancel button add an extra atribute to reset the form
-					if(button.cancel == true) {
+					if(button.cancel === true) {
 						button.attrs['data-ng-click'] = '«formName».$cancel()';
 					}
 					button.attrs['data-ng-disabled'] = '«formName».$waiting';
@@ -464,7 +470,7 @@ var pytangular = {  // Does NOT depend on angularjs
 		}
 
 		//If there is a template for the fields in this fieldset
-		if (formSpec.fieldsTemplate != undefined && formSpec.fieldsTemplate[fsetSumIndex]) {
+		if (formSpec.fieldsTemplate !== undefined && formSpec.fieldsTemplate[fsetSumIndex]) {
 			// Add the template to the newFieldSet variable
 			newFieldSet = formSpec.fieldsTemplate[fsetSumIndex];
 			for (var key in fieldSet) {
@@ -474,7 +480,7 @@ var pytangular = {  // Does NOT depend on angularjs
 			}
 		} else {
 			// If there is not a template, just concat all fields
-			for (var key in fieldSet) {
+			for (var key in fieldSet) {// jshint ignore:line
 				newFieldSet += fieldSet[key];
 			}
 		}
@@ -493,7 +499,7 @@ var pytangular = {  // Does NOT depend on angularjs
 	buildFrom: function (formKind, allFieldSets, formSpec) {
 		var newFieldSets = "";
 		// If there is a template for this fieldset
-		if (formSpec.fieldSetsTemplate != undefined) {
+		if (formSpec.fieldSetsTemplate !== undefined) {
 			newFieldSets = formSpec.fieldSetsTemplate;
 			for (var key in allFieldSets) {
 				// This replace all comands "add(fieldset_index)" on the template for the field
@@ -502,7 +508,7 @@ var pytangular = {  // Does NOT depend on angularjs
 			}
 		} else {
 			// If there is not a template, just concat all fieldsets
-			for (var key in allFieldSets) {
+			for (var key in allFieldSets) { // jshint ignore:line
 				newFieldSets += allFieldSets[key];
 			}
 		}
@@ -564,14 +570,14 @@ dvApp.directive('pytangular', function ($compile) {
 				formSpec.fieldsets.forEach(function (fieldset) {
 					fieldset.fields.forEach(function (field) {
 						// If there is no model use field name as model name
-						if(field.model == undefined) {
+						if(field.model === undefined) {
 							field.model = field.name;
 						}
 						model[field.model] = null;
-						if (config.applyDefaults && field.default != null) {
+						if (config.applyDefaults && field.default) {
 							model[field.model] = field.default;
 						}
-						if (values[field.name] != null) {
+						if (values[field.name]) {
 							model[field.model] = values[field.name];
 						}
 					});
