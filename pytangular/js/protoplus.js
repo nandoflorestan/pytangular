@@ -12,7 +12,7 @@
 // Polyfill from ECMAScript 6 (Harmony):
 if (!Array.prototype.find) {
 	Object.defineProperty(Array.prototype, 'find', {value: function (predicate) {
-		if (this == null) {
+		if (!this) {
 			throw new TypeError('Array.prototype.find called on null or undefined');
 		}
 		if (typeof predicate !== 'function') {
@@ -35,7 +35,7 @@ if (!Array.prototype.find) {
 // Polyfill from ECMAScript 6 (Harmony):
 if (!Array.prototype.findIndex) {
 	Object.defineProperty(Array.prototype, 'findIndex', {value: function (predicate) {
-		if (this == null) {
+		if (!this) {
 			throw new TypeError('Array.prototype.findIndex called on null or undefined');
 		}
 		if (typeof predicate !== 'function') {
@@ -65,19 +65,20 @@ Object.defineProperty(Array.prototype, 'query', {value: function () {
 }});
 Object.defineProperty(Array.prototype, '_mkPredicate', {value: function (conditions) {
 	return function (elem, i, array) {
-		for (var i = 0; i < conditions.length; i++) {
+		for (i = 0; i < conditions.length; i++) {
 			var cond = conditions[i];
-			if (typeof cond == 'string')  var c = 'elem.' + cond;
+			var c;
+			if (typeof cond == 'string')  c = 'elem.' + cond;
 			else {
 				if (cond.length != 2)
 					throw 'Non-string condition must have 2 parts: ' + cond;
-				var c = 'elem.' + cond[0] + ' ';
+				c = 'elem.' + cond[0] + ' ';
 				if (typeof cond[1] == 'string')
 					c += '"' + cond[1].replace('"', '\\"') + '"';
 				else  c += cond[1];
 			}
-			if (!eval(c)) return false;
-		};
+			if (!eval(c)) return false; // jshint ignore:line
+		}
 		return true;
 	};
 }});
@@ -94,7 +95,7 @@ Object.defineProperty(Array.prototype, 'listOf', {value: function (fieldName) {
 	var result = [];
 	for (var i = 0; i < this.length; i++) {
 		result.push(this[i][fieldName]);
-	};
+	}
 	return result;
 }});
 
