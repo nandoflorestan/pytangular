@@ -141,6 +141,7 @@ var pytangular = {  // Does NOT depend on angularjs
 				// Define the type of field and get the input template
 				if ((field.widget != 'textarea') && (field.widget != 'select') && (field.widget != 'checkbox') && (field.widget != 'typeahead')) {
 					var prepend;
+					var append;
 					// All other input types (text, number, password, etc)
 					// Xeditable uses a different password template
 					if (field.widget == 'password' && config.useXeditable) {
@@ -392,9 +393,6 @@ var pytangular = {  // Does NOT depend on angularjs
 						btType = ' type="' + type + '" data-ng-if=\'«formModel».isEditing==true\'';
 					} else {
 						btType = ' type="' + type + '" ';
-					}
-					if (formSpec.fnSubmit === undefined) {
-						autoSubmitFunction = true;
 					}
 				} else {
 					if (config.useEditForm) {
