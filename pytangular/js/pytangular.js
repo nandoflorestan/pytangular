@@ -18,8 +18,8 @@ var pytangular = {  // Does NOT depend on angularjs
 		noformSkeleton: '«formContent» «buttons»',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<div data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»' +
-			'<div class="help-block" data-ng-if="«formModel».errors[\'«fieldName»\']" data-ng-bind="«formModel».errors[\'«fieldName»\']"></div></div>' +
-			'<div class="help-block">«helpText»</div>',
+			'<div class="help-block" data-ng-if="«formModel».errors[\'«fieldName»\']" data-ng-bind="«formModel».errors[\'«fieldName»\']"></div>' +
+			'<p class="help-block">«helpText»</p></div>',
 		widgets : {
 			inputGroup: '<div class="input-group">«prepend»«defaultTemplate»«append»</div>',
 			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
