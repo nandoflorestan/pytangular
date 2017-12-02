@@ -14,7 +14,7 @@ var pytangular = {  // Does NOT depend on angularjs
 	resetableDefaultFields: [],
 	// Normal HTML5 field skeletons
 	simpleSkeletons: {
-		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form>',
+		formSkeleton: '<form role="form" «fnSubmit» id="«fieldId»" name="«formName»">«formContent» «buttons»</form>',
 		noformSkeleton: '«formContent» «buttons»',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<div data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»' +
@@ -34,7 +34,7 @@ var pytangular = {  // Does NOT depend on angularjs
 	},
 	// Editable field skeletons
 	editSkeletons: {
-		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form><button type="button" data-ng-if="formSpec.editPermission" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
+		formSkeleton: '<form role="form" «fnSubmit» id="«fieldId»" name="«formName»">«formContent» «buttons»</form><button type="button" data-ng-if="formSpec.editPermission" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
 		noformSkeleton: '«formContent» «buttons» <button type="button" data-ng-if="formSpec.editPermission" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<div id="pytangular-edit-form-group" data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'form-group \'">«fieldContent»' +
@@ -61,7 +61,7 @@ var pytangular = {  // Does NOT depend on angularjs
 	xeditableSkeletons: {
 		formSkeleton:
 			'<form role="form" ' +
-						'id="«formName»"' +
+						'id="«fieldId»"' +
 						'editable-form ' +
 						'«fnSubmit» ' +
 						'name="«formName»">' +
