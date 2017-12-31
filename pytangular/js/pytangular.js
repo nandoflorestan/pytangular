@@ -14,7 +14,7 @@ var pytangular = {  // Does NOT depend on angularjs
 	resetableDefaultFields: [],
 	// Normal HTML5 field skeletons
 	simpleSkeletons: {
-		formSkeleton: '<form role="form" «fnSubmit» id="«fieldId»" name="«formName»">«formContent» «buttons»</form>',
+		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form>',
 		noformSkeleton: '«formContent» «buttons»',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<div data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'has-success form-group \'">«fieldContent»' +
@@ -24,17 +24,17 @@ var pytangular = {  // Does NOT depend on angularjs
 			inputGroup: '<div class="input-group">«prepend»«defaultTemplate»«append»</div>',
 			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
 			append: '<div class="input-group-addon">«appendSymbol»</div>',
-			defaultTemplate: '<input type="«inputType»" «size» «validation» class="form-control«inputClass»" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
-			select: '<select class="form-control«inputClass»" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>',
-			textarea: '<textarea class="form-control«inputClass»" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>',
-			checkbox: ' <input type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
-			typeahead: '<input autocomplete="off" data-ng-change="onChange_«fieldName»()" type="text" ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" uib-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control«inputClass»">',
+			defaultTemplate: '<input type="«inputType»" «size» «validation» class="form-control«cssClass»" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
+			select: '<select class="form-control«cssClass»" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>',
+			textarea: '<textarea class="form-control«cssClass»" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>',
+			checkbox: ' <input type="checkbox" class="form-check-input«cssClass»" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
+			typeahead: '<input data-ng-change="onChange_«fieldName»()" type="text" ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" uib-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control«cssClass»">',
 		},
 		 labelSkeleton: '<label for="«fieldName»" «inputTitle» class="control-label">«fieldLabel»«labelStar» </label>',
 	},
 	// Editable field skeletons
 	editSkeletons: {
-		formSkeleton: '<form role="form" «fnSubmit» id="«fieldId»" name="«formName»">«formContent» «buttons»</form><button type="button" data-ng-if="formSpec.editPermission" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
+		formSkeleton: '<form role="form" «fnSubmit» id="«formName»" name="«formName»">«formContent» «buttons»</form><button type="button" data-ng-if="formSpec.editPermission" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
 		noformSkeleton: '«formContent» «buttons» <button type="button" data-ng-if="formSpec.editPermission" data-ng-show=\'«formModel».isEditing!=true\' class="btn btn-primary" data-ng-click="«formModel».isEditing=true"><span class="glyphicon glyphicon-pencil"></span> Edit</button>',
 		fieldSetSkeleton: '<fieldset><legend>«fieldSetLegend»</legend>«fieldSetContent»</fieldset>',
 		fieldSkeleton: '<div id="pytangular-edit-form-group" data-ng-class="«formModel».errors[\'«fieldName»\'] ? \'has-error form-group \' : \'form-group \'">«fieldContent»' +
@@ -44,15 +44,15 @@ var pytangular = {  // Does NOT depend on angularjs
 			inputGroup: '<div data-ng-show="«formModel».isEditing" class="input-group">«prepend»«defaultTemplate»«append»</div>',
 			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
 			append: '<div class="input-group-addon">«appendSymbol»</div>',
-			defaultTemplate: '<input data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
+			defaultTemplate: '<input class="form-control«cssClass»" data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel» || \'None\'"></div>',
-			select: '<select data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>' +
+			select: '<select class="form-control«cssClass»" data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«selectedLabel»"></div>',
-			textarea: '<textarea data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>' +
+			textarea: '<textarea class="form-control«cssClass»" data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel» || \'None\'"></div>',
-			checkbox: ' <input data-ng-show="«formModel».isEditing" type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
+			checkbox: ' <input class="form-check-input«cssClass»" data-ng-show="«formModel».isEditing" type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></div>',
-			typeahead: '<input autocomplete="off" data-ng-show="«formModel».isEditing" data-ng-change="onChange_«fieldName»()" type="text" ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" uib-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control«inputClass»">' +
+			typeahead: '<input class="form-control«cssClass»" data-ng-show="«formModel».isEditing" data-ng-change="onChange_«fieldName»()" type="text" ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" uib-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control">' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></div>',
 		},
 		 labelSkeleton: '<label for="«fieldName»" «inputTitle» class="control-label">«fieldLabel»«labelStar» </label> ',
@@ -61,7 +61,7 @@ var pytangular = {  // Does NOT depend on angularjs
 	xeditableSkeletons: {
 		formSkeleton:
 			'<form role="form" ' +
-						'id="«fieldId»"' +
+						'id="«formName»"' +
 						'editable-form ' +
 						'«fnSubmit» ' +
 						'name="«formName»">' +
@@ -176,8 +176,6 @@ var pytangular = {  // Does NOT depend on angularjs
 					aField += pytangular[formKind].widgets.typeahead;
 				}
 
-				aField = aField.replace(/«inputClass»/g, ' ' + field.class);
-
 				// If it is a select define the list of values
 				if (field.widget == 'select') {
 					var selectedPath, emptyValue;
@@ -289,6 +287,11 @@ var pytangular = {  // Does NOT depend on angularjs
 
 				// Insert all field attributes on the template
 				aField = aField.replace(/«inputAttrs»/g, aFieldAttrs);
+
+				// Insert field css class on the template
+				var cssClass = field.css_class || '';
+				if (cssClass) cssClass = ' ' + cssClass;
+				aField = aField.replace(/«cssClass»/g, cssClass);
 
 				// Insert size on the template
 				var size ;
