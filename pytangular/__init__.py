@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-"""Python component of pytangular: serializes a schema to JSON"""
+"""Python component of pytangular: serializes a schema to JSON."""
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import colander as c
-from bag.text import capitalize
 from sqlalchemy import types
 from json import dumps
 from nine import IS_PYTHON2, nimport, nine, range, str, basestring
@@ -32,14 +31,15 @@ def _colander_type_from(attrib):
 
 
 def schema_to_json(*a, **kw):
-    """Serializes a Colander schema to JSON. Takes the same arguments as the
-        schema_to_dict() function.
-        """
+    """Serialize a Colander schema to JSON.
+
+    Takes the same arguments as the schema_to_dict() function.
+    """
     return dumps(schema_to_dict(*a, **kw))
 
 
 def _copy_attr(o, attr, adict, key=None):
-    """Maybe copies an attribute of an object to an item in adict."""
+    """Maybe copy an attribute of an object to an item in adict."""
     if hasattr(o, attr):
         adict[key or attr] = getattr(o, attr)
 
@@ -123,9 +123,10 @@ def get_validator(typ, node):
 
 
 def mix_validators(*validators):
-    """Gets arbitrary validators and joins them.
-        May return a single All instance, or a single validator, or None.
-        """
+    """Join arbitrary validators received as arguments.
+
+    May return a single All instance, or a single validator, or None.
+    """
     result = []
     for validator in validators:
         if validator is None:
@@ -165,19 +166,18 @@ def get_widget(node):
 
 
 def text_node(attrib, max_size=60, **kw):
-    """Helps you define colander SchemaNodes for text fields that
-        will be stored in SQLAlchemy -- typing less.
+    """Help define colander SchemaNodes for SQLAlchemy text fields.
 
-        Pass in the SQLAlchemy model attribute, such as ``User.name``,
-        along with other keyword arguments.
+    Pass in the SQLAlchemy model attribute, such as ``User.name``,
+    along with other keyword arguments.
 
-        If not informed, ``maxlength`` is inferred from the column size.
+    If not informed, ``maxlength`` is inferred from the column size.
 
-        When ``widget`` is missing, it is set to ``text``.
-        And when ``widget`` is not ``textarea``,
-        a smart formula calculates ``size`` based on ``maxlength``.
-        Also, a Length validator is added to the schema if not present.
-        """
+    When ``widget`` is missing, it is set to ``text``.
+    And when ``widget`` is not ``textarea``,
+    a smart formula calculates ``size`` based on ``maxlength``.
+    Also, a Length validator is added to the schema if not present.
+    """
     from bag.sqlalchemy.tricks import length
 
     maxlength = kw.get('maxlength')
@@ -211,11 +211,13 @@ def text_node(attrib, max_size=60, **kw):
 
 
 def select_node(attrib, options, validators=None, **kw):
-    """*attrib* must be the SQLAlchemy model attribute where the value
-        will be stored. *options* should be a sequence of (value, label)
-        tuples. Additional *validators* may be passed in, but this function
-        creates a OneOf validator, too.
-        """
+    """Return a SchemaNode with a select widget.
+
+    *attrib* must be the SQLAlchemy model attribute where the value
+    will be stored. *options* should be a sequence of (value, label)
+    tuples. Additional *validators* may be passed in, but this function
+    creates a OneOf validator, too.
+    """
     assert isinstance(options, (list, tuple, set, frozenset))
     one_of = c.OneOf([t[0] for t in options])
     validator = c.All(one_of, *validators) if validators else one_of
@@ -235,9 +237,3 @@ class PytangularSchema(c.MappingSchema):
 
     def to_json(self, mode='simple'):
         return schema_to_json(self, mode=mode)
-
-
-def capitalize_preparer(value):  # Colander preparer
-    if value is c.null:
-        return value
-    return capitalize(value)
