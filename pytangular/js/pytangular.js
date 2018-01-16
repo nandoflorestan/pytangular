@@ -28,7 +28,7 @@ var pytangular = {  // Does NOT depend on angularjs
 			select: '<select class="form-control«cssClass»" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>',
 			textarea: '<textarea class="form-control«cssClass»" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>',
 			checkbox: ' <input type="checkbox" class="form-check-input«cssClass»" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
-			typeahead: '<input data-ng-change="onChange_«fieldName»()" type="text" ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" uib-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control«cssClass»">',
+			typeahead: '<input data-ng-change="onChange_«fieldName»()" autocomplete="off" type="text" ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" uib-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control«cssClass»">',
 		},
 		 labelSkeleton: '<label for="«fieldName»" «inputTitle» class="control-label">«fieldLabel»«labelStar» </label>',
 	},
@@ -52,7 +52,7 @@ var pytangular = {  // Does NOT depend on angularjs
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel» || \'None\'"></div>',
 			checkbox: ' <input class="form-check-input«cssClass»" data-ng-show="«formModel».isEditing" type="checkbox" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></div>',
-			typeahead: '<input class="form-control«cssClass»" data-ng-show="«formModel».isEditing" data-ng-change="onChange_«fieldName»()" type="text" ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" uib-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control">' +
+			typeahead: '<input class="form-control«cssClass»" autocomplete="off" data-ng-show="«formModel».isEditing" data-ng-change="onChange_«fieldName»()" type="text" ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" uib-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control">' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel»"></div>',
 		},
 		 labelSkeleton: '<label for="«fieldName»" «inputTitle» class="control-label">«fieldLabel»«labelStar» </label> ',
