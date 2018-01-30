@@ -39,7 +39,7 @@ def schema_to_json(*a, **kw):
 
 
 def _copy_attr(o, attr, adict, key=None):
-    """Maybe copies an attribute of an object to an item in adict."""
+    """Maybe copy an attribute of an object to an item in adict."""
     if hasattr(o, attr):
         adict[key or attr] = getattr(o, attr)
 
