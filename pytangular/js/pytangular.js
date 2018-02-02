@@ -29,6 +29,11 @@ var pytangular = {  // Does NOT depend on angularjs
 			textarea: '<textarea class="form-control«cssClass»" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>',
 			checkbox: ' <input type="checkbox" class="form-check-input«cssClass»" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
 			typeahead: '<input data-ng-change="onChange_«fieldName»()" autocomplete="off" type="text" ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" uib-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control«cssClass»">',
+			datetimepicker: '<div class="input-group">'+
+								'<input data-ng-keypress="pressEnterKey($event)" data-ng-focus="toogleCalendars(\'end\', true)" type="text" class="form-control" data-date-time-input="MMM/DD/YYYY, h:mm a" data-ng-model="ui.rounds.wizard.newRound.ended">'+
+								'<span style="cursor:pointer;" data-ng-click="toogleCalendars(\'end\')" class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>'+
+							'</div>'+
+							'<datetimepicker class="dropdown-menu" data-ng-show="dateRangeEndShow" data-ng-model="ui.rounds.wizard.newRound.ended" data-datetimepicker-config="{startView:\'day\', minView:\'minute\', renderOn: \'start-date-changed\'}" data-on-set-time="toogleCalendars(\'end\')" data-before-render="endDateBeforeRender($view, $dates)"></datetimepicker>',
 		},
 		 labelSkeleton: '<label for="«fieldName»" «inputTitle» class="control-label">«fieldLabel»«labelStar» </label>',
 	},
@@ -139,7 +144,7 @@ var pytangular = {  // Does NOT depend on angularjs
 				}
 
 				// Define the type of field and get the input template
-				if ((field.widget != 'textarea') && (field.widget != 'select') && (field.widget != 'checkbox') && (field.widget != 'typeahead')) {
+				if ((field.widget != 'textarea') && (field.widget != 'select') && (field.widget != 'checkbox') && (field.widget != 'typeahead')&& (field.widget != 'datetimepicker')) {
 					var prepend;
 					var append;
 					// All other input types (text, number, password, etc)
@@ -174,6 +179,8 @@ var pytangular = {  // Does NOT depend on angularjs
 					aField += pytangular[formKind].widgets.checkbox;
 				} else if (field.widget == 'typeahead') {
 					aField += pytangular[formKind].widgets.typeahead;
+				} else if (field.widget == 'datetimepicker') {
+					aField += pytangular[formKind].widgets.datetimepicker;
 				}
 
 				// If it is a select define the list of values
@@ -527,6 +534,12 @@ dvApp.directive('pytangular', function ($compile) {
 			if (!attrs.formspec) throw 'Missing attribute "formspec" of directive "pytangular"';
 			if (!attrs.model) throw 'Missing attribute "model" of directive "pytangular"';
 
+			// Create a formSpec in directive scope
+			$scope.formSpec = $scope.$eval(attrs.formspec);
+			if (!$scope.formSpec) return;
+			
+			$scope.formSpec.editPermission = $scope.$eval(attrs.editPermission) || false;
+
 			var useXeditable = attrs.useXeditable == 'true';
 			var useEditForm = attrs.useEditForm == 'true';
 			// applyDefaults is true by default
@@ -540,10 +553,6 @@ dvApp.directive('pytangular', function ($compile) {
 			if (values) {
 				values = $scope.$eval(attrs.values);
 			}
-
-			// Create a formSpec in directive scope
-			$scope.formSpec = $scope.$eval(attrs.formspec);
-			$scope.formSpec.editPermission = $scope.$eval(attrs.editPermission) || false;
 
 			// Insert into model a config file to pytangular methods load need information
 			var config = {
