@@ -289,7 +289,7 @@ var pytangular = {  // Does NOT depend on angularjs
 				aField = aField.replace(/«inputAttrs»/g, aFieldAttrs);
 
 				// Insert size on the template
-				var size ;
+				var size;
 				if (field.size) size = 'size = "' + field.size + '"';
 				aField = aField.replace(/«size»/g, size || '');
 
@@ -597,10 +597,10 @@ dvApp.directive('pytangular', function ($compile, $cookies) {
 				var formaction = config.formSpec.buttons[btIndex].formaction || '';
 
 				var myForm = document.createElement("form");
-				myForm.method = "post" ;
+				myForm.method = "post";
 				myForm.action = formaction;
 				for (var key in model) {
-					var myInput = document.createElement("input") ;
+					var myInput = document.createElement("input");
 					myInput.setAttribute("name", key);
 					myInput.setAttribute("value", model[key]);
 					myForm.appendChild(myInput);
@@ -614,7 +614,7 @@ dvApp.directive('pytangular', function ($compile, $cookies) {
 				myForm.appendChild(csrf);
 
 				document.body.appendChild(myForm);
-				myForm.submit() ;
+				myForm.submit();
 				document.body.removeChild(myForm);
 			};
 
