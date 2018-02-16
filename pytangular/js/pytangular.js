@@ -28,12 +28,22 @@ var pytangular = {  // Does NOT depend on angularjs
 			select: '<select class="form-control«cssClass»" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>',
 			textarea: '<textarea class="form-control«cssClass»" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>',
 			checkbox: ' <input type="checkbox" class="form-check-input«cssClass»" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
-			typeahead: '<input data-ng-change="onChange_«fieldName»()" autocomplete="off" type="text" ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" uib-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control«cssClass»">',
-			datetimepicker: '<div class="input-group">'+
-								'<input data-ng-keypress="pressEnterKey($event)" data-ng-focus="toogleCalendars(\'end\', true)" type="text" class="form-control" data-date-time-input="MMM/DD/YYYY, h:mm a" data-ng-model="ui.rounds.wizard.newRound.ended">'+
-								'<span style="cursor:pointer;" data-ng-click="toogleCalendars(\'end\')" class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>'+
-							'</div>'+
-							'<datetimepicker class="dropdown-menu" data-ng-show="dateRangeEndShow" data-ng-model="ui.rounds.wizard.newRound.ended" data-datetimepicker-config="{startView:\'day\', minView:\'minute\', renderOn: \'start-date-changed\'}" data-on-set-time="toogleCalendars(\'end\')" data-before-render="endDateBeforeRender($view, $dates)"></datetimepicker>',
+			typeahead: '<input data-ng-change="onChange_«fieldName»()" autocomplete="off" type="text" data-ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" uib-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control«cssClass»">',
+			datetimepicker: '<div class="dropdown">'+
+								'<div class="input-group">'+
+									'<input «inputAttrs» id="«fieldId»" autocomplete="off"'+
+										' data-ng-focus="«fn»" type="text" class="form-control"'+
+										' data-date-time-input="«format»"'+
+										' data-ng-model="«ngModel»">'+
+									'<span style="cursor:pointer;" data-ng-click="«fn»" class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>'+
+								'</div>'+
+								'<datetimepicker class="dropdown-menu" data-ng-show="«ngShow»"'+
+									' data-ng-model="«ngModel»"'+
+									' data-datetimepicker-config="«config»"'+
+									' data-on-set-time="«fn»"'+
+									' data-before-render="«beforeRender»">'+
+								'</datetimepicker>'+
+							'</div>',
 		},
 		 labelSkeleton: '<label for="«fieldName»" «inputTitle» class="control-label">«fieldLabel»«labelStar» </label>',
 	},
@@ -181,6 +191,14 @@ var pytangular = {  // Does NOT depend on angularjs
 					aField += pytangular[formKind].widgets.typeahead;
 				} else if (field.widget == 'datetimepicker') {
 					aField += pytangular[formKind].widgets.datetimepicker;
+					aField = aField.replace(/«fn»/g, field.fn);
+					aField = aField.replace(/«config»/g, field.config);
+					aField = aField.replace(/«beforeRender»/g, field.beforeRender);
+					aField = aField.replace(/«ngShow»/g, field.ngShow);
+					var format;
+					if (!field.format) format = 'MMM/DD/YYYY, h:mm a';
+					else format = field.format;
+					aField = aField.replace(/«format»/g, format);
 				}
 
 				// If it is a select define the list of values
