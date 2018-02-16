@@ -301,7 +301,7 @@ var pytangular = {  // Does NOT depend on angularjs
 				aField = aField.replace(/«cssClass»/g, cssClass);
 
 				// Insert size on the template
-				var size ;
+				var size;
 				if (field.size) size = 'size = "' + field.size + '"';
 				aField = aField.replace(/«size»/g, size || '');
 
@@ -526,7 +526,7 @@ var pytangular = {  // Does NOT depend on angularjs
 	},
 };
 
-dvApp.directive('pytangular', function ($compile) {
+dvApp.directive('pytangular', function ($compile, $cookies) {
 	return {
 		scope: true,
 		restrict: 'E',
@@ -611,17 +611,25 @@ dvApp.directive('pytangular', function ($compile) {
 				var formaction = config.formSpec.buttons[btIndex].formaction || '';
 
 				var myForm = document.createElement("form");
-				myForm.method = "post" ;
-				myForm.action = formaction ;
+				myForm.method = "post";
+				myForm.action = formaction;
 				for (var key in model) {
-					var myInput = document.createElement("input") ;
-					myInput.setAttribute("name", key) ;
+					var myInput = document.createElement("input");
+					myInput.setAttribute("name", key);
 					myInput.setAttribute("value", model[key]);
-					myForm.appendChild(myInput) ;
+					myForm.appendChild(myInput);
 				}
-				document.body.appendChild(myForm) ;
-				myForm.submit() ;
-				document.body.removeChild(myForm) ;
+
+				// Add the csrf_token hidden input
+				var csrf = document.createElement("input");
+				csrf.setAttribute("type", "hidden");
+				csrf.setAttribute("name", "csrf_token");
+				csrf.setAttribute("value", $cookies.get("XSRF-TOKEN"));
+				myForm.appendChild(csrf);
+
+				document.body.appendChild(myForm);
+				myForm.submit();
+				document.body.removeChild(myForm);
 			};
 
 			// Populate the form with values or default attrs of formSpec
