@@ -555,7 +555,7 @@ dvApp.directive('pytangular', function ($compile, $cookies) {
 			// Create a formSpec in directive scope
 			$scope.formSpec = $scope.$eval(attrs.formspec);
 			if (!$scope.formSpec) return;
-			
+
 			$scope.formSpec.editPermission = $scope.$eval(attrs.editPermission) || false;
 
 			var useXeditable = attrs.useXeditable == 'true';
