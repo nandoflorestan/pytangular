@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 
 # http://peak.telecommunity.com/DevCenter/setuptools#developer-s-guide
 # from distutils.core import setup
@@ -10,11 +9,6 @@ with open('README.rst', encoding='utf-8') as f:
     long_description = f.read()
 
 dependencies = ['bag']
-# from sys import version_info
-# if version_info[:2] < (3, 4):
-#     dependencies.append('pathlib')
-# if version_info[:2] == (2, 6):
-#     dependencies.append('ordereddict')
 
 setup(
     url='https://github.com/nandoflorestan/pytangular',
@@ -37,13 +31,9 @@ setup(
         'License :: OSI Approved :: MIT License',
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.3",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         'Programming Language :: Python :: Implementation :: CPython',
         "Framework :: Pyramid",
         "Topic :: Internet :: WWW/HTTP",

@@ -1,13 +1,8 @@
-# -*- coding: utf-8 -*-
-
 """Python component of pytangular: serializes a schema to JSON."""
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 import colander as c
 from sqlalchemy import types
 from json import dumps
-from nine import IS_PYTHON2, nimport, nine, range, str, basestring
 
 
 colander_types = {  # maps SQLAlchemy types to colander types

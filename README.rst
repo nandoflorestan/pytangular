@@ -7,12 +7,16 @@ pytangular
 bridge between Python and AngularJS, such that a web form
 specification (containing form fields etc.) can cross the language chasm.
 
+
 Why?
 ====
 
 Remember that, in software development, **repetition is the root of all evil**.
 You already define your forms in the Python web server in order to validate
 them. So you should not have to recreate the same forms in the client.
+
+We support Python versions 3.5 and 3.6.
+
 
 How does it work?
 =================
@@ -37,7 +41,7 @@ TODO: Examples and how to use it.
 Collaboration
 =============
 
-We want your help. We are open to bug reports, feature requests, suggestions
+We are open to bug reports, feature requests, suggestions
 and (especially) pull requests. Reach us at
 https://github.com/nandoflorestan/pytangular/issues
 
