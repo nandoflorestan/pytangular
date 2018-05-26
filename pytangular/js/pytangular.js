@@ -320,7 +320,7 @@ var pytangular = {  // Does NOT depend on angularjs
 
 				// Insert size on the template
 				var size;
-				if (field.size) size = 'size = "' + field.size + '"';
+				if (field.size) size = 'size="' + field.size + '"';
 				aField = aField.replace(/«size»/g, size || '');
 
 				// Insert the aField inside of fieldSkeleton
