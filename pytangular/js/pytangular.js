@@ -24,10 +24,10 @@ var pytangular = {  // Does NOT depend on angularjs
 			inputGroup: '<div class="input-group">«prepend»«defaultTemplate»«append»</div>',
 			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
 			append: '<div class="input-group-addon">«appendSymbol»</div>',
-			defaultTemplate: '<input type="«inputType»" «size» «validation» class="form-control«cssClass»" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
+			defaultTemplate: '<input type="«inputType»" «size» «validation» class="form-control«cssClass»" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver» />',
 			select: '<select class="form-control«cssClass»" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>',
 			textarea: '<textarea class="form-control«cssClass»" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>',
-			checkbox: ' <input type="checkbox" class="form-check-input«cssClass»" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>',
+			checkbox: ' <input type="checkbox" class="form-check-input«cssClass»" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver» />',
 			typeahead: '<input data-ng-change="onChange_«fieldName»()" autocomplete="off" type="text" data-ng-model="«ngModel»" «inputAttrs» «popOver» id="«fieldId»" uib-typeahead="item for item in «typeaheadList» | filter:$viewValue | limitTo:8" typeahead-on-select="onSelect_«fieldName»($item, $model, $label)" class="form-control«cssClass»">',
 			datetimepicker: '<div class="dropdown">'+
 								'<div class="input-group">'+
@@ -59,7 +59,7 @@ var pytangular = {  // Does NOT depend on angularjs
 			inputGroup: '<div data-ng-show="«formModel».isEditing" class="input-group">«prepend»«defaultTemplate»«append»</div>',
 			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
 			append: '<div class="input-group-addon">«appendSymbol»</div>',
-			defaultTemplate: '<input class="form-control«cssClass»" data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver»/>' +
+			defaultTemplate: '<input class="form-control«cssClass»" data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver» />' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel» || \'None\'"></div>',
 			select: '<select class="form-control«cssClass»" data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«selectedLabel»"></div>',
@@ -112,7 +112,8 @@ var pytangular = {  // Does NOT depend on angularjs
 		'xeditable': {},
 	},
 
-	build: function (config) {
+	build: function (config) { // return an angular template
+		// TODO This method is spaghetti and needs to be broken down.
 		var modelName = config.modelName;
 		var formSpecName = config.formSpecName;
 		var formSpec = config.formSpec;
@@ -484,7 +485,6 @@ var pytangular = {  // Does NOT depend on angularjs
 		// Insert form submit function
 		formTemplate = formTemplate.replace(/«fnSubmit»/g, fnSubmit || '');
 		formTemplate = formTemplate.replace(/«formModel»/g, modelName);
-
 		return formTemplate;
 	},
 
