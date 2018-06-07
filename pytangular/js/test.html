@@ -176,8 +176,8 @@
 					name: 'salary',
 					model: 'salary',
 					default: '100000',
-					append: '<span>.00</span>',
-					prepend: '<span>$</span>',
+					appendText: '<span>.00</span>',
+					prependText: '<span>$</span>',
 					popover: {msg: 'How greed are you?', placement: 'bottom'},
 					size: 5,
 					input_attrs:{
@@ -202,7 +202,7 @@
 					label: 'E-mail',
 					name: 'email',
 					model: 'email',
-					append: '<span class="glyphicon glyphicon-envelope"></span>',
+					appendText: '<span class="glyphicon glyphicon-envelope"></span>',
 					helpText: 'Type your e-mail',
 				},
 				{
@@ -210,7 +210,7 @@
 					label: 'Password',
 					name: 'pwd',
 					model: 'pwd',
-					prepend: '<span class="glyphicon glyphicon-lock"></span>',
+					prependText: '<span class="glyphicon glyphicon-lock"></span>',
 					helpText: 'Mix numbers and letters',
 					input_attrs: {
 						'style': 'width: 10em;',
