@@ -8,6 +8,16 @@ function showFormErrors(response, fieldFinder) {
 	}
 }
 
+function escapeDollarSign(string) {
+	let newString = '';
+	if (!string) return string;
+	for (const ch of string) {
+		if (ch === '$') newString = newString + '&#36;';
+		else newString = newString + ch;
+	}
+	return newString;
+}
+
 var pytangular = {  // Does NOT depend on angularjs
 	// Hold the form field names
 	resetableFields: [],
@@ -175,8 +185,8 @@ var pytangular = {  // Does NOT depend on angularjs
 							tempField = tempField.replace(/«defaultTemplate»/g, aField);
 							tempField = tempField.replace(/«prepend»/g, prepend || '');
 							tempField = tempField.replace(/«append»/g, append || '');
-							tempField = tempField.replace(/«prependSymbol»/g, field.prepend);
-							tempField = tempField.replace(/«appendSymbol»/g, field.append);
+							tempField = tempField.replace(/«prependSymbol»/g, escapeDollarSign(field.prepend));
+							tempField = tempField.replace(/«appendSymbol»/g, escapeDollarSign(field.append));
 							aField = tempField;
 						}
 					}
