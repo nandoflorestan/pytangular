@@ -32,8 +32,8 @@ var pytangular = {  // Does NOT depend on angularjs
 			'<p class="help-block">«helpText»</p></div>',
 		widgets : {
 			inputGroup: '<div class="input-group">«prepend»«defaultTemplate»«append»</div>',
-			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
-			append: '<div class="input-group-addon">«appendSymbol»</div>',
+			prepend: '<div class="input-group-addon">«prependText»</div>',
+			append: '<div class="input-group-addon">«appendText»</div>',
 			defaultTemplate: '<input type="«inputType»" «size» «validation» class="form-control«cssClass»" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver» />',
 			select: '<select class="form-control«cssClass»" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>',
 			textarea: '<textarea class="form-control«cssClass»" data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» «popOver»></textarea>',
@@ -67,8 +67,8 @@ var pytangular = {  // Does NOT depend on angularjs
 			'<div class="help-block">«helpText»</div>',
 		widgets : {
 			inputGroup: '<div data-ng-show="«formModel».isEditing" class="input-group">«prepend»«defaultTemplate»«append»</div>',
-			prepend: '<div class="input-group-addon">«prependSymbol»</div>',
-			append: '<div class="input-group-addon">«appendSymbol»</div>',
+			prepend: '<div class="input-group-addon">«prependText»</div>',
+			append: '<div class="input-group-addon">«appendText»</div>',
 			defaultTemplate: '<input class="form-control«cssClass»" data-ng-show="«formModel».isEditing" type="«inputType»" «size» «validation» data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" id="«fieldId»" name="«fieldName»" data-ng-model="«ngModel»" «inputAttrs» «popOver» />' +
 				'<div data-ng-if="!«formModel».isEditing" data-ng-bind="«ngModel» || \'None\'"></div>',
 			select: '<select class="form-control«cssClass»" data-ng-show="«formModel».isEditing" data-ng-class="!«formModel».isEditing ? \'pytangular-hide\' : \'form-control\'" «selectedItem» data-ng-model="«ngModel»" id="«fieldId»" name="«fieldName»" «inputAttrs» data-ng-options="item.«itemValue» as item.«itemLabel» for item in «itemsList»">«emptyValue»</select>' +
@@ -177,16 +177,16 @@ var pytangular = {  // Does NOT depend on angularjs
 						aField += pytangular[formKind].widgets.defaultTemplate;
 						// Verify for append and prepend and add if exists
 						// Also verify if is a simple form (not xeditable)
-						if ((field.append || field.prepend) && !config.useXeditable) {
+						if ((field.appendText || field.prependText) && !config.useXeditable) {
 							var tempField = pytangular[formKind].widgets.inputGroup;
-							if (field.prepend) prepend = pytangular[formKind].widgets.prepend;
-							if (field.append) append = pytangular[formKind].widgets.append;
+							if (field.prependText) prepend = pytangular[formKind].widgets.prepend;
+							if (field.appendText) append = pytangular[formKind].widgets.append;
 
 							tempField = tempField.replace(/«defaultTemplate»/g, aField);
 							tempField = tempField.replace(/«prepend»/g, prepend || '');
 							tempField = tempField.replace(/«append»/g, append || '');
-							tempField = tempField.replace(/«prependSymbol»/g, escapeDollarSign(field.prepend));
-							tempField = tempField.replace(/«appendSymbol»/g, escapeDollarSign(field.append));
+							tempField = tempField.replace(/«prependText»/g, escapeDollarSign(field.prependText));
+							tempField = tempField.replace(/«appendText»/g, escapeDollarSign(field.appendText));
 							aField = tempField;
 						}
 					}
