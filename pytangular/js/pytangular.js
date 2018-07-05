@@ -1,4 +1,7 @@
 'use strict';
+
+import {dvApp} from "../../../../ng/dv-components.min.js";
+
 function showFormErrors(response, fieldFinder) {
 	if (response.invalid) {
 		for (var key in response.invalid) {
