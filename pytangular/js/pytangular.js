@@ -1,7 +1,5 @@
 'use strict';
 
-import {dvApp} from "../../../../ng/dv-components.min.js";
-
 function showFormErrors(response, fieldFinder) {
 	if (response.invalid) {
 		for (var key in response.invalid) {
@@ -547,7 +545,7 @@ var pytangular = {  // Does NOT depend on angularjs
 	},
 };
 
-dvApp.directive('pytangular', function ($compile, $cookies) {
+angular.module("pytangular", []).directive('pytangular', function ($compile, $cookies) {
 	return {
 		scope: true,
 		restrict: 'E',
