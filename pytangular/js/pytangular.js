@@ -1,5 +1,6 @@
 'use strict';
-function showFormErrors(response, fieldFinder) {
+
+export function showFormErrors(response, fieldFinder) {
 	if (response.invalid) {
 		for (var key in response.invalid) {
 			var field = fieldFinder(key);
@@ -544,120 +545,122 @@ var pytangular = {  // Does NOT depend on angularjs
 	},
 };
 
-dvApp.directive('pytangular', function ($compile, $cookies) {
-	return {
-		scope: true,
-		restrict: 'E',
-		link: function ($scope, element, attrs) {
-			if (!attrs.formspec) throw 'Missing attribute "formspec" of directive "pytangular"';
-			if (!attrs.model) throw 'Missing attribute "model" of directive "pytangular"';
+export function pytangularComponent() {
+	dvApp.directive('pytangular', function ($compile, $cookies) {
+		return {
+			scope: true,
+			restrict: 'E',
+			link: function ($scope, element, attrs) {
+				if (!attrs.formspec) throw 'Missing attribute "formspec" of directive "pytangular"';
+				if (!attrs.model) throw 'Missing attribute "model" of directive "pytangular"';
 
-			// Create a formSpec in directive scope
-			$scope.formSpec = $scope.$eval(attrs.formspec);
-			if (!$scope.formSpec) return;
+				// Create a formSpec in directive scope
+				$scope.formSpec = $scope.$eval(attrs.formspec);
+				if (!$scope.formSpec) return;
 
-			$scope.formSpec.editPermission = $scope.$eval(attrs.editPermission) || false;
+				$scope.formSpec.editPermission = $scope.$eval(attrs.editPermission) || false;
 
-			var useXeditable = attrs.useXeditable == 'true';
-			var useEditForm = attrs.useEditForm == 'true';
-			// applyDefaults is true by default
-			var applyDefaults = attrs.applyDefaults != 'false';
+				var useXeditable = attrs.useXeditable == 'true';
+				var useEditForm = attrs.useEditForm == 'true';
+				// applyDefaults is true by default
+				var applyDefaults = attrs.applyDefaults != 'false';
 
-			// Create field error
-			var model = $scope.$eval(attrs.model);
-			model.errors = {};
-			// Do the same as model, but values is optional so need check if exists
-			var values = attrs.values;
-			if (values) {
-				values = $scope.$eval(attrs.values);
-			}
+				// Create field error
+				var model = $scope.$eval(attrs.model);
+				model.errors = {};
+				// Do the same as model, but values is optional so need check if exists
+				var values = attrs.values;
+				if (values) {
+					values = $scope.$eval(attrs.values);
+				}
 
-			// Insert into model a config file to pytangular methods load need information
-			var config = {
-				model: model,
-				formSpecName: attrs.formspec,
-				formSpec: $scope.formSpec,
-				useEditForm: useEditForm,
-				useXeditable: useXeditable,
-				values: values || '',
-				modelName: attrs.model,
-				applyDefaults: applyDefaults,
-				noform: attrs.noform || null,
-			};
+				// Insert into model a config file to pytangular methods load need information
+				var config = {
+					model: model,
+					formSpecName: attrs.formspec,
+					formSpec: $scope.formSpec,
+					useEditForm: useEditForm,
+					useXeditable: useXeditable,
+					values: values || '',
+					modelName: attrs.model,
+					applyDefaults: applyDefaults,
+					noform: attrs.noform || null,
+				};
 
-			var populate = function (config) {
-				/* *config* must contain:
-					- formSpecName: a variable with name/path of a form description including fieldsets and fields
-					- valuesPath: a variable with the name/path of a initial field values
-					- modelName: a variable with name/path of where angular keeps the state
-					- applyDefaults: whether or not to apply default values contained in the formspec.
-					- useXeditable: hold true or false to tell if is using xeditable
-				*/
-				var formSpec = config.formSpec;
-				var model = config.model;
-				var values = config.values || '';
+				var populate = function (config) {
+					/* *config* must contain:
+						- formSpecName: a variable with name/path of a form description including fieldsets and fields
+						- valuesPath: a variable with the name/path of a initial field values
+						- modelName: a variable with name/path of where angular keeps the state
+						- applyDefaults: whether or not to apply default values contained in the formspec.
+						- useXeditable: hold true or false to tell if is using xeditable
+					*/
+					var formSpec = config.formSpec;
+					var model = config.model;
+					var values = config.values || '';
 
-				formSpec.fieldsets.forEach(function (fieldset) {
-					fieldset.fields.forEach(function (field) {
-						// If there is no model use field name as model name
-						if(field.model === undefined) {
-							field.model = field.name;
-						}
-						model[field.model] = null;
-						if (config.applyDefaults && field.default) {
-							model[field.model] = field.default;
-						}
-						if (values[field.name]) {
-							model[field.model] = values[field.name];
-						}
+					formSpec.fieldsets.forEach(function (fieldset) {
+						fieldset.fields.forEach(function (field) {
+							// If there is no model use field name as model name
+							if(field.model === undefined) {
+								field.model = field.name;
+							}
+							model[field.model] = null;
+							if (config.applyDefaults && field.default) {
+								model[field.model] = field.default;
+							}
+							if (values[field.name]) {
+								model[field.model] = values[field.name];
+							}
+						});
 					});
+				};
+
+				$scope.formSpec.showError = function (response, status, headers, config) {
+					for (var key in response.invalid) {
+						model.errors[key] = response.invalid[key];
+					}
+				};
+
+				$scope.$on('populate', function (event) {
+					populate(config);
 				});
-			};
 
-			$scope.formSpec.showError = function (response, status, headers, config) {
-				for (var key in response.invalid) {
-					model.errors[key] = response.invalid[key];
+				$scope.submitForm = function (btIndex) {
+					var method = config.formSpec.buttons[btIndex].method || 'post';
+					var formaction = config.formSpec.buttons[btIndex].formaction || '';
+
+					var myForm = document.createElement("form");
+					myForm.method = "post";
+					myForm.action = formaction;
+					for (var key in model) {
+						var myInput = document.createElement("input");
+						myInput.setAttribute("name", key);
+						myInput.setAttribute("value", model[key]);
+						myForm.appendChild(myInput);
+					}
+
+					// Add the csrf_token hidden input
+					var csrf = document.createElement("input");
+					csrf.setAttribute("type", "hidden");
+					csrf.setAttribute("name", "csrf_token");
+					csrf.setAttribute("value", $cookies.get("XSRF-TOKEN"));
+					myForm.appendChild(csrf);
+
+					document.body.appendChild(myForm);
+					myForm.submit();
+					document.body.removeChild(myForm);
+				};
+
+				// Populate the form with values or default attrs of formSpec
+				if (values || applyDefaults) {
+					populate(config);
 				}
-			};
-
-			$scope.$on('populate', function (event) {
-				populate(config);
-			});
-
-			$scope.submitForm = function (btIndex) {
-				var method = config.formSpec.buttons[btIndex].method || 'post';
-				var formaction = config.formSpec.buttons[btIndex].formaction || '';
-
-				var myForm = document.createElement("form");
-				myForm.method = "post";
-				myForm.action = formaction;
-				for (var key in model) {
-					var myInput = document.createElement("input");
-					myInput.setAttribute("name", key);
-					myInput.setAttribute("value", model[key]);
-					myForm.appendChild(myInput);
-				}
-
-				// Add the csrf_token hidden input
-				var csrf = document.createElement("input");
-				csrf.setAttribute("type", "hidden");
-				csrf.setAttribute("name", "csrf_token");
-				csrf.setAttribute("value", $cookies.get("XSRF-TOKEN"));
-				myForm.appendChild(csrf);
-
-				document.body.appendChild(myForm);
-				myForm.submit();
-				document.body.removeChild(myForm);
-			};
-
-			// Populate the form with values or default attrs of formSpec
-			if (values || applyDefaults) {
-				populate(config);
-			}
-			var template = pytangular.build(config);
-			var linkFn = $compile(template);
-			var content = linkFn($scope);
-			element.append(content);
-		},
-	};
-});
+				var template = pytangular.build(config);
+				var linkFn = $compile(template);
+				var content = linkFn($scope);
+				element.append(content);
+			},
+		};
+	});
+}
