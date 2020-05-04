@@ -10,7 +10,7 @@
 
 // .find(predicate) returns a single element, or undefined.
 // Polyfill from ECMAScript 6 (Harmony):
-export function runProtoPlus() {
+export function addProtoplusMethods() {
 	if (!Array.prototype.find) {
 		Object.defineProperty(Array.prototype, 'find', {value: function (predicate) {
 			if (!this) {
