@@ -8,10 +8,10 @@
 	The *predicate* fn signature is: (element, index, array): boolean
 */
 
-// .find(predicate) returns a single element, or undefined.
-// Polyfill from ECMAScript 6 (Harmony):
 export function addProtoplusMethods() {
 	if (!Array.prototype.find) {
+		// .find(predicate) returns a single element, or undefined.
+		// Polyfill from ECMAScript 6 (Harmony):
 		Object.defineProperty(Array.prototype, 'find', {value: function (predicate) {
 			if (!this) {
 				throw new TypeError('Array.prototype.find called on null or undefined');
@@ -33,8 +33,8 @@ export function addProtoplusMethods() {
 			return undefined;
 		}});
 	}
-	// Polyfill from ECMAScript 6 (Harmony):
 	if (!Array.prototype.findIndex) {
+		// Polyfill from ECMAScript 6 (Harmony):
 		Object.defineProperty(Array.prototype, 'findIndex', {value: function (predicate) {
 			if (!this) {
 				throw new TypeError('Array.prototype.findIndex called on null or undefined');
@@ -56,7 +56,6 @@ export function addProtoplusMethods() {
 			return -1;
 		}});
 	}
-
 
 	// Assuming the array items are objects, filter them according to the *conditions* and return a new array.
 	// conditions are strings or 2-tuples. Example:
