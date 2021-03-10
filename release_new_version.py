@@ -6,8 +6,26 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 from releaser import Releaser          # easy_install -UZ releaser
-from releaser.steps import *
-from releaser.git_steps import *
+from releaser.steps import (
+    Shell,
+    CheckRstFiles,
+    InteractivelyApproveDistribution,
+    InteractivelyApproveWheel,
+    CheckTravis,
+    SetVersionNumberInteractively,
+    PypiUpload,
+    PypiUploadWheel,
+    SetFutureVersion,
+    Warn,
+)
+from releaser.git_steps import (
+    EnsureGitClean,
+    EnsureGitBranch,
+    GitCommitVersionNumber,
+    GitTag,
+    GitPush,
+    GitPushTags,
+)
 
 # These settings are used by multiple release steps below.
 config = dict(
@@ -35,15 +53,14 @@ Releaser(
     EnsureGitBranch,  # I must be in the branch specified in config
     # InteractivelyEnsureChangesDocumented,     # Did you update CHANGES.rst?
     Shell('./build_sphinx_documentation.sh'),  # You can write it easily
-    InteractivelyApproveDistribution,  # Generate sdist, let user verify it
-    InteractivelyApproveWheel,         # Let user verify a temp wheel
     # CheckTravis,  # We run this late, so travis-ci has more time to build
 
     # ======================  All checks pass. RELEASE!  ======================
     SetVersionNumberInteractively,  # Ask for version and write to source code
     GitCommitVersionNumber,
     GitTag,  # Locally tag the current commit with the new version number
-    PypiRegister,           # Create the new release at https://pypi.python.org
+    InteractivelyApproveDistribution,  # Generate sdist, let user verify it
+    InteractivelyApproveWheel,         # Generate wheel, let user verify it
     PypiUpload,   # Make and upload a source .tar.gz to https://pypi.python.org
     PypiUploadWheel,  # Make and upload source wheel to https://pypi.python.org
 
