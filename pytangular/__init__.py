@@ -39,65 +39,64 @@ def _copy_attr(o, attr, adict, key=None):
         adict[key or attr] = getattr(o, attr)
 
 
-def schema_to_dict(*schemas, mode='simple'):
-    form = {'fieldsets': [], 'mode': mode}
+def schema_to_dict(*schemas, mode="simple"):
+    form = {"fieldsets": [], "mode": mode}
 
     # Build each fieldset
     for schema in schemas:
         if isinstance(schema, c._SchemaMeta):
             schema = schema()
-        fieldset = {'fields': []}
-        form['fieldsets'].append(fieldset)
-        _copy_attr(schema, 'legend', fieldset)
+        fieldset = {"fields": []}
+        form["fieldsets"].append(fieldset)
+        _copy_attr(schema, "legend", fieldset)
 
         # Build each field
         for node in schema:
             field = {
-                'name': node.name,
-                'label': node.title,
-                'widget': get_widget(node) if node.widget is None
-                else node.widget,
-                'input_attrs': {},
+                "name": node.name,
+                "label": node.title,
+                "widget": get_widget(node) if node.widget is None else node.widget,
+                "input_attrs": {},
             }
-            fieldset['fields'].append(field)
-            attrs = field['input_attrs']
+            fieldset["fields"].append(field)
+            attrs = field["input_attrs"]
             if node.default is not c.null:
-                field['default'] = node.default
+                field["default"] = node.default
             if node.description:
-                field['helpText'] = node.description
-            _copy_attr(node, 'tooltip', field, 'title')
-            _copy_attr(node, 'popover', field)
+                field["helpText"] = node.description
+            _copy_attr(node, "tooltip", field, "title")
+            _copy_attr(node, "popover", field)
 
             # Bootstrap prepend and append
-            _copy_attr(node, 'prepend', field)
-            _copy_attr(node, 'append', field)
+            _copy_attr(node, "prepend", field)
+            _copy_attr(node, "append", field)
 
-            _copy_attr(node, 'size', attrs)
-            _copy_attr(node, 'maxlength', attrs)
+            _copy_attr(node, "size", attrs)
+            _copy_attr(node, "maxlength", attrs)
 
             # Textarea
-            _copy_attr(node, 'cols', attrs)
-            _copy_attr(node, 'rows', attrs)
+            _copy_attr(node, "cols", attrs)
+            _copy_attr(node, "rows", attrs)
 
             # Select
-            _copy_attr(node, 'options', field)
+            _copy_attr(node, "options", field)
 
             # HTML5 forms: http://html5doctor.com/html5-forms-introduction-and-new-attributes/
-            _copy_attr(node, 'placeholder', attrs)
-            _copy_attr(node, 'pattern', attrs)
-            if hasattr(node, 'autofocus') and node.autofocus:
-                attrs['autofocus'] = 'autofocus'
+            _copy_attr(node, "placeholder", attrs)
+            _copy_attr(node, "pattern", attrs)
+            if hasattr(node, "autofocus") and node.autofocus:
+                attrs["autofocus"] = "autofocus"
             if node.required:
-                attrs['required'] = 'required'
+                attrs["required"] = "required"
             # TODO autocomplete, list, novalidate etc.
 
-            if field['widget'] == 'number':
+            if field["widget"] == "number":
                 validator = get_validator(c.Range, node)
                 if validator:
                     if validator.min is not None:
-                        attrs['min'] = validator.min
+                        attrs["min"] = validator.min
                     if validator.max is not None:
-                        attrs['max'] = validator.max
+                        attrs["max"] = validator.max
     return form
 
 
@@ -141,22 +140,22 @@ def mix_validators(*validators):
 
 def get_widget(node):
     if get_validator(c.Email, node):
-        return 'email'
+        return "email"
 
     if isinstance(node.typ, c.String):
         length_validator = get_validator(c.Length, node)
         # print(node, length_validator)
-        return 'textarea' if length_validator is None else 'text'
+        return "textarea" if length_validator is None else "text"
 
     typ = type(node.typ)
     return {
-        c.Date: 'date',
-        c.DateTime: 'datetime',
-        c.Time: 'time',
-        c.Decimal: 'number',
-        c.Bool: 'checkbox',
-        c.Int: 'number',
-        c.Float: 'number',
+        c.Date: "date",
+        c.DateTime: "datetime",
+        c.Time: "time",
+        c.Decimal: "number",
+        c.Bool: "checkbox",
+        c.Int: "number",
+        c.Float: "number",
     }[typ]
 
 
@@ -175,30 +174,31 @@ def text_node(attrib, max_size=60, **kw):
     """
     from bag.sqlalchemy.tricks import length
 
-    maxlength = kw.get('maxlength')
+    maxlength = kw.get("maxlength")
     if maxlength is None:
         maxlength = length(attrib)
         if maxlength is not None:
-            kw['maxlength'] = maxlength
+            kw["maxlength"] = maxlength
 
-    widget = kw.get('widget', 'text')
+    widget = kw.get("widget", "text")
 
     # If necessary, calculate a default size for the input
-    size = kw.get('size')
-    if widget != 'textarea' and size is None and maxlength is not None:
+    size = kw.get("size")
+    if widget != "textarea" and size is None and maxlength is not None:
         medium = max_size / 2 + (max_size / 12)
-        size = int(maxlength if maxlength <= medium
-                   else medium + (maxlength - medium) / 4)
+        size = int(
+            maxlength if maxlength <= medium else medium + (maxlength - medium) / 4
+        )
         if size > max_size:
             size = max_size
-        kw['size'] = size
+        kw["size"] = size
 
     # Add Length validator if not present
     if maxlength:
-        original = kw.get('validator')
+        original = kw.get("validator")
         length_validator = get_validator(c.Length, original)
         if length_validator is None:
-            kw['validator'] = mix_validators(original, c.Length(max=maxlength))
+            kw["validator"] = mix_validators(original, c.Length(max=maxlength))
 
     # Infer the type and return a SchemaNode
     # print(kw)
@@ -218,17 +218,18 @@ def select_node(attrib, options, validators=None, **kw):
     validator = c.All(one_of, *validators) if validators else one_of
     return c.SchemaNode(
         _colander_type_from(attrib)(),
-        widget='select',
-        options=[{'value': t[0], 'label': t[1]} for t in options],
+        widget="select",
+        options=[{"value": t[0], "label": t[1]} for t in options],
         validator=validator,
-        **kw)
+        **kw,
+    )
 
 
 class PytangularSchema(c.MappingSchema):
     """Self-describing mapping schema (has to_dict() and to_json())."""
 
-    def to_dict(self, mode='simple'):
+    def to_dict(self, mode="simple"):
         return schema_to_dict(self, mode=mode)
 
-    def to_json(self, mode='simple'):
+    def to_json(self, mode="simple"):
         return schema_to_json(self, mode=mode)
